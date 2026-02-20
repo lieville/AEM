@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3 面板数据模型 – 计量模型及应用</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/4时间序列分析.html" rel="next">
+<link href="../chapters/2横截面数据分析.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-70a47bd5681a7291082a5b9f83d58762.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="science-textbook.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/1线性回归.html">I 数据与模型</a></li><li class="breadcrumb-item"><a href="../chapters/3面板数据模型.html"><span class="chapter-title">3 面板数据模型</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">计量模型及应用</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">简介</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">I 数据与模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1线性回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1 线性回归基础</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2横截面数据分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2 横截面数据：假设违反的诊断与修正</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/3面板数据模型.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">3 面板数据模型</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/4时间序列分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4 时间序列分析</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/5离散与受限因变量模型.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">5 离散数据与受限因变量模型</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">II 因果推断方法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/6因果推断框架.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6 因果推断框架</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/7工具变量法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">7 工具变量法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/8倾向得分匹配.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">8 倾向得分匹配</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/9双重差分法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">9 双重差分法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10断点回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">10 断点回归</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11合成控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">11 合成控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12回归控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">12 回归控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13中介效应与调节效应.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">13 中介效应与调节效应</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">III 理论与算法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14大样本理论.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">14 大样本理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15最大似然估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">15 最大似然估计理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16广义矩估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">16 广义矩估计法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17蒙特卡洛法与自助法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">17 蒙特卡洛法与自助法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/18优化算法与数值方法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">18 数值优化与矩阵方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/19机器学习在计量中的应用.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">19 机器学习在计量中的应用</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#本章导读" id="toc-本章导读" class="nav-link active" data-scroll-target="#本章导读">本章导读</a></li>
+  <li><a href="#面板数据概述" id="toc-面板数据概述" class="nav-link" data-scroll-target="#面板数据概述">3.1 面板数据概述</a>
+  <ul class="collapse">
+  <li><a href="#面板数据的定义结构与符号" id="toc-面板数据的定义结构与符号" class="nav-link" data-scroll-target="#面板数据的定义结构与符号">3.1.1 面板数据的定义、结构与符号</a></li>
+  <li><a href="#面板数据的优势与挑战" id="toc-面板数据的优势与挑战" class="nav-link" data-scroll-target="#面板数据的优势与挑战">3.1.2 面板数据的优势与挑战</a></li>
+  <li><a href="#基本模型设定" id="toc-基本模型设定" class="nav-link" data-scroll-target="#基本模型设定">3.1.3 基本模型设定</a></li>
+  </ul></li>
+  <li><a href="#混合最小二乘估计pooled-ols" id="toc-混合最小二乘估计pooled-ols" class="nav-link" data-scroll-target="#混合最小二乘估计pooled-ols">3.2 混合最小二乘估计（Pooled OLS）</a>
+  <ul class="collapse">
+  <li><a href="#混合ols的模型形式与经典假设" id="toc-混合ols的模型形式与经典假设" class="nav-link" data-scroll-target="#混合ols的模型形式与经典假设">3.2.1 混合OLS的模型形式与经典假设</a></li>
+  <li><a href="#混合ols的适用条件与局限性" id="toc-混合ols的适用条件与局限性" class="nav-link" data-scroll-target="#混合ols的适用条件与局限性">3.2.2 混合OLS的适用条件与局限性</a></li>
+  <li><a href="#与横截面回归的比较" id="toc-与横截面回归的比较" class="nav-link" data-scroll-target="#与横截面回归的比较">3.2.3 与横截面回归的比较</a></li>
+  </ul></li>
+  <li><a href="#固定效应模型fixed-effects-fe" id="toc-固定效应模型fixed-effects-fe" class="nav-link" data-scroll-target="#固定效应模型fixed-effects-fe">3.3 固定效应模型（Fixed Effects, FE）</a>
+  <ul class="collapse">
+  <li><a href="#固定效应的动机消除不随时间变化的遗漏变量" id="toc-固定效应的动机消除不随时间变化的遗漏变量" class="nav-link" data-scroll-target="#固定效应的动机消除不随时间变化的遗漏变量">3.3.1 固定效应的动机：消除不随时间变化的遗漏变量</a></li>
+  <li><a href="#组内估计量within-estimator的推导与性质" id="toc-组内估计量within-estimator的推导与性质" class="nav-link" data-scroll-target="#组内估计量within-estimator的推导与性质">3.3.2 组内估计量（Within Estimator）的推导与性质</a></li>
+  <li><a href="#虚拟变量法与一阶差分法fd的等价性" id="toc-虚拟变量法与一阶差分法fd的等价性" class="nav-link" data-scroll-target="#虚拟变量法与一阶差分法fd的等价性">3.3.3 虚拟变量法与一阶差分法（FD）的等价性</a></li>
+  <li><a href="#固定效应模型的假设优点与缺点" id="toc-固定效应模型的假设优点与缺点" class="nav-link" data-scroll-target="#固定效应模型的假设优点与缺点">3.3.4 固定效应模型的假设、优点与缺点</a></li>
+  </ul></li>
+  <li><a href="#随机效应模型random-effects-re" id="toc-随机效应模型random-effects-re" class="nav-link" data-scroll-target="#随机效应模型random-effects-re">3.4 随机效应模型（Random Effects, RE）</a>
+  <ul class="collapse">
+  <li><a href="#随机效应的设定与假设" id="toc-随机效应的设定与假设" class="nav-link" data-scroll-target="#随机效应的设定与假设">3.4.1 随机效应的设定与假设</a></li>
+  <li><a href="#广义最小二乘估计gls的原理与实现" id="toc-广义最小二乘估计gls的原理与实现" class="nav-link" data-scroll-target="#广义最小二乘估计gls的原理与实现">3.4.2 广义最小二乘估计（GLS）的原理与实现</a></li>
+  <li><a href="#随机效应模型的效率优势与一致性" id="toc-随机效应模型的效率优势与一致性" class="nav-link" data-scroll-target="#随机效应模型的效率优势与一致性">3.4.3 随机效应模型的效率优势与一致性</a></li>
+  </ul></li>
+  <li><a href="#模型选择豪斯曼检验hausman-test" id="toc-模型选择豪斯曼检验hausman-test" class="nav-link" data-scroll-target="#模型选择豪斯曼检验hausman-test">3.5 模型选择：豪斯曼检验（Hausman Test）</a>
+  <ul class="collapse">
+  <li><a href="#豪斯曼检验的核心思想" id="toc-豪斯曼检验的核心思想" class="nav-link" data-scroll-target="#豪斯曼检验的核心思想">3.5.1 豪斯曼检验的核心思想</a></li>
+  <li><a href="#检验统计量的构造原假设与备择假设" id="toc-检验统计量的构造原假设与备择假设" class="nav-link" data-scroll-target="#检验统计量的构造原假设与备择假设">3.5.2 检验统计量的构造、原假设与备择假设</a></li>
+  <li><a href="#实践中的决策流程" id="toc-实践中的决策流程" class="nav-link" data-scroll-target="#实践中的决策流程">3.5.3 实践中的决策流程</a></li>
+  </ul></li>
+  <li><a href="#面板数据模型的扩展与高级应用" id="toc-面板数据模型的扩展与高级应用" class="nav-link" data-scroll-target="#面板数据模型的扩展与高级应用">3.6 面板数据模型的扩展与高级应用</a>
+  <ul class="collapse">
+  <li><a href="#动态面板数据模型arellano-bond-gmm估计" id="toc-动态面板数据模型arellano-bond-gmm估计" class="nav-link" data-scroll-target="#动态面板数据模型arellano-bond-gmm估计">3.6.1 动态面板数据模型：Arellano-Bond GMM估计</a></li>
+  <li><a href="#非平衡面板数据的处理方法" id="toc-非平衡面板数据的处理方法" class="nav-link" data-scroll-target="#非平衡面板数据的处理方法">3.6.2 非平衡面板数据的处理方法</a></li>
+  <li><a href="#双向固定效应two-way-fixed-effects" id="toc-双向固定效应two-way-fixed-effects" class="nav-link" data-scroll-target="#双向固定效应two-way-fixed-effects">3.6.3 双向固定效应（Two-Way Fixed Effects）</a></li>
+  </ul></li>
+  <li><a href="#面板数据在政策评估中的应用" id="toc-面板数据在政策评估中的应用" class="nav-link" data-scroll-target="#面板数据在政策评估中的应用">3.7 面板数据在政策评估中的应用</a></li>
+  <li><a href="#本章总结" id="toc-本章总结" class="nav-link" data-scroll-target="#本章总结">本章总结</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/1线性回归.html">I 数据与模型</a></li><li class="breadcrumb-item"><a href="../chapters/3面板数据模型.html"><span class="chapter-title">3 面板数据模型</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">3 面板数据模型</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="本章导读" class="level2">
+<h2 class="anchored" data-anchor-id="本章导读">本章导读</h2>
+<p>面板数据（Panel Data）结合了横截面与时间序列的双重维度，为识别因果关系提供了更丰富的信息。本章在前两章基础上，系统介绍面板数据的基本模型（混合OLS、固定效应、随机效应）、估计方法及模型选择策略。重点理解<strong>组内变异</strong>与<strong>组间变异</strong>的区别，掌握<strong>豪斯曼检验</strong>，并通过案例体会面板数据在政策评估、劳动经济学等领域的应用价值。本章是连接经典横截面分析与现代因果推断的关键桥梁。</p>
+</section>
+<section id="面板数据概述" class="level2">
+<h2 class="anchored" data-anchor-id="面板数据概述">3.1 面板数据概述</h2>
+<section id="面板数据的定义结构与符号" class="level3">
+<h3 class="anchored" data-anchor-id="面板数据的定义结构与符号">3.1.1 面板数据的定义、结构与符号</h3>
+<p><strong>面板数据</strong>是指对<strong>同一组个体</strong>（如个人、企业、国家）在<strong>多个时间点</strong>上进行重复观测所得到的数据。记 <span class="math inline">\(i = 1, 2, \dots, N\)</span> 表示个体，<span class="math inline">\(t = 1, 2, \dots, T\)</span> 表示时间，则观测值 <span class="math inline">\(y_{it}\)</span> 表示第 <span class="math inline">\(i\)</span> 个个体在第 <span class="math inline">\(t\)</span> 期的因变量取值，<span class="math inline">\(\mathbf{x}_{it}\)</span> 表示相应的 <span class="math inline">\(k\)</span> 维解释变量向量。</p>
+<p>面板数据的基本结构如下表所示：</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>个体\时间</th>
+<th><span class="math inline">\(t=1\)</span></th>
+<th><span class="math inline">\(t=2\)</span></th>
+<th><span class="math inline">\(\cdots\)</span></th>
+<th><span class="math inline">\(t=T\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(i=1\)</span></td>
+<td><span class="math inline">\((y_{11}, \mathbf{x}_{11})\)</span></td>
+<td><span class="math inline">\((y_{12}, \mathbf{x}_{12})\)</span></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td><span class="math inline">\((y_{1T}, \mathbf{x}_{1T})\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(i=2\)</span></td>
+<td><span class="math inline">\((y_{21}, \mathbf{x}_{21})\)</span></td>
+<td><span class="math inline">\((y_{22}, \mathbf{x}_{22})\)</span></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td><span class="math inline">\((y_{2T}, \mathbf{x}_{2T})\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\vdots\)</span></td>
+<td><span class="math inline">\(\vdots\)</span></td>
+<td><span class="math inline">\(\vdots\)</span></td>
+<td><span class="math inline">\(\ddots\)</span></td>
+<td><span class="math inline">\(\vdots\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(i=N\)</span></td>
+<td><span class="math inline">\((y_{N1}, \mathbf{x}_{N1})\)</span></td>
+<td><span class="math inline">\((y_{N2}, \mathbf{x}_{N2})\)</span></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td><span class="math inline">\((y_{NT}, \mathbf{x}_{NT})\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="面板数据的优势与挑战" class="level3">
+<h3 class="anchored" data-anchor-id="面板数据的优势与挑战">3.1.2 面板数据的优势与挑战</h3>
+<section id="优势" class="level4">
+<h4 class="anchored" data-anchor-id="优势">优势</h4>
+<ol type="1">
+<li><strong>控制不可观测异质性</strong>：能够控制不随时间变化的<strong>个体固定效应</strong>（如个人能力、企业文化、地理位置），从而缓解<strong>遗漏变量偏误</strong>。</li>
+<li><strong>提供更丰富的变异信息</strong>：既包含个体间的差异（<strong>组间变异</strong>， Between Variation），也包含个体随时间的变化（<strong>组内变异</strong>， Within Variation），有助于识别因果关系。</li>
+<li><strong>提高估计效率</strong>：更多的观测值通常带来更小的标准误。</li>
+<li><strong>研究动态行为</strong>：可以分析个体行为的动态调整过程。</li>
+</ol>
+</section>
+<section id="挑战" class="level4">
+<h4 class="anchored" data-anchor-id="挑战">挑战</h4>
+<ol type="1">
+<li><strong>测量误差</strong>：变量的测量误差在面板数据中可能导致动态面板偏误。</li>
+<li><strong>样本损耗</strong>：长期追踪调查中，个体可能退出，导致<strong>非平衡面板</strong>（Unbalanced Panel）。</li>
+<li><strong>模型设定复杂性</strong>：需要选择合适的模型（混合、固定、随机效应），并处理可能的序列相关、异方差和截面相关。</li>
+</ol>
+</section>
+</section>
+<section id="基本模型设定" class="level3">
+<h3 class="anchored" data-anchor-id="基本模型设定">3.1.3 基本模型设定</h3>
+<p>面板数据模型的三种基本设定如下：</p>
+<ol type="1">
+<li><p><strong>混合回归模型（Pooled Model）</strong> 忽略个体差异，假设所有个体遵循相同的数据生成过程。 <span class="math display">\[y_{it} = \beta_0 + \mathbf{x}_{it}'\pmb{\beta} + \varepsilon_{it}\]</span></p></li>
+<li><p><strong>固定效应模型（Fixed Effects Model, FE）</strong> 允许每个个体拥有自己的截距项 <span class="math inline">\(\alpha_i\)</span>，且 <span class="math inline">\(\alpha_i\)</span> 可能与解释变量相关。 <span class="math display">\[y_{it} = \alpha_i + \mathbf{x}_{it}'\pmb{\beta} + \varepsilon_{it}\]</span></p></li>
+<li><p><strong>随机效应模型（Random Effects Model, RE）</strong> 将个体截距 <span class="math inline">\(\alpha_i\)</span> 视为随机变量，且与解释变量不相关。 <span class="math display">\[y_{it} = \beta_0 + \mathbf{x}_{it}'\pmb{\beta} + \alpha_i + \varepsilon_{it}\]</span></p></li>
+</ol>
+<p>其中，<span class="math inline">\(\alpha_i\)</span> 称为<strong>个体效应</strong>（Individual Effect）或<strong>不可观测异质性</strong>（Unobserved Heterogeneity）。</p>
+</section>
+</section>
+<section id="混合最小二乘估计pooled-ols" class="level2">
+<h2 class="anchored" data-anchor-id="混合最小二乘估计pooled-ols">3.2 混合最小二乘估计（Pooled OLS）</h2>
+<section id="混合ols的模型形式与经典假设" class="level3">
+<h3 class="anchored" data-anchor-id="混合ols的模型形式与经典假设">3.2.1 混合OLS的模型形式与经典假设</h3>
+<p>混合OLS将 <span class="math inline">\(N \times T\)</span> 个观测值视为一个大的独立横截面数据进行回归，完全忽略面板数据结构： <span class="math display">\[y_{it} = \beta_0 + \mathbf{x}_{it}'\pmb{\beta} + \varepsilon_{it}\]</span></p>
+<p>其经典假设与横截面OLS相同：</p>
+<p>1. <strong>线性关系与严格外生性</strong>：<span class="math inline">\(E(\varepsilon_{it} | \mathbf{x}_{it}) = 0\)</span>。</p>
+<p>2. <strong>随机抽样</strong>：观测值 <span class="math inline">\(\{ (y_{it}, \mathbf{x}_{it}) \}\)</span> 独立同分布。</p>
+<p>3. <strong>无完全共线性</strong>：解释变量矩阵 <span class="math inline">\(\mathbf{X}\)</span> 列满秩。</p>
+<p>4. <strong>同方差性</strong>：<span class="math inline">\(\text{Var}(\varepsilon_{it} | \mathbf{x}_{it}) = \sigma^2\)</span>。</p>
+<p>5. <strong>无自相关</strong>：<span class="math inline">\(\text{Cov}(\varepsilon_{it}, \varepsilon_{js} | \mathbf{x}_{it}, \mathbf{x}_{js}) = 0\)</span>，除非 <span class="math inline">\(i=j\)</span> 且 <span class="math inline">\(t=s\)</span>。</p>
+</section>
+<section id="混合ols的适用条件与局限性" class="level3">
+<h3 class="anchored" data-anchor-id="混合ols的适用条件与局限性">3.2.2 混合OLS的适用条件与局限性</h3>
+<p><strong>适用条件</strong>： - 个体效应 <span class="math inline">\(\alpha_i\)</span> 与所有解释变量 <span class="math inline">\(\mathbf{x}_{it}\)</span> 均不相关，即 <span class="math inline">\(\text{Cov}(\alpha_i, \mathbf{x}_{it}) = 0\)</span>。 - 研究目的仅关注 <span class="math inline">\(\mathbf{x}_{it}\)</span> 的“平均”效应，而非个体异质性效应。</p>
+<p><strong>局限性</strong>： 1. <strong>遗漏变量偏误</strong>：若 <span class="math inline">\(\alpha_i\)</span> 与 <span class="math inline">\(\mathbf{x}_{it}\)</span> 相关，则混合OLS的估计量 <span class="math inline">\(\hat{\pmb{\beta}}_{\text{Pooled}}\)</span> 是有偏且不一致的。 2. <strong>效率损失</strong>：即使假设成立，混合OLS未利用面板数据的结构信息，其标准误可能不是最有效的（除非使用<strong>聚类稳健标准误</strong>进行修正）。</p>
+</section>
+<section id="与横截面回归的比较" class="level3">
+<h3 class="anchored" data-anchor-id="与横截面回归的比较">3.2.3 与横截面回归的比较</h3>
+<p>混合OLS本质上是将面板数据“堆叠”后进行横截面回归。与第2章横截面分析相比： - <strong>数据层面</strong>：混合OLS虽然利用了重复观测，但假设不同期的观测相互独立，忽略了个体内的序列相关性。 - <strong>假设层面</strong>：横截面分析无法检验个体效应的存在，而面板数据允许我们通过比较混合、固定、随机效应模型来做出选择。</p>
+</section>
+</section>
+<section id="固定效应模型fixed-effects-fe" class="level2">
+<h2 class="anchored" data-anchor-id="固定效应模型fixed-effects-fe">3.3 固定效应模型（Fixed Effects, FE）</h2>
+<section id="固定效应的动机消除不随时间变化的遗漏变量" class="level3">
+<h3 class="anchored" data-anchor-id="固定效应的动机消除不随时间变化的遗漏变量">3.3.1 固定效应的动机：消除不随时间变化的遗漏变量</h3>
+<p>固定效应模型的核心动机是控制<strong>不随时间变化</strong>的不可观测异质性 <span class="math inline">\(\alpha_i\)</span>。模型设定为： <span class="math display">\[y_{it} = \alpha_i + \mathbf{x}_{it}'\pmb{\beta} + \varepsilon_{it}\]</span> 其中 <span class="math inline">\(\alpha_i\)</span> 是待估参数（或通过变换消除），代表个体 <span class="math inline">\(i\)</span> 特有的、不随时间变化的特征。</p>
+</section>
+<section id="组内估计量within-estimator的推导与性质" class="level3">
+<h3 class="anchored" data-anchor-id="组内估计量within-estimator的推导与性质">3.3.2 组内估计量（Within Estimator）的推导与性质</h3>
+<p>为了消除 <span class="math inline">\(\alpha_i\)</span>，对每个个体计算时间均值： <span class="math display">\[\bar{y}_i = \frac{1}{T}\sum_{t=1}^{T} y_{it}, \quad \bar{\mathbf{x}}_i = \frac{1}{T}\sum_{t=1}^{T} \mathbf{x}_{it}, \quad \bar{\varepsilon}_i = \frac{1}{T}\sum_{t=1}^{T} \varepsilon_{it}\]</span></p>
+<p>将原模型减去其时间均值模型 <span class="math inline">\(\bar{y}_i = \alpha_i + \bar{\mathbf{x}}_i'\pmb{\beta} + \bar{\varepsilon}_i\)</span>，得到<strong>组内变换</strong>（Within Transformation）后的模型： <span class="math display">\[y_{it} - \bar{y}_i = (\mathbf{x}_{it} - \bar{\mathbf{x}}_i)'\pmb{\beta} + (\varepsilon_{it} - \bar{\varepsilon}_i)\]</span></p>
+<p>记 <span class="math inline">\(\ddot{y}_{it} = y_{it} - \bar{y}_i\)</span>，<span class="math inline">\(\ddot{\mathbf{x}}_{it} = \mathbf{x}_{it} - \bar{\mathbf{x}}_i\)</span>，则上式简化为： <span class="math display">\[\ddot{y}_{it} = \ddot{\mathbf{x}}_{it}'\pmb{\beta} + \ddot{\varepsilon}_{it}\]</span> 对上述模型进行OLS回归，得到的估计量 <span class="math inline">\(\hat{\pmb{\beta}}_{\text{FE}}\)</span> 称为<strong>组内估计量</strong>。</p>
+<p><strong>估计量性质</strong>： - <strong>一致性</strong>：只要 <span class="math inline">\(E(\ddot{\varepsilon}_{it} | \ddot{\mathbf{x}}_{it}) = 0\)</span>（即 <span class="math inline">\(\mathbf{x}_{it}\)</span> 与 <span class="math inline">\(\varepsilon_{it}\)</span> 不相关），FE估计量是一致的。 - <strong>无法估计不随时间变化的变量</strong>：对于常数变量（如性别、种族），<span class="math inline">\(\ddot{\mathbf{x}}_{it} \equiv 0\)</span>，其系数无法被识别。</p>
+</section>
+<section id="虚拟变量法与一阶差分法fd的等价性" class="level3">
+<h3 class="anchored" data-anchor-id="虚拟变量法与一阶差分法fd的等价性">3.3.3 虚拟变量法与一阶差分法（FD）的等价性</h3>
+<p><strong>虚拟变量法（LSDV）</strong>：在原始模型中为每个个体加入一个虚拟变量（除一个基准个体外）： <span class="math display">\[y_{it} = \beta_0 + \sum_{i=2}^{N} \alpha_i D_i + \mathbf{x}_{it}'\pmb{\beta} + \varepsilon_{it}\]</span> 其中 <span class="math inline">\(D_i\)</span> 为个体虚拟变量。对该模型进行OLS回归，得到的 <span class="math inline">\(\hat{\pmb{\beta}}\)</span> 与组内估计量完全等价。</p>
+<p><strong>一阶差分法（First Difference, FD）</strong>：对相邻两期数据进行差分，以消除 <span class="math inline">\(\alpha_i\)</span>： <span class="math display">\[\Delta y_{it} = y_{it} - y_{i,t-1} = (\mathbf{x}_{it} - \mathbf{x}_{i,t-1})'\pmb{\beta} + (\varepsilon_{it} - \varepsilon_{i,t-1})\]</span> - 当 <span class="math inline">\(T=2\)</span> 时，FD估计量与FE估计量<strong>完全等价</strong>。 - 当 <span class="math inline">\(T&gt;2\)</span> 时，两者略有不同。FD假设扰动项 <span class="math inline">\(\varepsilon_{it}\)</span> 无序列相关，否则FE估计量更有效。</p>
+</section>
+<section id="固定效应模型的假设优点与缺点" class="level3">
+<h3 class="anchored" data-anchor-id="固定效应模型的假设优点与缺点">3.3.4 固定效应模型的假设、优点与缺点</h3>
+<p><strong>核心假设</strong>： 1. <strong>严格外生性</strong>：<span class="math inline">\(E(\varepsilon_{it} | \mathbf{x}_{i1}, \dots, \mathbf{x}_{iT}, \alpha_i) = 0\)</span>。即任意时期的扰动项 <span class="math inline">\(\varepsilon_{it}\)</span> 与所有时期（过去、现在、未来）的解释变量均不相关。这是一个较强的假设。 2. <span class="math inline">\(\alpha_i\)</span> 与 <span class="math inline">\(\mathbf{x}_{it}\)</span> 可以存在任意形式的相关性（这正是使用FE的动机）。</p>
+<p><strong>优点</strong>： 1. 能有效控制<strong>不随时间变化</strong>的遗漏变量，缓解由此导致的偏误。 2. 无需对 <span class="math inline">\(\alpha_i\)</span> 的分布做任何假设。</p>
+<p><strong>缺点</strong>： 1. 无法估计不随时间变化的变量的效应。 2. 若关注变量 <span class="math inline">\(x_{it}\)</span> 本身随时间变化很小（即组内变异小），则FE估计量的标准误会很大，估计不精确。 3. 不能控制<strong>随时间变化</strong>的遗漏变量。</p>
+</section>
+</section>
+<section id="随机效应模型random-effects-re" class="level2">
+<h2 class="anchored" data-anchor-id="随机效应模型random-effects-re">3.4 随机效应模型（Random Effects, RE）</h2>
+<section id="随机效应的设定与假设" class="level3">
+<h3 class="anchored" data-anchor-id="随机效应的设定与假设">3.4.1 随机效应的设定与假设</h3>
+<p>随机效应模型将个体效应 <span class="math inline">\(\alpha_i\)</span> 视为随机变量，并纳入复合扰动项中： <span class="math display">\[y_{it} = \beta_0 + \mathbf{x}_{it}'\pmb{\beta} + u_{it}, \quad u_{it} = \alpha_i + \varepsilon_{it}\]</span></p>
+<p><strong>核心假设</strong>： 1. <span class="math inline">\(\alpha_i \sim \text{i.i.d.}(0, \sigma_{\alpha}^2)\)</span>，且与 <span class="math inline">\(\varepsilon_{it}\)</span> 相互独立。 2. <span class="math inline">\(\varepsilon_{it} \sim \text{i.i.d.}(0, \sigma_{\varepsilon}^2)\)</span>。 3. <span class="math inline">\(\alpha_i\)</span> 与所有解释变量 <span class="math inline">\(\mathbf{x}_{it}\)</span> 均不相关，即 <span class="math inline">\(\text{Cov}(\alpha_i, \mathbf{x}_{it}) = 0\)</span>。</p>
+<p>在此假设下，复合扰动项 <span class="math inline">\(u_{it}\)</span> 的协方差结构为： <span class="math display">\[\text{Var}(u_{it}) = \sigma_{\alpha}^2 + \sigma_{\varepsilon}^2\]</span> <span class="math display">\[\text{Cov}(u_{it}, u_{is}) = \sigma_{\alpha}^2, \quad \text{for } t \neq s\]</span> 即同一个体不同期的扰动项之间存在相关性，相关系数为 <span class="math inline">\(\rho = \sigma_{\alpha}^2 / (\sigma_{\alpha}^2 + \sigma_{\varepsilon}^2)\)</span>。</p>
+</section>
+<section id="广义最小二乘估计gls的原理与实现" class="level3">
+<h3 class="anchored" data-anchor-id="广义最小二乘估计gls的原理与实现">3.4.2 广义最小二乘估计（GLS）的原理与实现</h3>
+<p>由于扰动项存在组内自相关，OLS不再有效。随机效应模型采用<strong>广义最小二乘法（GLS）</strong>进行估计。其核心是对数据进行<strong>准离差变换</strong>（Quasi-demeaning Transformation）： <span class="math display">\[y_{it} - \theta \bar{y}_i = (\mathbf{x}_{it} - \theta \bar{\mathbf{x}}_i)'\pmb{\beta} + [(1-\theta)\beta_0 + (u_{it} - \theta \bar{u}_i)]\]</span> 其中， <span class="math display">\[\theta = 1 - \sqrt{\frac{\sigma_{\varepsilon}^2}{\sigma_{\varepsilon}^2 + T \sigma_{\alpha}^2}}\]</span></p>
+<ul>
+<li>当 <span class="math inline">\(\theta=0\)</span> 时，等价于混合OLS（<span class="math inline">\(\sigma_{\alpha}^2=0\)</span>）。</li>
+<li>当 <span class="math inline">\(\theta=1\)</span> 时，等价于固定效应变换（<span class="math inline">\(\sigma_{\varepsilon}^2=0\)</span>，或 <span class="math inline">\(T \rightarrow \infty\)</span>）。</li>
+<li>通常 <span class="math inline">\(\theta \in (0, 1)\)</span>，RE估计量是混合OLS和FE估计量的加权平均。</li>
+</ul>
+<p>实际操作中，需先估计 <span class="math inline">\(\sigma_{\varepsilon}^2\)</span> 和 <span class="math inline">\(\sigma_{\alpha}^2\)</span>，然后进行GLS估计。现代软件可自动完成此过程。</p>
+</section>
+<section id="随机效应模型的效率优势与一致性" class="level3">
+<h3 class="anchored" data-anchor-id="随机效应模型的效率优势与一致性">3.4.3 随机效应模型的效率优势与一致性</h3>
+<p><strong>效率优势</strong>：当 <span class="math inline">\(\text{Cov}(\alpha_i, \mathbf{x}_{it}) = 0\)</span> 的假设成立时，RE估计量比FE估计量更<strong>有效</strong>（方差更小），因为它同时利用了数据的<strong>组内变异</strong>和<strong>组间变异</strong>。</p>
+<p><strong>一致性条件</strong>：RE估计量的一致性完全依赖于 <span class="math inline">\(\alpha_i\)</span> 与 <span class="math inline">\(\mathbf{x}_{it}\)</span> 不相关的假设。若该假设不成立，则RE估计量是<strong>不一致</strong>的。因此，RE模型的使用必须依赖于理论支持或统计检验。</p>
+</section>
+</section>
+<section id="模型选择豪斯曼检验hausman-test" class="level2">
+<h2 class="anchored" data-anchor-id="模型选择豪斯曼检验hausman-test">3.5 模型选择：豪斯曼检验（Hausman Test）</h2>
+<section id="豪斯曼检验的核心思想" class="level3">
+<h3 class="anchored" data-anchor-id="豪斯曼检验的核心思想">3.5.1 豪斯曼检验的核心思想</h3>
+<p>豪斯曼检验用于判断个体效应 <span class="math inline">\(\alpha_i\)</span> 是否与解释变量 <span class="math inline">\(\mathbf{x}_{it}\)</span> 相关，从而在FE和RE模型之间做出统计选择。</p>
+<p><strong>逻辑基础</strong>： - 如果 <span class="math inline">\(H_0: \text{Cov}(\alpha_i, \mathbf{x}_{it}) = 0\)</span> 成立，则<strong>FE和RE估计量都是一致的</strong>，但RE估计量更有效。 - 如果 <span class="math inline">\(H_0\)</span> 不成立，则<strong>FE估计量仍然一致，但RE估计量不一致</strong>。</p>
+<p>因此，可以检验两种估计量之间的差异是否显著。若无显著差异，则选择更有效的RE模型；若有显著差异，则说明RE不一致，应选择FE模型。</p>
+</section>
+<section id="检验统计量的构造原假设与备择假设" class="level3">
+<h3 class="anchored" data-anchor-id="检验统计量的构造原假设与备择假设">3.5.2 检验统计量的构造、原假设与备择假设</h3>
+<p>定义两个估计量的差：<span class="math inline">\(\mathbf{d} = \hat{\pmb{\beta}}_{\text{FE}} - \hat{\pmb{\beta}}_{\text{RE}}\)</span>。 在 <span class="math inline">\(H_0\)</span> 下，<span class="math inline">\(\text{plim } \mathbf{d} = 0\)</span>。豪斯曼证明，其渐近协方差矩阵为： <span class="math display">\[\text{Var}(\mathbf{d}) = \text{Var}(\hat{\pmb{\beta}}_{\text{FE}}) - \text{Var}(\hat{\pmb{\beta}}_{\text{RE}})\]</span></p>
+<p>构造的检验统计量为： <span class="math display">\[H = \mathbf{d}' [\widehat{\text{Var}}(\hat{\pmb{\beta}}_{\text{FE}}) - \widehat{\text{Var}}(\hat{\pmb{\beta}}_{\text{RE}})]^{-1} \mathbf{d} \stackrel{a}{\sim} \chi^2(k)\]</span> 其中 <span class="math inline">\(k\)</span> 为 <span class="math inline">\(\pmb{\beta}\)</span> 的维数（不包括常数项）。</p>
+<ul>
+<li><strong>原假设 (</strong><span class="math inline">\(H_0\)</span>)：<span class="math inline">\(\text{Cov}(\alpha_i, \mathbf{x}_{it}) = 0\)</span>，应选择随机效应模型。</li>
+<li><strong>备择假设 (</strong><span class="math inline">\(H_1\)</span>)：<span class="math inline">\(\text{Cov}(\alpha_i, \mathbf{x}_{it}) \neq 0\)</span>，应选择固定效应模型。</li>
+</ul>
+<p><strong>决策规则</strong>：给定显著性水平 <span class="math inline">\(\alpha\)</span>（如0.05），若 <span class="math inline">\(H &gt; \chi_{\alpha}^2(k)\)</span>，则拒绝 <span class="math inline">\(H_0\)</span>，选择固定效应模型；否则，选择随机效应模型。</p>
+</section>
+<section id="实践中的决策流程" class="level3">
+<h3 class="anchored" data-anchor-id="实践中的决策流程">3.5.3 实践中的决策流程</h3>
+<ol type="1">
+<li><strong>理论先导</strong>：首先根据经济理论或研究背景判断。如果理论上认为个体效应极有可能与解释变量相关（如企业不可观测的管理能力影响其研发投入），则应直接选择FE模型。</li>
+<li><strong>统计检验</strong>：运行FE和RE模型，进行豪斯曼检验。注意，检验要求RE估计量是有效的（在 <span class="math inline">\(H_0\)</span> 下），因此需要使用基于GLS的RE估计结果。</li>
+<li><strong>稳健性报告</strong>：在学术论文中，通常同时报告FE和RE的估计结果，并注明豪斯曼检验的结论，以体现结论的稳健性。</li>
+</ol>
+</section>
+</section>
+<section id="面板数据模型的扩展与高级应用" class="level2">
+<h2 class="anchored" data-anchor-id="面板数据模型的扩展与高级应用">3.6 面板数据模型的扩展与高级应用</h2>
+<section id="动态面板数据模型arellano-bond-gmm估计" class="level3">
+<h3 class="anchored" data-anchor-id="动态面板数据模型arellano-bond-gmm估计">3.6.1 动态面板数据模型：Arellano-Bond GMM估计</h3>
+<p>当模型包含因变量的滞后项以刻画动态调整过程时，即为动态面板模型： <span class="math display">\[y_{it} = \rho y_{i, t-1} + \mathbf{x}_{it}'\pmb{\beta} + \alpha_i + \varepsilon_{it}\]</span></p>
+<p>此时，即使使用FE变换，变换后的扰动项 <span class="math inline">\(\ddot{\varepsilon}_{it}\)</span> 与变换后的滞后因变量 <span class="math inline">\(\ddot{y}_{i, t-1}\)</span> 仍然相关，导致FE估计量有偏且不一致（<strong>尼克尔偏误</strong>， Nickell Bias）。</p>
+<p><strong>Arellano-Bond估计法</strong>的解决思路： 1. 先对原模型进行一阶差分以消除 <span class="math inline">\(\alpha_i\)</span>：<span class="math inline">\(\Delta y_{it} = \rho \Delta y_{i, t-1} + \Delta \mathbf{x}_{it}'\pmb{\beta} + \Delta \varepsilon_{it}\)</span>。 2. 差分后，<span class="math inline">\(\Delta y_{i, t-1}\)</span> 与 <span class="math inline">\(\Delta \varepsilon_{it}\)</span> 仍相关。但更早的滞后水平 <span class="math inline">\(y_{i, t-2}, y_{i, t-3}, \dots\)</span> 与 <span class="math inline">\(\Delta \varepsilon_{it}\)</span> 不相关，却与 <span class="math inline">\(\Delta y_{i, t-1}\)</span> 相关，因此可以作为<strong>有效的工具变量</strong>。 3. 利用这些滞后变量作为工具变量，进行<strong>广义矩估计（GMM）</strong>，即<strong>差分GMM</strong>。</p>
+</section>
+<section id="非平衡面板数据的处理方法" class="level3">
+<h3 class="anchored" data-anchor-id="非平衡面板数据的处理方法">3.6.2 非平衡面板数据的处理方法</h3>
+<p>非平衡面板指不同个体拥有的时间期数 <span class="math inline">\(T_i\)</span> 不同。对于FE和RE模型： - <strong>固定效应模型</strong>：组内变换依然适用，只需将均值计算改为 <span class="math inline">\(\bar{y}_i = \frac{1}{T_i}\sum_{t \in \mathcal{T}_i} y_{it}\)</span>，其中 <span class="math inline">\(\mathcal{T}_i\)</span> 是个体 <span class="math inline">\(i\)</span> 的观测时期集合。 - <strong>随机效应模型</strong>：GLS估计中的变换参数 <span class="math inline">\(\theta_i\)</span> 变为个体特定：<span class="math inline">\(\theta_i = 1 - \sqrt{\frac{\sigma_{\varepsilon}^2}{\sigma_{\varepsilon}^2 + T_i \sigma_{\alpha}^2}}\)</span>。</p>
+<p>处理时需关注<strong>样本损耗</strong>（Attrition）是否是随机的，若非随机可能导致样本选择偏误。</p>
+</section>
+<section id="双向固定效应two-way-fixed-effects" class="level3">
+<h3 class="anchored" data-anchor-id="双向固定效应two-way-fixed-effects">3.6.3 双向固定效应（Two-Way Fixed Effects）</h3>
+<p>在基础FE模型上，进一步加入<strong>时间固定效应</strong> <span class="math inline">\(\lambda_t\)</span>，以控制所有个体共同面临的时间趋势或宏观冲击： <span class="math display">\[y_{it} = \alpha_i + \lambda_t + \mathbf{x}_{it}'\pmb{\beta} + \varepsilon_{it}\]</span></p>
+<p>估计方法：可在组内变换的基础上，再对时间均值进行离差变换（即对 <span class="math inline">\(\ddot{y}_{it}\)</span> 和 <span class="math inline">\(\ddot{\mathbf{x}}_{it}\)</span> 做“时间离差”），或直接加入时间虚拟变量进行LSDV回归。双向固定效应模型是政策评估中<strong>双重差分法（DID）</strong> 的标准设定框架。</p>
+</section>
+</section>
+<section id="面板数据在政策评估中的应用" class="level2">
+<h2 class="anchored" data-anchor-id="面板数据在政策评估中的应用">3.7 面板数据在政策评估中的应用</h2>
+<p>面板数据是实施<strong>双重差分法（Difference-in-Differences, DID）</strong> 的理想载体。基本DID模型设定如下： <span class="math display">\[y_{it} = \beta_0 + \beta_1 \text{Post}_t + \beta_2 \text{Treat}_i + \beta_3 (\text{Post}_t \times \text{Treat}_i) + \alpha_i + \lambda_t + \varepsilon_{it}\]</span></p>
+<p>其中： - <span class="math inline">\(\text{Treat}_i\)</span>：处理组虚拟变量（个体层面不随时间变化）。 - <span class="math inline">\(\text{Post}_t\)</span>：政策后时期虚拟变量（时间层面不随个体变化）。 - <span class="math inline">\(\text{Post}_t \times \text{Treat}_i\)</span>：交互项，其系数 <span class="math inline">\(\beta_3\)</span> 是核心估计量，反映了政策处理的<strong>平均处理效应（ATE）</strong>。</p>
+<p>在这个设定中，个体固定效应 <span class="math inline">\(\alpha_i\)</span> 吸收了 <span class="math inline">\(\text{Treat}_i\)</span>，时间固定效应 <span class="math inline">\(\lambda_t\)</span> 吸收了 <span class="math inline">\(\text{Post}_t\)</span>，因此模型常简写为： <span class="math display">\[y_{it} = \beta_3 D_{it} + \alpha_i + \lambda_t + \varepsilon_{it}\]</span> 其中 <span class="math inline">\(D_{it} = \text{Post}_t \times \text{Treat}_i\)</span> 表示个体 <span class="math inline">\(i\)</span> 在时期 <span class="math inline">\(t\)</span> 是否受到政策处理。这清晰地体现了面板数据通过控制不可观测的个体和时点特征来识别因果效应的优势。</p>
+</section>
+<section id="本章总结" class="level2">
+<h2 class="anchored" data-anchor-id="本章总结">本章总结</h2>
+<p>本章系统介绍了面板数据模型的核心内容，旨在利用数据在时间和个体两个维度的变异来更准确地识别经济关系与因果效应。</p>
+<ol type="1">
+<li><p><strong>面板数据的本质与优势</strong>：面板数据通过追踪同一组个体在不同时间点的信息，使研究者能够控制<strong>不随时间变化的个体异质性</strong>，这是其相对于横截面数据最根本的优势。</p></li>
+<li><p><strong>三大基本模型</strong>：</p>
+<ul>
+<li><strong>混合OLS</strong>：忽略面板结构，假设所有观测独立。适用于个体效应与解释变量绝对不相关的理想情况，但通常风险较大。</li>
+<li><strong>固定效应模型</strong>：通过<strong>组内变换</strong>消除个体效应 <span class="math inline">\(\alpha_i\)</span>，允许 <span class="math inline">\(\alpha_i\)</span> 与解释变量任意相关。是解决遗漏变量偏误的强有力工具，但无法估计不随时间变化变量的系数。</li>
+<li><strong>随机效应模型</strong>：将个体效应视为随机扰动的一部分，要求 <span class="math inline">\(\alpha_i\)</span> 与解释变量不相关。若假设满足，则估计效率高于FE模型。</li>
+</ul></li>
+<li><p><strong>模型选择的关键</strong>：<strong>豪斯曼检验</strong>提供了在FE与RE之间选择的统计依据。其核心是比较两个估计量的一致性。实践中应结合经济理论和统计检验综合判断。</p></li>
+<li><p><strong>扩展与应用</strong>：</p>
+<ul>
+<li><strong>动态面板</strong>：当包含滞后因变量时，需使用<strong>Arellano-Bond GMM</strong>等工具变量方法。</li>
+<li><strong>双向固定效应</strong>：同时控制个体和时间效应，是更为稳健的设定。</li>
+<li><strong>政策评估</strong>：面板数据为<strong>双重差分法</strong>提供了天然的实施框架，通过比较处理组和对照组在政策前后的变化来识别因果效应。</li>
+</ul></li>
+<li><p><strong>核心思想贯穿始终</strong>：理解<strong>组内变异</strong>与<strong>组间变异</strong>的区别是掌握面板数据模型的钥匙。固定效应模型仅利用组内变异，随机效应模型则同时利用两种变异。选择何种模型，取决于研究者相信个体不可观测特征 <span class="math inline">\(\alpha_i\)</span> 与解释变量 <span class="math inline">\(\mathbf{x}_{it}\)</span> 是否相关，而这最终关系到估计结果的一致性与可靠性。</p></li>
+</ol>
+<p>面板数据模型是现代计量经济学实证分析的基石。掌握本章内容，意味着具备了利用更丰富的数据结构去检验经济理论、评估政策效果的基本能力，为进一步学习更高级的微观计量与因果推断方法奠定了坚实基础。</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/2横截面数据分析.html" class="pagination-link" aria-label="2 横截面数据：假设违反的诊断与修正">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">2 横截面数据：假设违反的诊断与修正</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/4时间序列分析.html" class="pagination-link" aria-label="4 时间序列分析">
+        <span class="nav-page-text"><span class="chapter-title">4 时间序列分析</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

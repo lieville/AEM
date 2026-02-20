@@ -1,0 +1,406 @@
+---
+title: "14 大样本理论"
+format: html
+editor: visual
+---
+
+## 13.1 大样本理论的基本动机
+
+### 13.1.1 有限样本推断的局限性
+
+在经典计量经济学中，我们通常基于有限样本性质（finite-sample properties）对估计量进行评价，如无偏性、有效性等。然而，有限样本理论存在以下局限性：
+
+1.  **分布假设的强依赖性**：有限样本性质通常需要严格的分布假设（如正态性假设）
+2.  **小样本偏误**：某些估计量在小样本下可能存在显著偏误
+3.  **精确分布难以推导**：除少数简单情况外，大多数估计量的精确分布难以获得
+
+### 13.1.2 渐近理论的作用与意义
+
+大样本理论（large sample theory）或渐近理论（asymptotic theory）研究当样本容量 $n \to \infty$ 时统计量的性质，主要优势包括：
+
+1.  **放松分布假设**：只需较弱的正则条件
+2.  **提供近似分布**：通过中心极限定理获得渐近正态分布
+3.  **统一分析框架**：适用于广泛的估计量和检验统计量
+
+### 13.1.3 经济学中大样本分析的常见场景
+
+1.  **横截面数据**：当样本量足够大时（通常 $n > 100$）
+2.  **时间序列数据**：当时间跨度足够长时
+3.  **面板数据**：当横截面维度或时间维度较大时
+
+## 13.2 随机序列的收敛性
+
+### 13.2.1 依概率收敛
+
+**定义13.1**（依概率收敛）：设 $\{X_n\}$ 是随机变量序列，$X$ 是一个随机变量。如果对于任意 $\epsilon > 0$，有：
+
+$$
+\lim_{n \to \infty} P(|X_n - X| > \epsilon) = 0
+$$
+
+则称 $X_n$ **依概率收敛**于 $X$，记作 $X_n \xrightarrow{p} X$。
+
+**性质13.1**：若 $X_n \xrightarrow{p} a$，$Y_n \xrightarrow{p} b$，且 $g(\cdot)$ 在 $(a,b)$ 处连续，则： 1. $X_n + Y_n \xrightarrow{p} a + b$ 2. $X_n Y_n \xrightarrow{p} ab$ 3. $g(X_n) \xrightarrow{p} g(a)$
+
+### 13.2.2 几乎必然收敛
+
+**定义13.2**（几乎必然收敛）：如果：
+
+$$
+P\left(\lim_{n \to \infty} X_n = X\right) = 1
+$$
+
+则称 $X_n$ **几乎必然收敛**于 $X$，记作 $X_n \xrightarrow{a.s.} X$。
+
+**定理13.1**：几乎必然收敛强于依概率收敛，即： $$
+X_n \xrightarrow{a.s.} X \quad \Rightarrow \quad X_n \xrightarrow{p} X
+$$
+
+### 13.2.3 均方收敛
+
+**定义13.3**（均方收敛）：如果：
+
+$$
+\lim_{n \to \infty} E[(X_n - X)^2] = 0
+$$
+
+则称 $X_n$ **均方收敛**于 $X$，记作 $X_n \xrightarrow{m.s.} X$。
+
+**定理13.2**：均方收敛强于依概率收敛，即： $$
+X_n \xrightarrow{m.s.} X \quad \Rightarrow \quad X_n \xrightarrow{p} X
+$$
+
+### 13.2.4 收敛关系总结
+
+a 几乎必然收敛(a.s. convergence);
+
+b 均方收敛(m.s. convergence);
+
+c 依概率收敛(p. convergence);
+
+d 分布收敛(d. convergence);
+
+a -\> c; b -\> c; c -\> d;
+
+## 13.3 分布收敛与渐近分布
+
+### 13.3.1 分布收敛的定义
+
+**定义13.4**（分布收敛）：设 $\{X_n\}$ 的累积分布函数为 $F_n(x)$，$X$ 的累积分布函数为 $F(x)$。如果对于 $F(x)$ 的所有连续点 $x$，有：
+
+$$
+\lim_{n \to \infty} F_n(x) = F(x)
+$$
+
+则称 $X_n$ **依分布收敛**于 $X$，记作 $X_n \xrightarrow{d} X$ 或 $X_n \rightsquigarrow X$。
+
+### 13.3.2 连续映射定理
+
+**定理13.3**（连续映射定理，CMT）：如果 $X_n \xrightarrow{d} X$，且函数 $g(\cdot)$ 连续，则： $$
+g(X_n) \xrightarrow{d} g(X)
+$$
+
+更一般地，对于随机向量，如果 $(X_n, Y_n) \xrightarrow{d} (X, Y)$，且 $g(\cdot, \cdot)$ 连续，则： $$
+g(X_n, Y_n) \xrightarrow{d} g(X, Y)
+$$
+
+### 13.3.3 渐近分布的核心性质
+
+**定义13.5**（渐近分布）：如果 $\sqrt{n}(X_n - \theta) \xrightarrow{d} N(0, \sigma^2)$，则称 $X_n$ 的**渐近分布**为： $$
+X_n \sim AN\left(\theta, \frac{\sigma^2}{n}\right)
+$$ 其中 $AN$ 表示"渐近正态"。
+
+**性质13.2**：若 $X_n \sim AN(\theta, \sigma^2/n)$，则： 1. $X_n$ 是 $\theta$ 的一致估计量 2. $\sqrt{n}(X_n - \theta)/\sigma \xrightarrow{d} N(0,1)$
+
+### 13.3.4 例子：样本均值的渐近正态性
+
+设 $X_1, \ldots, X_n \sim i.i.d.(\mu, \sigma^2)$，样本均值 $\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i$。
+
+由中心极限定理： $$
+\sqrt{n}(\bar{X}_n - \mu) \xrightarrow{d} N(0, \sigma^2)
+$$
+
+因此： $$
+\bar{X}_n \sim AN\left(\mu, \frac{\sigma^2}{n}\right)
+$$
+
+## 13.4 中心极限定理及其扩展
+
+### 13.4.1 Lindeberg-Lévy 中心极限定理
+
+**定理13.4**（Lindeberg-Lévy CLT）：设 $X_1, \ldots, X_n$ 是独立同分布随机变量，$E[X_i] = \mu$，$Var(X_i) = \sigma^2 < \infty$，则： $$
+\sqrt{n}(\bar{X}_n - \mu) \xrightarrow{d} N(0, \sigma^2)
+$$ 等价地： $$
+\frac{\sqrt{n}(\bar{X}_n - \mu)}{\sigma} \xrightarrow{d} N(0,1)
+$$
+
+### 13.4.2 Lindeberg-Feller 中心极限定理
+
+**定理13.5**（Lindeberg-Feller CLT）：设 $X_1, \ldots, X_n$ 是独立随机变量，$E[X_i] = \mu_i$，$Var(X_i) = \sigma_i^2$。记： $$
+s_n^2 = \sum_{i=1}^n \sigma_i^2, \quad \bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i, \quad \bar{\mu}_n = \frac{1}{n}\sum_{i=1}^n \mu_i
+$$
+
+如果满足 Lindeberg 条件：对于任意 $\epsilon > 0$， $$
+\lim_{n \to \infty} \frac{1}{s_n^2} \sum_{i=1}^n E\left[(X_i - \mu_i)^2 I(|X_i - \mu_i| > \epsilon s_n)\right] = 0
+$$
+
+则： $$
+\frac{\sum_{i=1}^n (X_i - \mu_i)}{s_n} \xrightarrow{d} N(0,1)
+$$
+
+### 13.4.3 多元中心极限定理
+
+**定理13.6**（多元CLT）：设 $\{X_i\}_{i=1}^n$ 是 $k$ 维独立同分布随机向量，$E[X_i] = \mu$，$Cov(X_i) = \Sigma$ 正定，则： $$
+\sqrt{n}(\bar{X}_n - \mu) \xrightarrow{d} N_k(0, \Sigma)
+$$ 其中 $\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i$，$N_k(0, \Sigma)$ 表示 $k$ 维多元正态分布。
+
+### 13.4.4 在回归模型中的应用
+
+考虑线性回归模型： $$
+y_i = x_i'\beta + u_i, \quad i = 1, \ldots, n
+$$
+
+假设 $\{(x_i, u_i)\}$ 独立同分布，$E[u_i|x_i] = 0$，$E[u_i^2|x_i] = \sigma^2$。
+
+OLS估计量： $$
+\hat{\beta} = \left(\sum_{i=1}^n x_i x_i'\right)^{-1} \sum_{i=1}^n x_i y_i
+$$
+
+在正则条件下： $$
+\sqrt{n}(\hat{\beta} - \beta) \xrightarrow{d} N(0, \sigma^2 Q^{-1})
+$$ 其中 $Q = E[x_i x_i']$。
+
+## 13.5 Slutsky定理及其应用
+
+### 13.5.1 Slutsky定理的表述
+
+**定理13.7**（Slutsky定理）：如果 $X_n \xrightarrow{d} X$，$Y_n \xrightarrow{p} c$（常数），则： 1. $X_n + Y_n \xrightarrow{d} X + c$ 2. $X_n Y_n \xrightarrow{d} cX$ 3. 若 $c \neq 0$，则 $X_n / Y_n \xrightarrow{d} X/c$
+
+更一般地，对于连续函数 $g(\cdot, \cdot)$： $$
+g(X_n, Y_n) \xrightarrow{d} g(X, c)
+$$
+
+### 13.5.2 估计量组合的渐近性质
+
+**例13.1**：设 $\hat{\theta}_n \xrightarrow{p} \theta$，$\hat{\sigma}_n^2 \xrightarrow{p} \sigma^2$，则 $t$ 统计量： $$
+t_n = \frac{\sqrt{n}(\hat{\theta}_n - \theta)}{\hat{\sigma}_n} \xrightarrow{d} N(0,1)
+$$
+
+**证明**：由CLT知 $\sqrt{n}(\hat{\theta}_n - \theta) \xrightarrow{d} N(0, \sigma^2)$，即： $$
+Z_n = \frac{\sqrt{n}(\hat{\theta}_n - \theta)}{\sigma} \xrightarrow{d} N(0,1)
+$$
+
+而 $\hat{\sigma}_n/\sigma \xrightarrow{p} 1$，由Slutsky定理： $$
+t_n = \frac{Z_n}{\hat{\sigma}_n/\sigma} \xrightarrow{d} N(0,1)
+$$
+
+### 13.5.3 渐近方差的计算与估计
+
+**Delta方法**：设 $\hat{\theta}_n$ 满足 $\sqrt{n}(\hat{\theta}_n - \theta) \xrightarrow{d} N(0, \Sigma)$，$g: \mathbb{R}^k \to \mathbb{R}^m$ 在 $\theta$ 处可微，记 $G(\theta) = \frac{\partial g(\theta)}{\partial \theta'}$，则： $$
+\sqrt{n}[g(\hat{\theta}_n) - g(\theta)] \xrightarrow{d} N(0, G(\theta)\Sigma G(\theta)')
+$$
+
+**渐近方差的估计**： $$
+\widehat{Avar}(g(\hat{\theta}_n)) = G(\hat{\theta}_n) \hat{\Sigma} G(\hat{\theta}_n)'/n
+$$ 其中 $\hat{\Sigma}$ 是 $\Sigma$ 的一致估计。
+
+## 13.6 大样本理论在OLS估计中的应用
+
+### 13.6.1 OLS估计量的渐近性质
+
+考虑线性模型： $$
+y_i = x_i'\beta + u_i, \quad i = 1, \ldots, n
+$$
+
+**假设13.1**（正则条件）： 1. $\{(x_i, u_i)\}_{i=1}^n$ 独立同分布 2. $E[u_i|x_i] = 0$（外生性） 3. $E[u_i^2|x_i] = \sigma^2$（条件同方差） 4. $Q = E[x_i x_i']$ 非奇异 5. $E[||x_i u_i||^2] < \infty$
+
+**定理13.8**：在假设13.1下： 1. **一致性**：$\hat{\beta}_{OLS} \xrightarrow{p} \beta$ 2. **渐近正态性**：$\sqrt{n}(\hat{\beta}_{OLS} - \beta) \xrightarrow{d} N(0, \sigma^2 Q^{-1})$ 3. **渐近有效性**：$\hat{\beta}_{OLS}$ 在满足条件1-4的线性无偏估计类中是渐近有效的
+
+### 13.6.2 异方差稳健标准误
+
+当条件同方差不成立时，$E[u_i^2|x_i] = \sigma_i^2$。此时： $$
+\sqrt{n}(\hat{\beta} - \beta) \xrightarrow{d} N(0, Q^{-1} \Omega Q^{-1})
+$$ 其中 $\Omega = E[u_i^2 x_i x_i']$。
+
+**Eicker-Huber-White 三明治估计量**： $$
+\widehat{Avar}(\hat{\beta}) = \left(\frac{1}{n}\sum_{i=1}^n x_i x_i'\right)^{-1} \left(\frac{1}{n}\sum_{i=1}^n \hat{u}_i^2 x_i x_i'\right) \left(\frac{1}{n}\sum_{i=1}^n x_i x_i'\right)^{-1}
+$$ 其中 $\hat{u}_i = y_i - x_i'\hat{\beta}$。
+
+### 13.6.3 渐近分布的应用：置信区间
+
+基于渐近正态性，$\beta_j$ 的 $(1-\alpha)100\%$ 渐近置信区间为： $$
+\hat{\beta}_j \pm z_{1-\alpha/2} \times \widehat{se}(\hat{\beta}_j)
+$$ 其中 $\widehat{se}(\hat{\beta}_j) = \sqrt{\widehat{Avar}(\hat{\beta}_j)/n}$，$z_{1-\alpha/2}$ 是标准正态分布的 $1-\alpha/2$ 分位数。
+
+## 13.7 大样本假设检验
+
+### 13.7.1 三大渐近检验
+
+考虑检验 $H_0: g(\theta) = 0$ vs $H_1: g(\theta) \neq 0$，其中 $g: \mathbb{R}^k \to \mathbb{R}^m$。
+
+**定义13.6**：
+
+1\. **无约束估计量**：$\hat{\theta}$ 最大化无约束对数似然 $\ell(\theta)$
+
+2\. **约束估计量**：$\tilde{\theta}$ 最大化受约束于 $g(\theta)=0$ 的对数似然
+
+#### Wald检验
+
+$$
+W = n \cdot g(\hat{\theta})' \left[G(\hat{\theta}) \hat{I}(\hat{\theta})^{-1} G(\hat{\theta})'\right]^{-1} g(\hat{\theta}) \xrightarrow{d} \chi_m^2
+$$ 其中 $\hat{I}(\hat{\theta})$ 是信息矩阵的估计。
+
+#### 似然比检验
+
+$$
+LR = 2[\ell(\hat{\theta}) - \ell(\tilde{\theta})] \xrightarrow{d} \chi_m^2
+$$
+
+#### 拉格朗日乘数检验
+
+$$
+LM = \left.\frac{\partial \ell(\theta)}{\partial \theta}\right|_{\theta=\tilde{\theta}}' \hat{I}(\tilde{\theta})^{-1} \left.\frac{\partial \ell(\theta)}{\partial \theta}\right|_{\theta=\tilde{\theta}} \xrightarrow{d} \chi_m^2
+$$
+
+### 13.7.2 线性约束的Wald检验
+
+考虑线性约束 $H_0: R\beta = r$，其中 $R$ 是 $m \times k$ 矩阵。
+
+Wald统计量： $$
+W = (R\hat{\beta} - r)' [R \widehat{Avar}(\hat{\beta}) R']^{-1} (R\hat{\beta} - r) \xrightarrow{d} \chi_m^2
+$$
+
+特别地，当 $m=1$ 时： $$
+t = \frac{R\hat{\beta} - r}{\sqrt{R \widehat{Avar}(\hat{\beta}) R'}} \xrightarrow{d} N(0,1)
+$$
+
+### 13.7.3 模型设定检验的渐近性质
+
+**例13.2**（RESET检验）：检验线性设定是否正确。
+
+步骤： 1. 估计原模型：$y = X\beta + u$ 2. 获得拟合值 $\hat{y} = X\hat{\beta}$ 3. 估计扩展模型：$y = X\beta + \delta_1 \hat{y}^2 + \delta_2 \hat{y}^3 + v$ 4. 检验 $H_0: \delta_1 = \delta_2 = 0$ 使用 Wald 或 F 检验
+
+在 $H_0$ 下，$nR^2$ 从辅助回归中 $\xrightarrow{d} \chi_2^2$。
+
+## 13.8 自助法与大样本近似
+
+### 13.8.1 自助法的基本思想
+
+**自助法（Bootstrap）** 通过重抽样来近似统计量的抽样分布。
+
+**算法13.1**（非参数自助法）： 1. 从原始样本 $\{z_1, \ldots, z_n\}$ 中有放回地抽取 $n$ 个观测，得到自助样本 $\{z_1^*, \ldots, z_n^*\}$ 2. 计算自助统计量 $\hat{\theta}^* = s(z_1^*, \ldots, z_n^*)$ 3. 重复步骤1-2共 $B$ 次，得到 $\{\hat{\theta}_1^*, \ldots, \hat{\theta}_B^*\}$ 4. 用 $\{\hat{\theta}_b^*\}$ 的经验分布近似 $\hat{\theta}$ 的抽样分布
+
+### 13.8.2 参数自助法
+
+**算法13.2**（参数自助法）： 1. 估计模型参数 $\hat{\theta}$ 2. 从分布 $F(\cdot; \hat{\theta})$ 中生成 $n$ 个观测 $z_1^*, \ldots, z_n^*$ 3. 计算 $\hat{\theta}^*$ 4. 重复 $B$ 次
+
+### 13.8.3 自助法的渐近合理性
+
+**定理13.9**（自助法的一致性）：在正则条件下，如果 $\sqrt{n}(\hat{\theta} - \theta) \xrightarrow{d} N(0, V)$，则自助分布满足： $$
+\sup_x \left| P^*(\sqrt{n}(\hat{\theta}^* - \hat{\theta}) \leq x) - P(\sqrt{n}(\hat{\theta} - \theta) \leq x) \right| \xrightarrow{p} 0
+$$ 其中 $P^*$ 表示给定原始样本下的自助分布概率。
+
+### 13.8.4 自助置信区间
+
+1.  **百分位数区间**： $$
+    [\hat{\theta}_{(\alpha/2)}^*, \hat{\theta}_{(1-\alpha/2)}^*]
+    $$ 其中 $\hat{\theta}_{(q)}^*$ 是自助统计量的 $q$ 分位数。
+
+2.  **偏差校正区间**： $$
+    [\hat{\theta}_{(\alpha_1)}^*, \hat{\theta}_{(\alpha_2)}^*]
+    $$ 其中 $\alpha_1 = \Phi(2z_0 + z_{\alpha/2})$，$\alpha_2 = \Phi(2z_0 + z_{1-\alpha/2})$，$z_0 = \Phi^{-1}(\hat{F}(\hat{\theta}))$。
+
+3.  **自助t区间**： $$
+    \hat{\theta} \pm t_{1-\alpha/2}^* \cdot \widehat{se}(\hat{\theta})
+    $$ 其中 $t_{1-\alpha/2}^*$ 是自助t统计量的 $1-\alpha/2$ 分位数。
+
+## 13.9 大样本理论的局限与注意事项
+
+### 13.9.1 渐近性质与实际样本量
+
+**有限样本偏差**：即使估计量是一致的，小样本下仍可能有显著偏差。
+
+**例13.3**：动态面板数据的Arellano-Bond估计量： - 理论：当 $T$ 固定，$n \to \infty$ 时一致 - 实际：当 $T$ 较小（如 $T=5$）时，即使 $n$ 很大，仍可能有显著偏差
+
+### 13.9.2 大样本近似的质量
+
+**收敛速度**：不同估计量的收敛速度不同： - OLS估计量：$\sqrt{n}$-收敛 - 非参数估计量：通常慢于 $\sqrt{n}$-收敛
+
+**Edgeworth展开**：用于改进渐近近似： $$
+P\left(\frac{\sqrt{n}(\hat{\theta}_n - \theta)}{\sigma} \leq x\right) = \Phi(x) + \frac{\phi(x)}{\sqrt{n}}g(x) + O\left(\frac{1}{n}\right)
+$$ 其中 $g(x)$ 包含偏度和峰度信息。
+
+### 13.9.3 适用条件的检验与诊断
+
+1.  **样本量足够大的判断**：
+    -   经验法则：$n \geq 30$ 可应用CLT，但取决于问题复杂度
+    -   模拟研究：通过蒙特卡洛模拟检查有限样本性质
+2.  **依赖结构的检验**：
+    -   时间序列：检验自相关、平稳性
+    -   横截面：检验空间相关性、异方差性
+3.  **重尾分布的诊断**：
+    -   峰度系数：$\hat{\kappa} = \frac{1}{n}\sum_{i=1}^n (x_i - \bar{x})^4 / \hat{\sigma}^4$
+    -   若 $\hat{\kappa} > 3$（正态分布的峰度），收敛可能较慢
+
+### 13.9.4 稳健推断方法
+
+1.  **异方差和自相关稳健（HAC）估计**： $$
+    \hat{\Omega}_{HAC} = \sum_{j=-m}^{m} k\left(\frac{j}{m}\right) \hat{\Gamma}(j)
+    $$ 其中 $\hat{\Gamma}(j) = \frac{1}{n}\sum_{i=|j|+1}^n \hat{u}_i \hat{u}_{i-|j|} x_i x_{i-|j|}'$，$k(\cdot)$ 是核函数。
+
+2.  **聚类稳健标准误**： 当数据存在聚类结构时（如面板数据、调查数据）： $$
+    \widehat{Avar}(\hat{\beta}) = (X'X)^{-1} \left(\sum_{g=1}^G X_g' \hat{u}_g \hat{u}_g' X_g\right) (X'X)^{-1}
+    $$ 其中 $G$ 是聚类数。
+
+### 13.9.5 实践建议
+
+1.  **报告稳健标准误**：在实证研究中，应同时报告普通标准误和稳健标准误
+2.  **检查敏感性**：对不同的渐近方差估计方法进行比较
+3.  **使用自助法验证**：当渐近理论条件存疑时，使用自助法作为补充
+4.  **结合经济理论**：统计显著性需结合经济意义进行解释
+5.  **样本量透明度**：明确报告样本量，讨论其对推断可靠性的影响
+
+## 本章总结
+
+大样本理论为计量经济学提供了在有限样本分布难以获得时的推断基础。本章系统介绍了：
+
+1.  **收敛性概念**：依概率收敛、几乎必然收敛、均方收敛、分布收敛及其关系
+2.  **核心定理**：中心极限定理、Slutsky定理、连续映射定理
+3.  **渐近分布理论**：Delta方法、渐近正态性
+4.  **应用**：OLS估计量的渐近性质、假设检验的渐近分布
+5.  **现代方法**：自助法及其渐近合理性
+6.  **实践考量**：大样本近似的局限性、诊断方法和稳健推断
+
+大样本理论的重要性体现在： - 为大多数计量经济推断提供理论基础 - 允许在相对弱的条件下进行统计推断 - 支持现代计量方法的发展（如GMM、半参数估计）
+
+然而，研究者必须清醒认识： - 渐近性质是近似，实际样本量下可能不精确 - 收敛速度因问题和估计量而异 - 需要结合稳健方法和诊断工具
+
+掌握大样本理论不仅有助于理解计量方法的内在逻辑，更能指导实证研究中方法的选择和结果的解释，是计量经济学理论素养的重要组成部分。
+
+## 附录：关键定理证明概要
+
+### 中心极限定理的直观理解
+
+设 $X_i \sim i.i.d.(\mu, \sigma^2)$，特征函数为 $\varphi_X(t) = E[e^{itX}]$。
+
+$\bar{X}_n$ 的特征函数： $$
+\varphi_{\bar{X}_n}(t) = \left[\varphi_X\left(\frac{t}{n}\right)\right]^n = \left[1 + i\mu\frac{t}{n} - \frac{\sigma^2 + \mu^2}{2}\frac{t^2}{n^2} + o\left(\frac{1}{n^2}\right)\right]^n
+$$
+
+对于 $\sqrt{n}(\bar{X}_n - \mu)$： $$
+\varphi_{\sqrt{n}(\bar{X}_n-\mu)}(t) = e^{-i\mu t\sqrt{n}} \varphi_{\bar{X}_n}(\sqrt{n}t) \to e^{-\frac{1}{2}\sigma^2 t^2}
+$$
+
+即正态分布的特征函数。
+
+### Slutsky定理的证明思路
+
+以 $X_n + Y_n \xrightarrow{d} X + c$ 为例： 1. 对于任意 $\epsilon > 0$，$P(X_n + Y_n \leq x) \leq P(X_n \leq x - c + \epsilon) + P(|Y_n - c| > \epsilon)$ 2. 取极限：$\limsup P(X_n + Y_n \leq x) \leq F(x - c + \epsilon)$ 3. 类似可得下界 4. 令 $\epsilon \to 0$，利用 $F$ 的连续性得证
+
+**练习与思考题**
+
+1.  证明：若 $X_n \xrightarrow{p} X$，$Y_n \xrightarrow{p} Y$，则 $X_n + Y_n \xrightarrow{p} X + Y$。
+2.  设 $\hat{\beta}_{OLS}$ 是线性回归的OLS估计量，推导其渐近分布，并讨论异方差情况下的调整。
+3.  比较Wald检验、LR检验和LM检验的优缺点及适用场景。
+4.  设计一个蒙特卡洛实验，考察OLS估计量在小样本下的有限样本性质与渐近性质的差异。
+5.  讨论在大数据时代（$n$ 很大但 $p$ 也很大）大样本理论面临的挑战。

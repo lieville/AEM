@@ -1,0 +1,404 @@
+---
+title: "15 最大似然估计理论"
+author: "李老师"
+format: html
+editor: visual
+---
+
+## 本章导读
+
+最大似然估计法是现代计量经济学的核心方法论之一，它为参数估计和统计推断提供了一个统一而强大的理论框架。本章将系统介绍最大似然估计的基本原理、统计性质、计算方法及其在计量经济学中的重要应用。
+
+通过本章学习，您将能够： 1. 理解最大似然估计的基本思想与哲学基础 2. 掌握似然函数和对数似然函数的构建方法 3. 理解MLE的大样本性质及其证明思路 4. 掌握基于MLE的三大假设检验方法 5. 了解MLE在非线性计量模型中的应用 6. 能够使用统计软件实现MLE估计并解释结果
+
+本章需要读者具备概率论、数理统计和矩阵代数的基本知识，特别是关于概率分布、期望、方差、协方差和矩阵求导等内容。
+
+## 14.1 最大似然估计的基本原理
+
+### 14.1.1 直观思想
+
+最大似然估计的基本思想可以用一个简单的例子说明：假设我们有一个硬币，想要估计它正面朝上的概率$p$。我们抛掷10次，观察到7次正面。那么，什么样的$p$值最有可能产生这样的观察结果呢？
+
+形式上，对于参数$\theta$和观测数据$y = (y_1, y_2, \ldots, y_n)$，我们寻找使得观测数据出现概率最大的参数值：
+
+$$
+\hat{\theta}_{MLE} = \arg\max_{\theta \in \Theta} L(\theta; y)
+$$
+
+其中$\Theta$是参数空间，$L(\theta; y)$是**似然函数**。
+
+### 14.1.2 似然函数与对数似然函数
+
+设随机变量$Y$的概率密度函数（连续情形）或概率质量函数（离散情形）为$f(y;\theta)$，其中$\theta$是未知参数向量。对于独立同分布的样本$y_1, y_2, \ldots, y_n$，似然函数定义为：
+
+$$
+L(\theta; y) = \prod_{i=1}^n f(y_i; \theta)
+$$
+
+在实际计算中，我们通常使用**对数似然函数**：
+
+$$
+\ell(\theta; y) = \ln L(\theta; y) = \sum_{i=1}^n \ln f(y_i; \theta)
+$$
+
+取对数的原因： 1. 将乘积转化为求和，简化计算 2. 许多分布的对数形式更简单 3. 不改变极值点的位置（因为对数函数是单调递增的）
+
+### 14.1.3 一个简单例子：正态分布均值的MLE
+
+假设$Y_i \sim N(\mu, \sigma^2)$，$\sigma^2$已知，$i=1,\ldots,n$。似然函数为：
+
+$$
+L(\mu; y) = \prod_{i=1}^n \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(y_i - \mu)^2}{2\sigma^2}\right)
+$$
+
+对数似然函数为：
+
+$$
+\ell(\mu; y) = -\frac{n}{2}\ln(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{i=1}^n (y_i - \mu)^2
+$$
+
+最大化$\ell(\mu; y)$等价于最小化$\sum_{i=1}^n (y_i - \mu)^2$，得到：
+
+$$
+\hat{\mu}_{MLE} = \frac{1}{n}\sum_{i=1}^n y_i = \bar{y}
+$$
+
+这个结果与我们的直觉一致：样本均值是总体均值的最佳估计。
+
+## 14.2 MLE的求解与计算方法
+
+### 14.2.1 一阶条件与似然方程
+
+MLE估计量$\hat{\theta}_{MLE}$满足一阶条件：
+
+$$
+\frac{\partial \ell(\theta)}{\partial \theta} \bigg|_{\theta = \hat{\theta}_{MLE}} = 0
+$$
+
+这个方程组称为**似然方程**或**得分方程**。其中，
+
+$$
+s(\theta) = \frac{\partial \ell(\theta)}{\partial \theta}
+$$
+
+称为**得分函数**（Score Function）。
+
+### 14.2.2 信息矩阵
+
+**Fisher信息矩阵**衡量了似然函数的曲率，定义为：
+
+$$
+I(\theta) = -E\left[\frac{\partial^2 \ell(\theta)}{\partial \theta \partial \theta'}\right]
+$$
+
+在i.i.d.样本下，$I(\theta) = n \cdot \mathcal{I}(\theta)$，其中$\mathcal{I}(\theta)$是单个观测的信息矩阵。
+
+**观测信息矩阵**为：
+
+$$
+J(\theta) = -\frac{\partial^2 \ell(\theta)}{\partial \theta \partial \theta'}
+$$
+
+### 14.2.3 数值优化方法
+
+对于大多数计量经济学模型，似然方程没有解析解，需要数值方法求解：
+
+#### 1. 牛顿-拉夫森法（Newton-Raphson Method）
+
+迭代公式：
+
+$$
+\theta^{(k+1)} = \theta^{(k)} - \left[\frac{\partial^2 \ell(\theta)}{\partial \theta \partial \theta'}\bigg|_{\theta=\theta^{(k)}}\right]^{-1} \frac{\partial \ell(\theta)}{\partial \theta}\bigg|_{\theta=\theta^{(k)}}
+$$
+
+#### 2. 得分算法（Method of Scoring）
+
+使用期望信息矩阵代替观测信息矩阵：
+
+$$
+\theta^{(k+1)} = \theta^{(k)} + \left[I(\theta^{(k)})\right]^{-1} s(\theta^{(k)})
+$$
+
+#### 3. BHHH算法（Berndt-Hall-Hall-Hausman）
+
+基于外积估计信息矩阵：
+
+$$
+\theta^{(k+1)} = \theta^{(k)} + \lambda_k \left[\sum_{i=1}^n s_i(\theta^{(k)}) s_i(\theta^{(k)})'\right]^{-1} s(\theta^{(k)})
+$$
+
+其中$s_i(\theta) = \frac{\partial \ln f(y_i;\theta)}{\partial \theta}$是第$i$个观测的得分。
+
+### 14.2.4 收敛准则与初始值选择
+
+数值优化需要设定收敛准则： 1. 参数变化：$\|\theta^{(k+1)} - \theta^{(k)}\| < \epsilon_1$ 2. 函数值变化：$|\ell(\theta^{(k+1)}) - \ell(\theta^{(k)})| < \epsilon_2$ 3. 梯度范数：$\|s(\theta^{(k)})\| < \epsilon_3$
+
+初始值$\theta^{(0)}$的选择至关重要，常用方法包括： - 使用简单的矩估计作为初始值 - 使用简化模型的估计结果 - 网格搜索法
+
+## 14.3 MLE的统计性质
+
+### 14.3.1 正则条件
+
+为保证MLE具有良好的大样本性质，需要以下正则条件：
+
+1.  **识别条件**：不同的$\theta$值对应不同的分布
+2.  **紧参数空间**：$\Theta$是紧集
+3.  **连续性**：$\ln f(y;\theta)$关于$\theta$连续
+4.  **可微性**：$\ln f(y;\theta)$关于$\theta$三阶连续可微
+5.  **可积性**：期望$E[\ln f(y;\theta)]$存在且有限
+6.  **信息矩阵正定**：$I(\theta)$有限且正定
+
+### 14.3.2 一致性
+
+在正则条件下，MLE估计量具有一致性：
+
+$$
+\hat{\theta}_{MLE} \xrightarrow{p} \theta_0 \quad \text{当} \quad n \to \infty
+$$
+
+其中$\theta_0$是真实参数值。
+
+### 14.3.3 渐近正态性
+
+MLE估计量具有渐近正态性：
+
+$$
+\sqrt{n}(\hat{\theta}_{MLE} - \theta_0) \xrightarrow{d} N(0, I(\theta_0)^{-1})
+$$
+
+等价地，
+
+$$
+\hat{\theta}_{MLE} \sim N\left(\theta_0, \frac{1}{n}I(\theta_0)^{-1}\right)
+$$
+
+在实践中，我们用估计的信息矩阵代替$I(\theta_0)$：
+
+$$
+\widehat{Var}(\hat{\theta}_{MLE}) = \left[-\frac{\partial^2 \ell(\theta)}{\partial \theta \partial \theta'}\bigg|_{\theta=\hat{\theta}_{MLE}}\right]^{-1}
+$$
+
+### 14.3.4 渐近有效性（Cramér-Rao下界）
+
+MLE达到了Cramér-Rao下界，即在所有一致且渐近正态的估计量中，MLE的渐近方差最小。对于任意无偏估计量$\tilde{\theta}$：
+
+$$
+Var(\tilde{\theta}) \geq I(\theta)^{-1}
+$$
+
+MLE的方差恰好等于这个下界（渐近意义上）。
+
+### 14.3.5 不变性原理
+
+MLE具有不变性：如果$\hat{\theta}$是$\theta$的MLE，且$g(\cdot)$是一对一函数，那么$g(\hat{\theta})$是$g(\theta)$的MLE。即使$g(\cdot)$不是一对一函数，这个性质在一定条件下仍然成立。
+
+## 14.4 基于MLE的假设检验
+
+### 14.4.1 三大检验方法
+
+#### 1. 似然比检验（Likelihood Ratio Test, LRT）
+
+比较有约束模型和无约束模型的似然函数最大值：
+
+$$
+LR = 2[\ell(\hat{\theta}_u) - \ell(\hat{\theta}_r)] \sim \chi^2(q)
+$$
+
+其中： - $\ell(\hat{\theta}_u)$：无约束模型的对数似然最大值 - $\ell(\hat{\theta}_r)$：有约束模型的对数似然最大值 - $q$：约束条件的个数
+
+#### 2. 沃尔德检验（Wald Test）
+
+直接检验约束条件$H_0: R\theta = r$：
+
+$$
+W = (R\hat{\theta} - r)'[R \widehat{Var}(\hat{\theta}) R']^{-1}(R\hat{\theta} - r) \sim \chi^2(q)
+$$
+
+优点：只需估计无约束模型。
+
+#### 3. 拉格朗日乘子检验（Lagrange Multiplier Test, LM）或得分检验（Score Test）
+
+基于约束模型下的得分函数：
+
+$$
+LM = s(\tilde{\theta})' I(\tilde{\theta})^{-1} s(\tilde{\theta}) \sim \chi^2(q)
+$$
+
+其中$\tilde{\theta}$是在$H_0$约束下的MLE。优点：只需估计约束模型。
+
+### 14.4.2 三种检验的比较
+
+| 检验方法 | 需要估计的模型   | 计算复杂度 | 小样本性质 | 对重新参数化的不变性 |
+|----------|------------------|------------|------------|----------------------|
+| LRT      | 无约束和约束模型 | 高         | 较好       | 不变                 |
+| Wald     | 仅无约束模型     | 低         | 一般       | 可变                 |
+| LM       | 仅约束模型       | 中等       | 一般       | 不变                 |
+
+### 14.4.3 模型选择准则
+
+对于非嵌套模型，使用信息准则：
+
+1.  **Akaike信息准则（AIC）**： $$
+    AIC = -2\ell(\hat{\theta}) + 2k
+    $$ 其中$k$是参数个数。
+
+2.  **贝叶斯信息准则（BIC）**： $$
+    BIC = -2\ell(\hat{\theta}) + k\ln n
+    $$
+
+选择AIC或BIC最小的模型。
+
+## 14.5 MLE在计量经济学中的应用
+
+### 14.5.1 经典线性回归模型
+
+假设$y_i = x_i'\beta + \varepsilon_i$，$\varepsilon_i \sim N(0, \sigma^2)$，则对数似然函数为：
+
+$$
+\ell(\beta, \sigma^2) = -\frac{n}{2}\ln(2\pi) - \frac{n}{2}\ln(\sigma^2) - \frac{1}{2\sigma^2}\sum_{i=1}^n (y_i - x_i'\beta)^2
+$$
+
+MLE估计量为： $$
+\hat{\beta}_{MLE} = (X'X)^{-1}X'y
+$$ $$
+\hat{\sigma}^2_{MLE} = \frac{1}{n}\sum_{i=1}^n (y_i - x_i'\hat{\beta})^2
+$$
+
+注意：$\hat{\sigma}^2_{MLE}$是有偏估计，通常使用$\frac{n}{n-k}\hat{\sigma}^2_{MLE}$作为无偏估计。
+
+### 14.5.2 离散选择模型
+
+#### Logit模型：
+
+假设$P(y_i=1|x_i) = \frac{\exp(x_i'\beta)}{1+\exp(x_i'\beta)}$，对数似然函数为：
+
+$$
+\ell(\beta) = \sum_{i=1}^n [y_i \ln \Lambda(x_i'\beta) + (1-y_i) \ln(1-\Lambda(x_i'\beta))]
+$$
+
+其中$\Lambda(z) = \frac{\exp(z)}{1+\exp(z)}$。
+
+#### Probit模型：
+
+假设$P(y_i=1|x_i) = \Phi(x_i'\beta)$，其中$\Phi(\cdot)$是标准正态分布函数。
+
+### 14.5.3 计数数据模型
+
+#### 泊松回归模型：
+
+假设$y_i|x_i \sim Poisson(\lambda_i)$，$\lambda_i = \exp(x_i'\beta)$，对数似然函数为：
+
+$$
+\ell(\beta) = \sum_{i=1}^n [y_i(x_i'\beta) - \exp(x_i'\beta) - \ln(y_i!)]
+$$
+
+#### 负二项回归：
+
+用于处理过度离散问题，方差大于均值的情况。
+
+### 14.5.4 受限因变量模型
+
+#### Tobit模型（Type I）：
+
+适用于归并数据（censored data）：
+
+$$
+y_i^* = x_i'\beta + \varepsilon_i, \quad \varepsilon_i \sim N(0, \sigma^2)
+$$ $$
+y_i = 
+\begin{cases}
+y_i^* & \text{if } y_i^* > 0 \\
+0 & \text{if } y_i^* \leq 0
+\end{cases}
+$$
+
+对数似然函数由两部分组成： $$
+\ell(\beta, \sigma) = \sum_{y_i=0} \ln \Phi\left(-\frac{x_i'\beta}{\sigma}\right) + \sum_{y_i>0} \left[-\frac{1}{2}\ln(2\pi\sigma^2) - \frac{1}{2\sigma^2}(y_i - x_i'\beta)^2\right]
+$$
+
+### 14.5.5 时间序列模型
+
+#### ARMA(p,q)模型：
+
+$$
+y_t = c + \sum_{i=1}^p \phi_i y_{t-i} + \varepsilon_t + \sum_{j=1}^q \theta_j \varepsilon_{t-j}, \quad \varepsilon_t \sim N(0, \sigma^2)
+$$
+
+使用条件似然或精确似然方法估计。
+
+#### GARCH模型：
+
+用于波动率建模： $$
+y_t = \mu_t + \varepsilon_t, \quad \varepsilon_t = \sigma_t z_t, \quad z_t \sim N(0,1)
+$$ $$
+\sigma_t^2 = \omega + \sum_{i=1}^q \alpha_i \varepsilon_{t-i}^2 + \sum_{j=1}^p \beta_j \sigma_{t-j}^2
+$$
+
+## 14.6 实践中的问题与扩展
+
+### 14.6.1 准最大似然估计（QMLE）
+
+当分布假设错误时，MLE可能不一致。但若条件均值设定正确，QMLE仍可得到条件均值参数的一致估计（在广义线性模型框架下）。此时需要使用稳健标准误（Huber-White标准误）。
+
+### 14.6.2 数值问题
+
+1.  **局部极大值**：对数似然函数可能有多个极值点
+2.  **平坦区域**：信息矩阵接近奇异，估计不精确
+3.  **边界解**：估计值落在参数空间边界
+4.  **收敛失败**：迭代算法不收敛
+
+应对策略：尝试不同初始值、重新参数化、使用全局优化算法。
+
+### 14.6.3 缺失数据与EM算法
+
+当数据存在缺失时，可以使用期望最大化（EM）算法： 1. **E步**：计算完全数据对数似然的条件期望 2. **M步**：最大化这个期望
+
+### 14.6.4 贝叶斯方法与MLE的关系
+
+贝叶斯估计将参数视为随机变量，使用后验分布进行推断。当先验分布是均匀分布时，后验众数等于MLE估计量。在大样本下，贝叶斯后验分布近似正态，中心在MLE估计量处。
+
+## 14.7 应用案例：工资方程的MLE估计
+
+## 本章总结
+
+最大似然估计法是计量经济学中最重要的估计方法之一，具有坚实的理论基础和广泛的应用价值。本章系统地介绍了：
+
+1.  **基本原理**：MLE通过最大化似然函数寻找最可能产生观测数据的参数值，其核心是似然函数和对数似然函数。
+
+2.  **计算方法**：对于简单模型有解析解，复杂模型需要数值优化算法（牛顿-拉夫森法、BHHH算法等）。
+
+3.  **统计性质**：在正则条件下，MLE具有一致性、渐近正态性和渐近有效性，达到了Cramér-Rao下界。
+
+4.  **假设检验**：基于MLE的三大检验方法（似然比检验、沃尔德检验、得分检验）为模型设定检验提供了系统工具。
+
+5.  **应用领域**：MLE是离散选择模型、计数模型、受限因变量模型、时间序列模型等非线性计量模型的标准估计方法。
+
+6.  **实践问题**：需要关注分布假设的合理性、数值计算的稳定性、模型设定的正确性等问题。
+
+MLE的魅力在于它提供了一个统一的框架来处理各种复杂的计量经济学问题。然而，在实际应用中，研究者必须谨慎对待其前提假设，正确解释估计结果，并理解各种检验方法的适用条件。
+
+随着计算技术的发展，MLE的应用范围不断扩大，特别是在处理高维数据、复杂数据结构和非标准模型方面。掌握MLE不仅有助于理解经典计量方法，也为学习更高级的计量经济学方法（如广义矩方法、半参数和非参数方法）奠定了坚实基础。
+
+## 关键术语
+
+-   最大似然估计（Maximum Likelihood Estimation, MLE）
+-   似然函数（Likelihood Function）
+-   对数似然函数（Log-Likelihood Function）
+-   得分函数（Score Function）
+-   信息矩阵（Information Matrix）
+-   渐近正态性（Asymptotic Normality）
+-   似然比检验（Likelihood Ratio Test）
+-   沃尔德检验（Wald Test）
+-   得分检验（Score Test）
+-   Cramér-Rao下界（Cramér-Rao Lower Bound）
+-   准最大似然估计（Quasi-MLE）
+-   EM算法（Expectation-Maximization Algorithm）
+
+## 思考与练习
+
+1.  证明正态分布方差$\sigma^2$的MLE估计量是有偏的，并推导其偏差。
+2.  比较MLE与矩估计法（MM）的优缺点。
+3.  推导Logit模型的得分函数和信息矩阵。
+4.  在Tobit模型中，解释系数$\beta$的经济含义与线性回归模型有何不同？
+5.  当对数似然函数有多个局部极大值时，如何寻找全局最大值？
+6.  讨论MLE在小样本下的性质及其改进方法。

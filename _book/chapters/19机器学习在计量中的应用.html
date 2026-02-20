@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="李世纪">
+
+<title>19 机器学习在计量中的应用 – 计量模型及应用</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/18优化算法与数值方法.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-70a47bd5681a7291082a5b9f83d58762.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="science-textbook.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/14大样本理论.html">III 理论与算法</a></li><li class="breadcrumb-item"><a href="../chapters/19机器学习在计量中的应用.html"><span class="chapter-title">19 机器学习在计量中的应用</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">计量模型及应用</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">简介</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">I 数据与模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1线性回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1 线性回归基础</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2横截面数据分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2 横截面数据：假设违反的诊断与修正</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/3面板数据模型.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 面板数据模型</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/4时间序列分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4 时间序列分析</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/5离散与受限因变量模型.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">5 离散数据与受限因变量模型</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">II 因果推断方法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/6因果推断框架.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6 因果推断框架</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/7工具变量法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">7 工具变量法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/8倾向得分匹配.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">8 倾向得分匹配</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/9双重差分法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">9 双重差分法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10断点回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">10 断点回归</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11合成控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">11 合成控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12回归控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">12 回归控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13中介效应与调节效应.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">13 中介效应与调节效应</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">III 理论与算法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14大样本理论.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">14 大样本理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15最大似然估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">15 最大似然估计理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16广义矩估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">16 广义矩估计法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17蒙特卡洛法与自助法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">17 蒙特卡洛法与自助法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/18优化算法与数值方法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">18 数值优化与矩阵方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/19机器学习在计量中的应用.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">19 机器学习在计量中的应用</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#本章导读" id="toc-本章导读" class="nav-link active" data-scroll-target="#本章导读">本章导读</a></li>
+  <li><a href="#因果推断的新工具机器学习下的处理效应估计" id="toc-因果推断的新工具机器学习下的处理效应估计" class="nav-link" data-scroll-target="#因果推断的新工具机器学习下的处理效应估计">18.1 因果推断的新工具：机器学习下的处理效应估计</a>
+  <ul class="collapse">
+  <li><a href="#传统方法的局限与机器学习的优势" id="toc-传统方法的局限与机器学习的优势" class="nav-link" data-scroll-target="#传统方法的局限与机器学习的优势">18.1.1 传统方法的局限与机器学习的优势</a></li>
+  <li><a href="#双重机器学习" id="toc-双重机器学习" class="nav-link" data-scroll-target="#双重机器学习">18.1.2 双重机器学习</a></li>
+  <li><a href="#异质性处理效应的识别因果森林" id="toc-异质性处理效应的识别因果森林" class="nav-link" data-scroll-target="#异质性处理效应的识别因果森林">18.1.3 异质性处理效应的识别：因果森林</a></li>
+  <li><a href="#实践案例评估职业培训项目的异质性收益" id="toc-实践案例评估职业培训项目的异质性收益" class="nav-link" data-scroll-target="#实践案例评估职业培训项目的异质性收益">18.1.4 实践案例：评估职业培训项目的异质性收益</a></li>
+  </ul></li>
+  <li><a href="#高维控制与变量选择从lasso到正则化回归" id="toc-高维控制与变量选择从lasso到正则化回归" class="nav-link" data-scroll-target="#高维控制与变量选择从lasso到正则化回归">18.2 高维控制与变量选择：从Lasso到正则化回归</a>
+  <ul class="collapse">
+  <li><a href="#高维数据下的维数诅咒与稀疏性假设" id="toc-高维数据下的维数诅咒与稀疏性假设" class="nav-link" data-scroll-target="#高维数据下的维数诅咒与稀疏性假设">18.2.1 高维数据下的”维数诅咒”与稀疏性假设</a></li>
+  <li><a href="#核心方法lasso岭回归与弹性网络" id="toc-核心方法lasso岭回归与弹性网络" class="nav-link" data-scroll-target="#核心方法lasso岭回归与弹性网络">18.2.2 核心方法：Lasso、岭回归与弹性网络</a></li>
+  <li><a href="#后选择推断" id="toc-后选择推断" class="nav-link" data-scroll-target="#后选择推断">18.2.3 后选择推断</a></li>
+  <li><a href="#应用在收入决定模型中控制海量家庭特征" id="toc-应用在收入决定模型中控制海量家庭特征" class="nav-link" data-scroll-target="#应用在收入决定模型中控制海量家庭特征">18.2.4 应用：在收入决定模型中控制海量家庭特征</a></li>
+  </ul></li>
+  <li><a href="#结构识别与数据模式发现异常检测与结构突变" id="toc-结构识别与数据模式发现异常检测与结构突变" class="nav-link" data-scroll-target="#结构识别与数据模式发现异常检测与结构突变">18.3 结构识别与数据模式发现：异常检测与结构突变</a>
+  <ul class="collapse">
+  <li><a href="#无监督学习在计量经济中的角色" id="toc-无监督学习在计量经济中的角色" class="nav-link" data-scroll-target="#无监督学习在计量经济中的角色">18.3.1 无监督学习在计量经济中的角色</a></li>
+  <li><a href="#检测经济与金融异常值孤立森林" id="toc-检测经济与金融异常值孤立森林" class="nav-link" data-scroll-target="#检测经济与金融异常值孤立森林">18.3.2 检测经济与金融异常值：孤立森林</a></li>
+  <li><a href="#识别经济关系的结构断点" id="toc-识别经济关系的结构断点" class="nav-link" data-scroll-target="#识别经济关系的结构断点">18.3.3 识别经济关系的结构断点</a></li>
+  <li><a href="#应用金融危机预警与政策体制转换识别" id="toc-应用金融危机预警与政策体制转换识别" class="nav-link" data-scroll-target="#应用金融危机预警与政策体制转换识别">18.3.4 应用：金融危机预警与政策体制转换识别</a></li>
+  </ul></li>
+  <li><a href="#面板数据的深化机器学习与个体异质性建模" id="toc-面板数据的深化机器学习与个体异质性建模" class="nav-link" data-scroll-target="#面板数据的深化机器学习与个体异质性建模">18.4 面板数据的深化：机器学习与个体异质性建模</a>
+  <ul class="collapse">
+  <li><a href="#超越固定效应在面板数据中引入非线性与交互效应" id="toc-超越固定效应在面板数据中引入非线性与交互效应" class="nav-link" data-scroll-target="#超越固定效应在面板数据中引入非线性与交互效应">18.4.1 超越固定效应：在面板数据中引入非线性与交互效应</a></li>
+  <li><a href="#机器学习方法估计时变个体效应" id="toc-机器学习方法估计时变个体效应" class="nav-link" data-scroll-target="#机器学习方法估计时变个体效应">18.4.2 机器学习方法估计时变个体效应</a></li>
+  <li><a href="#交互固定效应模型与机器学习的结合" id="toc-交互固定效应模型与机器学习的结合" class="nav-link" data-scroll-target="#交互固定效应模型与机器学习的结合">18.4.3 交互固定效应模型与机器学习的结合</a></li>
+  <li><a href="#应用企业生产率分析中的异质性技术溢出效应" id="toc-应用企业生产率分析中的异质性技术溢出效应" class="nav-link" data-scroll-target="#应用企业生产率分析中的异质性技术溢出效应">18.4.4 应用：企业生产率分析中的异质性技术溢出效应</a></li>
+  </ul></li>
+  <li><a href="#政策评估的强化基于机器学习的合成控制与反事实构建" id="toc-政策评估的强化基于机器学习的合成控制与反事实构建" class="nav-link" data-scroll-target="#政策评估的强化基于机器学习的合成控制与反事实构建">18.5 政策评估的强化：基于机器学习的合成控制与反事实构建</a>
+  <ul class="collapse">
+  <li><a href="#合成控制法的回顾及其机器学习扩展" id="toc-合成控制法的回顾及其机器学习扩展" class="nav-link" data-scroll-target="#合成控制法的回顾及其机器学习扩展">18.5.1 合成控制法的回顾及其机器学习扩展</a></li>
+  <li><a href="#矩阵补全方法与反事实预测" id="toc-矩阵补全方法与反事实预测" class="nav-link" data-scroll-target="#矩阵补全方法与反事实预测">18.5.2 矩阵补全方法与反事实预测</a></li>
+  <li><a href="#广义合成控制与正则化合成控制" id="toc-广义合成控制与正则化合成控制" class="nav-link" data-scroll-target="#广义合成控制与正则化合成控制">18.5.3 广义合成控制与正则化合成控制</a></li>
+  <li><a href="#应用评估大型区域性经济政策如特区设立的净效应" id="toc-应用评估大型区域性经济政策如特区设立的净效应" class="nav-link" data-scroll-target="#应用评估大型区域性经济政策如特区设立的净效应">18.5.4 应用：评估大型区域性经济政策（如特区设立）的净效应</a></li>
+  </ul></li>
+  <li><a href="#本章总结" id="toc-本章总结" class="nav-link" data-scroll-target="#本章总结">本章总结</a></li>
+  <li><a href="#本章练习题" id="toc-本章练习题" class="nav-link" data-scroll-target="#本章练习题">本章练习题</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/14大样本理论.html">III 理论与算法</a></li><li class="breadcrumb-item"><a href="../chapters/19机器学习在计量中的应用.html"><span class="chapter-title">19 机器学习在计量中的应用</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">19 机器学习在计量中的应用</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">作者</div>
+    <div class="quarto-title-meta-contents">
+             <p>李世纪 </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="本章导读" class="level2">
+<h2 class="anchored" data-anchor-id="本章导读">本章导读</h2>
+<p>在当今数据爆炸的时代，经济数据呈现出前所未有的复杂性：高维度、非线性、非结构化以及大规模特征。传统计量经济学方法在处理这些问题时，常常面临维数诅咒、模型设定偏误和过拟合等挑战。与此同时，机器学习方法在计算机科学、统计学等领域展现出强大的数据建模能力，特别是在预测和模式识别方面。然而，机器学习的预测导向与计量经济学的因果推断导向之间存在本质差异。本章旨在架起这两大领域的桥梁，系统介绍如何将机器学习方法有效、严谨地应用于计量经济学研究。</p>
+<p>本章重点探讨机器学习技术如何服务于计量经济学的核心使命——因果识别与推断。我们将学习如何利用正则化方法处理高维控制变量，如何使用现代机器学习工具估计异质性处理效应，以及如何将无监督学习应用于经济数据的结构发现。特别地，我们将看到机器学习不仅不威胁计量经济学的因果推断传统，反而为克服传统方法的局限提供了新工具和新思路。</p>
+<p>本章不要求读者具备深厚的机器学习背景，所有概念都将从计量经济学家的视角出发进行阐释。我们的目标是使读者能够理解这些方法的核心思想，掌握其适用条件，并能够在实际研究中审慎应用。</p>
+</section>
+<section id="因果推断的新工具机器学习下的处理效应估计" class="level2">
+<h2 class="anchored" data-anchor-id="因果推断的新工具机器学习下的处理效应估计">18.1 因果推断的新工具：机器学习下的处理效应估计</h2>
+<section id="传统方法的局限与机器学习的优势" class="level3">
+<h3 class="anchored" data-anchor-id="传统方法的局限与机器学习的优势">18.1.1 传统方法的局限与机器学习的优势</h3>
+<p>在因果推断中，我们通常关注处理效应（Treatment Effect）的估计。在Rubin的潜在结果框架下，个体<span class="math inline">\(i\)</span>的处理效应定义为：</p>
+<p><span class="math display">\[
+\tau_i = Y_i(1) - Y_i(0)
+\]</span></p>
+<p>其中<span class="math inline">\(Y_i(1)\)</span>和<span class="math inline">\(Y_i(0)\)</span>分别表示个体<span class="math inline">\(i\)</span>在接受处理和未接受处理时的潜在结果。传统方法如倾向得分匹配、双重差分法等在处理高维协变量、非线性关系以及异质性处理效应时面临挑战。</p>
+<p>机器学习方法的优势在于： 1. <strong>高维处理能力</strong>：能有效处理协变量维度<span class="math inline">\(p\)</span>大于样本量<span class="math inline">\(n\)</span>的情况 2. <strong>非线性建模</strong>：能够自动捕捉变量间的复杂非线性关系和交互效应 3. <strong>异质性识别</strong>：可以估计个体层面的处理效应，而非仅关注平均处理效应 4. <strong>正则化</strong>：通过惩罚复杂模型防止过拟合，提高样本外预测能力</p>
+</section>
+<section id="双重机器学习" class="level3">
+<h3 class="anchored" data-anchor-id="双重机器学习">18.1.2 双重机器学习</h3>
+<p>Chernozhukov等（2018）提出的双重机器学习（Double/Debiased Machine Learning）为在因果推断中应用机器学习提供了理论框架。考虑以下部分线性模型：</p>
+<p><span class="math display">\[
+\begin{aligned}
+Y &amp;= D\theta_0 + g_0(X) + \zeta, \quad \mathbb{E}[\zeta|X,D] = 0 \\
+D &amp;= m_0(X) + V, \quad \mathbb{E}[V|X] = 0
+\end{aligned}
+\]</span></p>
+<p>其中<span class="math inline">\(D\)</span>是处理变量，<span class="math inline">\(X\)</span>是高维协变量，<span class="math inline">\(\theta_0\)</span>是我们关心的处理效应参数。双重机器学习估计量通过以下步骤获得：</p>
+<ol type="1">
+<li>使用机器学习方法分别估计<span class="math inline">\(Y\)</span>对<span class="math inline">\(X\)</span>的回归函数<span class="math inline">\(l_0(X) = \mathbb{E}[Y|X]\)</span>和<span class="math inline">\(D\)</span>对<span class="math inline">\(X\)</span>的回归函数<span class="math inline">\(m_0(X) = \mathbb{E}[D|X]\)</span></li>
+<li>构造残差： <span class="math display">\[
+\tilde{Y} = Y - \hat{l}_0(X), \quad \tilde{D} = D - \hat{m}_0(X)
+\]</span></li>
+<li>通过以下回归估计处理效应： <span class="math display">\[
+\hat{\theta}_0 = \left(\frac{1}{n}\sum_{i=1}^n \tilde{D}_i^2\right)^{-1}\frac{1}{n}\sum_{i=1}^n \tilde{D}_i\tilde{Y}_i
+\]</span></li>
+</ol>
+<p>该估计量具有<span class="math inline">\(\sqrt{n}\)</span>一致性，只要机器学习估计量以<span class="math inline">\(o(n^{-1/4})\)</span>的速率收敛。</p>
+</section>
+<section id="异质性处理效应的识别因果森林" class="level3">
+<h3 class="anchored" data-anchor-id="异质性处理效应的识别因果森林">18.1.3 异质性处理效应的识别：因果森林</h3>
+<p>对于条件平均处理效应（CATE）： <span class="math display">\[
+\tau(x) = \mathbb{E}[Y(1) - Y(0)|X=x]
+\]</span></p>
+<p>Athey和Wager（2019）提出了因果森林（Causal Forest），这是随机森林在因果推断中的扩展。因果森林通过以下步骤估计CATE：</p>
+<ol type="1">
+<li>将样本随机分成若干子集</li>
+<li>在每个子集上，通过以下目标函数进行分割： <span class="math display">\[
+\Delta(C_1, C_2) = \frac{|C_1||C_2|}{|C|^2}\left(\hat{\tau}(C_1) - \hat{\tau}(C_2)\right)^2
+\]</span> 其中<span class="math inline">\(\hat{\tau}(C)\)</span>是子集<span class="math inline">\(C\)</span>内处理效应的估计</li>
+<li>对每个观测值<span class="math inline">\(i\)</span>，收集包含它的所有叶子节点的处理效应估计，取平均作为最终估计</li>
+</ol>
+<p>因果森林的估计量具有渐近正态性： <span class="math display">\[
+\sqrt{n}\left(\hat{\tau}(x) - \tau(x)\right) \xrightarrow{d} N(0, \sigma^2(x))
+\]</span></p>
+</section>
+<section id="实践案例评估职业培训项目的异质性收益" class="level3">
+<h3 class="anchored" data-anchor-id="实践案例评估职业培训项目的异质性收益">18.1.4 实践案例：评估职业培训项目的异质性收益</h3>
+<p>考虑评估一项职业培训项目对参与者收入的影响。传统方法可能只提供平均处理效应，但实际影响可能因个体特征而异。使用因果森林，我们可以：</p>
+<ol type="1">
+<li>收集数据：处理状态<span class="math inline">\(D_i\)</span>（是否参与培训），结果变量<span class="math inline">\(Y_i\)</span>（收入），协变量<span class="math inline">\(X_i\)</span>（年龄、教育、工作经验等）</li>
+<li>使用因果森林估计条件平均处理效应<span class="math inline">\(\hat{\tau}(x)\)</span></li>
+<li>分析发现：培训项目对年轻、低教育水平的参与者效果显著，但对高教育水平参与者效果不显著</li>
+</ol>
+<p>这种异质性分析为政策优化提供了重要依据。</p>
+</section>
+</section>
+<section id="高维控制与变量选择从lasso到正则化回归" class="level2">
+<h2 class="anchored" data-anchor-id="高维控制与变量选择从lasso到正则化回归">18.2 高维控制与变量选择：从Lasso到正则化回归</h2>
+<section id="高维数据下的维数诅咒与稀疏性假设" class="level3">
+<h3 class="anchored" data-anchor-id="高维数据下的维数诅咒与稀疏性假设">18.2.1 高维数据下的”维数诅咒”与稀疏性假设</h3>
+<p>在高维数据中，当协变量数量<span class="math inline">\(p\)</span>超过样本量<span class="math inline">\(n\)</span>时，普通最小二乘法（OLS）不可行，因为设计矩阵不满秩。更一般地，当<span class="math inline">\(p\)</span>与<span class="math inline">\(n\)</span>可比拟时，OLS估计量的方差很大，预测性能差。</p>
+<p>解决高维问题的关键假设是<strong>稀疏性</strong>：尽管有大量潜在协变量，但只有少数对结果有实质性影响。形式上，假设真实模型为： <span class="math display">\[
+Y = X\beta^* + \epsilon
+\]</span> 其中<span class="math inline">\(\beta^*\)</span>是<span class="math inline">\(p\)</span>维向量，但只有<span class="math inline">\(s \ll p\)</span>个非零元素。</p>
+</section>
+<section id="核心方法lasso岭回归与弹性网络" class="level3">
+<h3 class="anchored" data-anchor-id="核心方法lasso岭回归与弹性网络">18.2.2 核心方法：Lasso、岭回归与弹性网络</h3>
+<p><strong>Lasso（Least Absolute Shrinkage and Selection Operator）</strong> Lasso通过<span class="math inline">\(L_1\)</span>惩罚实现变量选择和系数收缩： <span class="math display">\[
+\hat{\beta}^{lasso} = \arg\min_{\beta} \left\{\frac{1}{2n}\|Y - X\beta\|_2^2 + \lambda\|\beta\|_1\right\}
+\]</span> 其中<span class="math inline">\(\lambda &gt; 0\)</span>是调节参数，<span class="math inline">\(\|\beta\|_1 = \sum_{j=1}^p |\beta_j|\)</span>。<span class="math inline">\(L_1\)</span>惩罚的几何特性使得某些系数恰好为零，从而实现变量选择。</p>
+<p><strong>岭回归（Ridge Regression）</strong> 岭回归使用<span class="math inline">\(L_2\)</span>惩罚： <span class="math display">\[
+\hat{\beta}^{ridge} = \arg\min_{\beta} \left\{\frac{1}{2n}\|Y - X\beta\|_2^2 + \lambda\|\beta\|_2^2\right\}
+\]</span> 其中<span class="math inline">\(\|\beta\|_2^2 = \sum_{j=1}^p \beta_j^2\)</span>。岭回归收缩系数但不将其设为零，适用于所有变量都有微小影响的情况。</p>
+<p><strong>弹性网络（Elastic Net）</strong> 弹性网络结合了<span class="math inline">\(L_1\)</span>和<span class="math inline">\(L_2\)</span>惩罚： <span class="math display">\[
+\hat{\beta}^{enet} = \arg\min_{\beta} \left\{\frac{1}{2n}\|Y - X\beta\|_2^2 + \lambda\left(\alpha\|\beta\|_1 + \frac{1}{2}(1-\alpha)\|\beta\|_2^2\right)\right\}
+\]</span> 其中<span class="math inline">\(\alpha \in [0,1]\)</span>控制两种惩罚的混合比例。弹性网络在处理高度相关变量时比Lasso更稳定。</p>
+</section>
+<section id="后选择推断" class="level3">
+<h3 class="anchored" data-anchor-id="后选择推断">18.2.3 后选择推断</h3>
+<p>在Lasso进行变量选择后，直接对所选变量进行OLS推断会产生偏误，因为选择过程引入了数据窥视（data snooping）。后选择推断方法提供有效的置信区间：</p>
+<p><strong>去偏Lasso（Debiased Lasso）</strong> 对于Lasso估计量<span class="math inline">\(\hat{\beta}\)</span>，构造去偏估计： <span class="math display">\[
+\hat{b} = \hat{\beta} + \frac{1}{n}\hat{\Theta}X^\top(Y - X\hat{\beta})
+\]</span> 其中<span class="math inline">\(\hat{\Theta}\)</span>是精度矩阵<span class="math inline">\(\Sigma^{-1}\)</span>的估计。在适当条件下，去偏估计量满足： <span class="math display">\[
+\sqrt{n}(\hat{b}_j - \beta_j^*) \xrightarrow{d} N(0, \sigma_j^2)
+\]</span> 可用于构造置信区间。</p>
+</section>
+<section id="应用在收入决定模型中控制海量家庭特征" class="level3">
+<h3 class="anchored" data-anchor-id="应用在收入决定模型中控制海量家庭特征">18.2.4 应用：在收入决定模型中控制海量家庭特征</h3>
+<p>研究教育对收入的影响时，需要控制大量家庭背景变量。假设我们有<span class="math inline">\(p=500\)</span>个潜在控制变量（包括家庭资产、父母教育、社区特征等），但样本只有<span class="math inline">\(n=1000\)</span>。</p>
+<ol type="1">
+<li>使用弹性网络选择相关控制变量</li>
+<li>得到稀疏模型，只包含约30个重要变量</li>
+<li>在控制这些变量后，估计教育回报率</li>
+<li>使用去偏Lasso计算教育回报率的置信区间</li>
+</ol>
+<p>这种方法比主观选择控制变量更系统、更可靠。</p>
+</section>
+</section>
+<section id="结构识别与数据模式发现异常检测与结构突变" class="level2">
+<h2 class="anchored" data-anchor-id="结构识别与数据模式发现异常检测与结构突变">18.3 结构识别与数据模式发现：异常检测与结构突变</h2>
+<section id="无监督学习在计量经济中的角色" class="level3">
+<h3 class="anchored" data-anchor-id="无监督学习在计量经济中的角色">18.3.1 无监督学习在计量经济中的角色</h3>
+<p>无监督学习不依赖标签数据，而是从数据本身发现结构。在计量经济学中，无监督学习主要用于： 1. 数据探索和模式发现 2. 异常值和离群点检测 3. 结构变化和断点识别 4. 降维和特征提取</p>
+</section>
+<section id="检测经济与金融异常值孤立森林" class="level3">
+<h3 class="anchored" data-anchor-id="检测经济与金融异常值孤立森林">18.3.2 检测经济与金融异常值：孤立森林</h3>
+<p>孤立森林（Isolation Forest）是一种高效的异常检测算法。其核心思想是：异常点稀少且与正常点差异大，因此更容易被”孤立”。</p>
+<p>算法流程： 1. 随机选择一个特征和分割点 2. 递归地分割数据，直到每个点被孤立或达到深度限制 3. 异常点具有较短的平均路径长度</p>
+<p>对于观测值<span class="math inline">\(x\)</span>，异常分数定义为： <span class="math display">\[
+s(x,n) = 2^{-\frac{E(h(x))}{c(n)}}
+\]</span> 其中<span class="math inline">\(E(h(x))\)</span>是<span class="math inline">\(x\)</span>在多次树中的平均路径长度，<span class="math inline">\(c(n)\)</span>是平均路径长度的标准化因子。<span class="math inline">\(s(x,n)\)</span>接近1表示很可能是异常值。</p>
+<p>在经济金融中，孤立森林可用于： - 检测财务报表欺诈 - 识别金融市场异常交易 - 发现经济数据中的录入错误</p>
+</section>
+<section id="识别经济关系的结构断点" class="level3">
+<h3 class="anchored" data-anchor-id="识别经济关系的结构断点">18.3.3 识别经济关系的结构断点</h3>
+<p>考虑时间序列模型： <span class="math display">\[
+y_t = \begin{cases}
+f_1(x_t, \theta_1) + \epsilon_t, &amp; t \leq \tau \\
+f_2(x_t, \theta_2) + \epsilon_t, &amp; t &gt; \tau
+\end{cases}
+\]</span></p>
+<p>其中<span class="math inline">\(\tau\)</span>是未知的结构断点。传统方法如Bai-Perron检验假设<span class="math inline">\(f\)</span>是线性形式，机器学习方法可以处理非线性断点。</p>
+<p><strong>基于机器学习的断点检测</strong>： 1. 将时间序列划分为多个窗口 2. 在每个窗口内训练预测模型 3. 比较相邻窗口模型的预测差异 4. 当预测差异超过阈值时，标记为潜在断点</p>
+<p>对于非线性模型，定义断点统计量： <span class="math display">\[
+Q(\tau) = \frac{1}{T}\sum_{t=1}^T \left(\hat{f}_1(x_t) - \hat{f}_2(x_t)\right)^2
+\]</span> 其中<span class="math inline">\(\hat{f}_1\)</span>和<span class="math inline">\(\hat{f}_2\)</span>分别是断点前后训练的模型。</p>
+</section>
+<section id="应用金融危机预警与政策体制转换识别" class="level3">
+<h3 class="anchored" data-anchor-id="应用金融危机预警与政策体制转换识别">18.3.4 应用：金融危机预警与政策体制转换识别</h3>
+<p><strong>金融危机预警</strong>： 1. 收集多种经济指标（股市波动率、信用利差、外汇储备等） 2. 使用孤立森林识别异常时期 3. 发现这些异常时期往往领先于金融危机</p>
+<p><strong>货币政策体制转换</strong>： 1. 使用断点检测方法分析中央银行利率政策 2. 识别从通胀目标制到非传统货币政策的转换点 3. 分析不同体制下货币政策传导机制的变化</p>
+</section>
+</section>
+<section id="面板数据的深化机器学习与个体异质性建模" class="level2">
+<h2 class="anchored" data-anchor-id="面板数据的深化机器学习与个体异质性建模">18.4 面板数据的深化：机器学习与个体异质性建模</h2>
+<section id="超越固定效应在面板数据中引入非线性与交互效应" class="level3">
+<h3 class="anchored" data-anchor-id="超越固定效应在面板数据中引入非线性与交互效应">18.4.1 超越固定效应：在面板数据中引入非线性与交互效应</h3>
+<p>传统面板数据模型： <span class="math display">\[
+y_{it} = \alpha_i + x_{it}^\top\beta + \epsilon_{it}
+\]</span> 假设个体效应<span class="math inline">\(\alpha_i\)</span>是加性的，且与<span class="math inline">\(x_{it}\)</span>的关系是线性的。</p>
+<p>机器学习扩展允许更灵活的设定： <span class="math display">\[
+y_{it} = g(x_{it}, \alpha_i) + \epsilon_{it}
+\]</span> 其中<span class="math inline">\(g(\cdot)\)</span>可以是任意复杂函数，通过神经网络或树模型估计。</p>
+</section>
+<section id="机器学习方法估计时变个体效应" class="level3">
+<h3 class="anchored" data-anchor-id="机器学习方法估计时变个体效应">18.4.2 机器学习方法估计时变个体效应</h3>
+<p>考虑时变个体效应模型： <span class="math display">\[
+y_{it} = \alpha_{it} + x_{it}^\top\beta + \epsilon_{it}
+\]</span></p>
+<p>使用矩阵分解方法： <span class="math display">\[
+\min_{\alpha,\beta} \sum_{i=1}^N\sum_{t=1}^T (y_{it} - \alpha_{it} - x_{it}^\top\beta)^2 + \lambda R(\alpha)
+\]</span> 其中<span class="math inline">\(R(\alpha)\)</span>是惩罚项，鼓励<span class="math inline">\(\alpha\)</span>具有低秩或平滑结构。</p>
+<p>例如，假设<span class="math inline">\(\alpha\)</span>可分解为： <span class="math display">\[
+\alpha_{it} = u_i^\top v_t
+\]</span> 其中<span class="math inline">\(u_i \in \mathbb{R}^k\)</span>，<span class="math inline">\(v_t \in \mathbb{R}^k\)</span>，<span class="math inline">\(k \ll \min(N,T)\)</span>。这实质上是面板数据的因子模型。</p>
+</section>
+<section id="交互固定效应模型与机器学习的结合" class="level3">
+<h3 class="anchored" data-anchor-id="交互固定效应模型与机器学习的结合">18.4.3 交互固定效应模型与机器学习的结合</h3>
+<p>Bai（2009）的交互固定效应模型： <span class="math display">\[
+y_{it} = x_{it}^\top\beta + \lambda_i^\top f_t + \epsilon_{it}
+\]</span></p>
+<p>机器学习方法可以估计更一般的形式： <span class="math display">\[
+y_{it} = h(x_{it}) + \lambda_i^\top f_t + \epsilon_{it}
+\]</span> 其中<span class="math inline">\(h(\cdot)\)</span>通过机器学习方法估计。</p>
+<p>估计步骤： 1. 使用主成分分析估计因子结构：<span class="math inline">\(\hat{f}_t\)</span>和<span class="math inline">\(\hat{\lambda}_i\)</span> 2. 构造残差：<span class="math inline">\(\tilde{y}_{it} = y_{it} - \hat{\lambda}_i^\top \hat{f}_t\)</span> 3. 在残差上使用机器学习估计：<span class="math inline">\(\hat{h}(x) = \arg\min_h \sum_{i,t} (\tilde{y}_{it} - h(x_{it}))^2 + \lambda J(h)\)</span></p>
+</section>
+<section id="应用企业生产率分析中的异质性技术溢出效应" class="level3">
+<h3 class="anchored" data-anchor-id="应用企业生产率分析中的异质性技术溢出效应">18.4.4 应用：企业生产率分析中的异质性技术溢出效应</h3>
+<p>研究研发投入对企业生产率的影响： - 传统方法：估计平均弹性 - 机器学习方法：允许异质性影响</p>
+<p>模型设定： <span class="math display">\[
+\ln(Prod_{it}) = h(RD_{it}, Controls_{it}) + \alpha_i + \gamma_t + \epsilon_{it}
+\]</span></p>
+<p>其中<span class="math inline">\(h(\cdot)\)</span>通过梯度提升树估计。研究发现： 1. 研发对生产率的促进作用呈非线性：边际效应递减 2. 异质性明显：对高科技企业影响更大 3. 存在互补性：研发与人力资本投资有协同效应</p>
+</section>
+</section>
+<section id="政策评估的强化基于机器学习的合成控制与反事实构建" class="level2">
+<h2 class="anchored" data-anchor-id="政策评估的强化基于机器学习的合成控制与反事实构建">18.5 政策评估的强化：基于机器学习的合成控制与反事实构建</h2>
+<section id="合成控制法的回顾及其机器学习扩展" class="level3">
+<h3 class="anchored" data-anchor-id="合成控制法的回顾及其机器学习扩展">18.5.1 合成控制法的回顾及其机器学习扩展</h3>
+<p>传统合成控制法（Abadie等，2010）用于评估处理单元（如实施政策的地区）的处理效应。对于处理单元<span class="math inline">\(i=0\)</span>（<span class="math inline">\(t \geq T_0\)</span>后接受处理），寻找权重<span class="math inline">\(w^* = (w_1, ..., w_J)\)</span>使得： <span class="math display">\[
+\min_{w} \|X_0 - X_c w\|_V \quad \text{s.t.} \quad w_j \geq 0, \sum_{j=1}^J w_j = 1
+\]</span> 其中<span class="math inline">\(X_0\)</span>是处理单元的处理前特征，<span class="math inline">\(X_c\)</span>是控制单元的特征矩阵，<span class="math inline">\(V\)</span>是权重矩阵。</p>
+<p>合成控制法的机器学习扩展： 1. <strong>广义合成控制</strong>：放松凸组合约束，允许负权重和权重大于1 2. <strong>矩阵补全方法</strong>：将反事实预测视为矩阵补全问题 3. <strong>正则化合成控制</strong>：加入惩罚项防止过拟合</p>
+</section>
+<section id="矩阵补全方法与反事实预测" class="level3">
+<h3 class="anchored" data-anchor-id="矩阵补全方法与反事实预测">18.5.2 矩阵补全方法与反事实预测</h3>
+<p>将面板数据视为矩阵<span class="math inline">\(Y \in \mathbb{R}^{N \times T}\)</span>，其中部分条目缺失（处理后的处理单元结果）。矩阵补全的目标是： <span class="math display">\[
+\min_{M} \sum_{(i,t)\in \Omega} (Y_{it} - M_{it})^2 + \lambda \|M\|_*
+\]</span> 其中<span class="math inline">\(\Omega\)</span>是观测到的条目集合，<span class="math inline">\(\|M\|_*\)</span>是核范数（奇异值之和），鼓励低秩结构。</p>
+<p>对于处理单元<span class="math inline">\(i=0\)</span>在<span class="math inline">\(t \geq T_0\)</span>的反事实预测： <span class="math display">\[
+\hat{Y}_{0t}(0) = \hat{M}_{0t}, \quad t \geq T_0
+\]</span> 处理效应估计： <span class="math display">\[
+\hat{\tau}_{0t} = Y_{0t} - \hat{Y}_{0t}(0), \quad t \geq T_0
+\]</span></p>
+</section>
+<section id="广义合成控制与正则化合成控制" class="level3">
+<h3 class="anchored" data-anchor-id="广义合成控制与正则化合成控制">18.5.3 广义合成控制与正则化合成控制</h3>
+<p><strong>广义合成控制</strong>（Xu，2017）： <span class="math display">\[
+\hat{w}^{GSC} = \arg\min_{w} \left\{\sum_{t=1}^{T_0} (Y_{0t} - \sum_{j=1}^J w_j Y_{jt})^2 + \lambda\|w\|_2^2\right\}
+\]</span> 放松了非负和求和为1的约束，但增加了<span class="math inline">\(L_2\)</span>惩罚。</p>
+<p><strong>正则化合成控制</strong>（Arkhangelsky等，2021）： 考虑更一般的因子模型： <span class="math display">\[
+Y_{it}(0) = \alpha_i + \beta_t + \lambda_i^\top f_t + \epsilon_{it}
+\]</span> 使用矩阵补全方法估计缺失的反事实。</p>
+</section>
+<section id="应用评估大型区域性经济政策如特区设立的净效应" class="level3">
+<h3 class="anchored" data-anchor-id="应用评估大型区域性经济政策如特区设立的净效应">18.5.4 应用：评估大型区域性经济政策（如特区设立）的净效应</h3>
+<p>评估某经济特区设立对区域经济增长的影响： - 处理单元：设立特区的城市 - 控制单元：其他类似城市 - 结果变量：人均GDP增长率</p>
+<p><strong>传统合成控制法局限</strong>： 1. 只能处理单一处理单元 2. 对处理前拟合要求高 3. 权重非负约束可能限制拟合效果</p>
+<p><strong>机器学习改进方法</strong>： 1. 使用矩阵补全方法，同时估计多个特区的效应 2. 允许处理前拟合不完美，但保证模型复杂度受控 3. 得到处理效应的动态路径和置信区间</p>
+<p>研究发现：特区政策在短期（1-3年）内效应不明显，长期（5年以上）显著促进经济增长，但存在区域异质性。</p>
+</section>
+</section>
+<section id="本章总结" class="level2">
+<h2 class="anchored" data-anchor-id="本章总结">本章总结</h2>
+<p>本章系统探讨了机器学习方法在计量经济学中的五大核心应用领域，展示了这些现代数据科学工具如何丰富和扩展传统计量经济学方法论。</p>
+<p>在<strong>因果推断</strong>方面，我们学习了双重机器学习和因果森林等方法，它们使得在高维数据中估计处理效应和识别异质性成为可能。这些方法严格建立在计量经济学因果推断框架内，为处理复杂观测数据提供了新工具。</p>
+<p>在<strong>高维控制与变量选择</strong>方面，正则化方法如Lasso、岭回归和弹性网络解决了”维数诅咒”问题，使得研究者能够系统地从大量潜在控制变量中选择相关变量，减少模型设定偏误。</p>
+<p>在<strong>结构识别与模式发现</strong>方面，无监督学习方法如孤立森林为检测经济异常和识别结构变化提供了自动化工具，帮助经济学家从数据中发现新的经验规律。</p>
+<p>在<strong>面板数据分析</strong>方面，机器学习方法允许更灵活地建模个体异质性和时间效应，特别是通过因子模型与机器学习的结合，能够捕捉复杂的个体-时间交互效应。</p>
+<p>在<strong>政策评估</strong>方面，机器学习增强了合成控制法等反事实预测方法，通过矩阵补全和正则化技术，提高了政策效应估计的精度和稳健性。</p>
+<p>需要特别强调的是，机器学习的引入不是要取代传统计量经济学，而是要弥补其在高维、非线性、复杂数据环境中的不足。成功的应用需要深刻理解计量经济学的因果推断逻辑，审慎选择机器学习工具，并正确解释结果。</p>
+<p>未来，“计量机器学习”这一交叉领域将继续蓬勃发展，可能的方向包括： 1. 发展更适合经济数据特性的机器学习算法 2. 建立更完整的理论框架，理解机器学习方法的经济计量性质 3. 开发用户友好的软件包，降低方法应用门槛 4. 探索机器学习在结构计量模型中的应用</p>
+<p>计量经济学与机器学习的融合，正推动着经验经济学研究向更严谨、更精细、更实用的方向发展。</p>
+</section>
+<section id="本章练习题" class="level2">
+<h2 class="anchored" data-anchor-id="本章练习题">本章练习题</h2>
+<ol type="1">
+<li><p><strong>概念辨析</strong>：比较双重机器学习与传统工具变量法在解决内生性问题时的逻辑异同。双重机器学习如何处理不可观测的混杂变量？</p></li>
+<li><p><strong>方法操作</strong>：考虑线性模型<span class="math inline">\(Y = X\beta + \epsilon\)</span>，其中<span class="math inline">\(X\)</span>为<span class="math inline">\(n \times p\)</span>设计矩阵，<span class="math inline">\(p &gt; n\)</span>。推导Lasso估计量<span class="math inline">\(\hat{\beta}\)</span>的闭式解（当<span class="math inline">\(X^\top X = I\)</span>时），并解释<span class="math inline">\(L_1\)</span>惩罚如何导致稀疏性。</p></li>
+<li><p><strong>案例分析</strong>：设计一个研究方案，利用<strong>因果森林</strong>方法评估”提高最低工资”政策对不同规模、不同地区企业的就业效应差异。需详细说明：</p>
+<ul>
+<li>所需数据类型和来源</li>
+<li>核心变量定义和度量</li>
+<li>因果森林的具体设定和参数选择</li>
+<li>如何解释异质性处理效应结果</li>
+<li>可能的识别挑战和解决方案</li>
+</ul></li>
+<li><p><strong>模型比较</strong>：在政策评估中，比较<strong>传统合成控制法</strong>、<strong>广义合成控制法</strong>和<strong>矩阵补全方法</strong>：</p>
+<ul>
+<li>各自的假设条件是什么？</li>
+<li>各适用于什么类型的数据和政策评估问题？</li>
+<li>如何从实证角度比较这些方法的优劣？</li>
+</ul></li>
+<li><p><strong>综合论述</strong>：“机器学习虽然预测能力强，但对计量经济学追求的因果推断构成了威胁。”请结合本章内容，对此观点进行评述。讨论：</p>
+<ul>
+<li>预测和因果推断的根本区别</li>
+<li>机器学习如何可能威胁因果推断（如过拟合、黑箱问题）</li>
+<li>如何正确使用机器学习辅助因果推断而非威胁它</li>
+<li>计量机器学习方法如何保持因果推断的严谨性</li>
+</ul></li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/18优化算法与数值方法.html" class="pagination-link" aria-label="18 数值优化与矩阵方法">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">18 数值优化与矩阵方法</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

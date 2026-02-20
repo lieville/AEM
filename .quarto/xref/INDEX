@@ -1,0 +1,200 @@
+{
+  "index.qmd": {
+    "index.html": "a8550be9"
+  },
+  "intro.qmd": {
+    "intro.html": "0351c058"
+  },
+  "chapters/1 截面数据.qmd": {
+    "1 截面数据.html": "3be73128"
+  },
+  "chapters/2 面板数据.qmd": {
+    "2 面板数据.html": "83203ee8"
+  },
+  "chapters/3 时间序列数据.qmd": {
+    "3 时间序列数据.html": "c3885068"
+  },
+  "chapters/4 非线性面板数据.qmd": {
+    "4 非线性面板数据.html": "cbc4579d"
+  },
+  "chapters/5 内生性.qmd": {
+    "5 内生性.html": "4e2454b9"
+  },
+  "chapters/6 工具变量.qmd": {
+    "6 工具变量.html": "89ec368c"
+  },
+  "chapters/7 DID.qmd": {
+    "7 DID.html": "7e7a0a7f"
+  },
+  "chapters/8 PSM.qmd": {
+    "8 PSM.html": "84faa76d"
+  },
+  "chapters/9 断点回归.qmd": {
+    "9 断点回归.html": "70e8e4fb"
+  },
+  "chapters/10 合成控制法.qmd": {
+    "10 合成控制法.html": "3ec2efdf"
+  },
+  "chapters/11 大样本理论.qmd": {
+    "11 大样本理论.html": "f755470d"
+  },
+  "chapters/12 最大似然估计理论.qmd": {
+    "12 最大似然估计理论.html": "fd58cbe9"
+  },
+  "chapters/13 广义矩估计理论.qmd": {
+    "13 广义矩估计理论.html": "3c0c506c"
+  },
+  "chapters/14 优化算法.qmd": {
+    "14 优化算法.html": "cc07523c"
+  },
+  "chapters/15 机器学习基础.qmd": {
+    "15 机器学习基础.html": "7c18e007"
+  },
+  "chapters/1 线性回归.qmd": {
+    "1 线性回归.html": "2df2238f"
+  },
+  "chapters/2 横截面数据分析.qmd": {
+    "2 横截面数据分析.html": "bc7c60a3"
+  },
+  "chapters/3 面板数据模型.qmd": {
+    "3 面板数据模型.html": "47fffa5a"
+  },
+  "chapters/4 时间序列分析.qmd": {
+    "4 时间序列分析.html": "075f1618"
+  },
+  "chapters/5 离散与受限因变量模型.qmd": {
+    "5 离散与受限因变量模型.html": "d7c4ca24"
+  },
+  "chapters/6 因果推断框架与内生性.qmd": {
+    "6 因果推断框架与内生性.html": "720506e6"
+  },
+  "chapters/7 工具变量法.qmd": {
+    "7 工具变量法.html": "ebce4bca"
+  },
+  "chapters/9 DID.qmd": {
+    "9 DID.html": "fad7fbfc"
+  },
+  "chapters/10 断点回归.qmd": {
+    "10 断点回归.html": "6ef574bc"
+  },
+  "chapters/11 合成控制法.qmd": {
+    "11 合成控制法.html": "7365016f"
+  },
+  "chapters/12 中介效应与调节效应.qmd": {
+    "12 中介效应与调节效应.html": "8667f640"
+  },
+  "chapters/13 大样本理论.qmd": {
+    "13 大样本理论.html": "6ef7b72f"
+  },
+  "chapters/14 最大似然估计理论.qmd": {
+    "14 最大似然估计理论.html": "7b040dfc"
+  },
+  "chapters/15 广义矩估计理论.qmd": {
+    "15 广义矩估计理论.html": "f58cadc2"
+  },
+  "chapters/16 贝叶斯方法.qmd": {
+    "16 贝叶斯方法.html": "dd35a43d"
+  },
+  "chapters/17 优化算法与数值方法.qmd": {
+    "17 优化算法与数值方法.html": "d2fa85b2"
+  },
+  "chapters/18 机器学习在计量中的应用.qmd": {
+    "18 机器学习在计量中的应用.html": "f6566427"
+  },
+  "chapters/1线性回归.qmd": {
+    "1线性回归.html": "46b4afb1"
+  },
+  "chapters/2横截面数据分析.qmd": {
+    "2横截面数据分析.html": "19b023b7"
+  },
+  "chapters/3面板数据模型.qmd": {
+    "3面板数据模型.html": "d0cc8c34"
+  },
+  "chapters/4时间序列分析.qmd": {
+    "4时间序列分析.html": "f87662a5"
+  },
+  "chapters/5离散与受限因变量模型.qmd": {
+    "5离散与受限因变量模型.html": "a635ea6c"
+  },
+  "chapters/6因果推断框架与内生性.qmd": {
+    "6因果推断框架与内生性.html": "56299fc4"
+  },
+  "chapters/7工具变量法.qmd": {
+    "7工具变量法.html": "0b8118bf"
+  },
+  "chapters/8PSM.qmd": {
+    "8PSM.html": "9f373633"
+  },
+  "chapters/9DID.qmd": {
+    "9DID.html": "4ce4d9e5"
+  },
+  "chapters/10断点回归.qmd": {
+    "10断点回归.html": "864e95fb"
+  },
+  "chapters/11合成控制法.qmd": {
+    "11合成控制法.html": "ca31f4a2"
+  },
+  "chapters/12中介效应与调节效应.qmd": {
+    "12中介效应与调节效应.html": "46d413bd"
+  },
+  "chapters/13大样本理论.qmd": {
+    "13大样本理论.html": "20342e91"
+  },
+  "chapters/14最大似然估计理论.qmd": {
+    "14最大似然估计理论.html": "9fe11e70"
+  },
+  "chapters/15广义矩估计理论.qmd": {
+    "15广义矩估计理论.html": "3538118a"
+  },
+  "chapters/16贝叶斯方法.qmd": {
+    "16贝叶斯方法.html": "e0dec0af"
+  },
+  "chapters/17优化算法与数值方法.qmd": {
+    "17优化算法与数值方法.html": "9067cff3"
+  },
+  "chapters/18机器学习在计量中的应用.qmd": {
+    "18机器学习在计量中的应用.html": "c2f0de76"
+  },
+  "chapters/8倾向得分匹配.qmd": {
+    "8倾向得分匹配.html": "b5124870"
+  },
+  "chapters/9双重差分法.qmd": {
+    "9双重差分法.html": "9832b5b3"
+  },
+  "chapters/14最大似然估计法.qmd": {
+    "14最大似然估计法.html": "9e3761a2"
+  },
+  "chapters/15广义矩估计法.qmd": {
+    "15广义矩估计法.html": "73118ab9"
+  },
+  "chapters/16蒙特卡洛法与自助法.qmd": {
+    "16蒙特卡洛法与自助法.html": "bb50059c"
+  },
+  "chapters/12回归控制法.qmd": {
+    "12回归控制法.html": "062fd908"
+  },
+  "chapters/13中介效应与调节效应.qmd": {
+    "13中介效应与调节效应.html": "96f90973"
+  },
+  "chapters/14大样本理论.qmd": {
+    "14大样本理论.html": "c3e1fec2"
+  },
+  "chapters/15最大似然估计法.qmd": {
+    "15最大似然估计法.html": "11c87305"
+  },
+  "chapters/16广义矩估计法.qmd": {
+    "16广义矩估计法.html": "f6a0317f"
+  },
+  "chapters/17蒙特卡洛法与自助法.qmd": {
+    "17蒙特卡洛法与自助法.html": "9b41c655"
+  },
+  "chapters/18优化算法与数值方法.qmd": {
+    "18优化算法与数值方法.html": "938d00c9"
+  },
+  "chapters/19机器学习在计量中的应用.qmd": {
+    "19机器学习在计量中的应用.html": "9a48d83c"
+  },
+  "chapters/6因果推断框架.qmd": {
+    "6因果推断框架.html": "842ec036"
+  }
+}

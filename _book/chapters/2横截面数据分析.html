@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="李老师">
+
+<title>2 横截面数据：假设违反的诊断与修正 – 计量模型及应用</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/3面板数据模型.html" rel="next">
+<link href="../chapters/1线性回归.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-70a47bd5681a7291082a5b9f83d58762.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="science-textbook.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/1线性回归.html">I 数据与模型</a></li><li class="breadcrumb-item"><a href="../chapters/2横截面数据分析.html"><span class="chapter-title">2 横截面数据：假设违反的诊断与修正</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">计量模型及应用</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">简介</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">I 数据与模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1线性回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1 线性回归基础</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2横截面数据分析.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">2 横截面数据：假设违反的诊断与修正</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/3面板数据模型.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 面板数据模型</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/4时间序列分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4 时间序列分析</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/5离散与受限因变量模型.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">5 离散数据与受限因变量模型</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">II 因果推断方法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/6因果推断框架.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6 因果推断框架</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/7工具变量法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">7 工具变量法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/8倾向得分匹配.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">8 倾向得分匹配</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/9双重差分法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">9 双重差分法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10断点回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">10 断点回归</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11合成控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">11 合成控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12回归控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">12 回归控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13中介效应与调节效应.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">13 中介效应与调节效应</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">III 理论与算法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14大样本理论.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">14 大样本理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15最大似然估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">15 最大似然估计理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16广义矩估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">16 广义矩估计法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17蒙特卡洛法与自助法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">17 蒙特卡洛法与自助法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/18优化算法与数值方法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">18 数值优化与矩阵方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/19机器学习在计量中的应用.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">19 机器学习在计量中的应用</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#本章导读" id="toc-本章导读" class="nav-link active" data-scroll-target="#本章导读">本章导读</a></li>
+  <li><a href="#异方差诊断修正与推断" id="toc-异方差诊断修正与推断" class="nav-link" data-scroll-target="#异方差诊断修正与推断">2.1 异方差：诊断、修正与推断</a>
+  <ul class="collapse">
+  <li><a href="#异方差的来源与经济实例" id="toc-异方差的来源与经济实例" class="nav-link" data-scroll-target="#异方差的来源与经济实例">2.1.1 异方差的来源与经济实例</a></li>
+  <li><a href="#异方差的正式检验方法" id="toc-异方差的正式检验方法" class="nav-link" data-scroll-target="#异方差的正式检验方法">2.1.2 异方差的正式检验方法</a></li>
+  <li><a href="#异方差稳健标准误" id="toc-异方差稳健标准误" class="nav-link" data-scroll-target="#异方差稳健标准误">2.1.3 异方差稳健标准误</a></li>
+  <li><a href="#加权最小二乘法与可行gls" id="toc-加权最小二乘法与可行gls" class="nav-link" data-scroll-target="#加权最小二乘法与可行gls">2.1.4 加权最小二乘法与可行GLS</a></li>
+  </ul></li>
+  <li><a href="#自相关与聚类标准误" id="toc-自相关与聚类标准误" class="nav-link" data-scroll-target="#自相关与聚类标准误">2.2 自相关与聚类标准误</a>
+  <ul class="collapse">
+  <li><a href="#自相关的来源与类型" id="toc-自相关的来源与类型" class="nav-link" data-scroll-target="#自相关的来源与类型">2.2.1 自相关的来源与类型</a></li>
+  <li><a href="#自相关的检验方法" id="toc-自相关的检验方法" class="nav-link" data-scroll-target="#自相关的检验方法">2.2.2 自相关的检验方法</a></li>
+  <li><a href="#自相关的修正方法" id="toc-自相关的修正方法" class="nav-link" data-scroll-target="#自相关的修正方法">2.2.3 自相关的修正方法</a></li>
+  <li><a href="#聚类稳健标准误" id="toc-聚类稳健标准误" class="nav-link" data-scroll-target="#聚类稳健标准误">2.2.4 聚类稳健标准误</a></li>
+  </ul></li>
+  <li><a href="#异常值杠杆点与稳健估计" id="toc-异常值杠杆点与稳健估计" class="nav-link" data-scroll-target="#异常值杠杆点与稳健估计">2.3 异常值、杠杆点与稳健估计</a>
+  <ul class="collapse">
+  <li><a href="#异常值的识别与诊断" id="toc-异常值的识别与诊断" class="nav-link" data-scroll-target="#异常值的识别与诊断">2.3.1 异常值的识别与诊断</a></li>
+  <li><a href="#异常值的处理策略" id="toc-异常值的处理策略" class="nav-link" data-scroll-target="#异常值的处理策略">2.3.2 异常值的处理策略</a></li>
+  <li><a href="#分位数回归" id="toc-分位数回归" class="nav-link" data-scroll-target="#分位数回归">2.3.3 分位数回归</a></li>
+  </ul></li>
+  <li><a href="#缺失数据处理" id="toc-缺失数据处理" class="nav-link" data-scroll-target="#缺失数据处理">2.4 缺失数据处理</a>
+  <ul class="collapse">
+  <li><a href="#缺失数据机制" id="toc-缺失数据机制" class="nav-link" data-scroll-target="#缺失数据机制">2.4.1 缺失数据机制</a></li>
+  <li><a href="#多重插补方法" id="toc-多重插补方法" class="nav-link" data-scroll-target="#多重插补方法">2.4.2 多重插补方法</a></li>
+  <li><a href="#选择模型与逆概率加权" id="toc-选择模型与逆概率加权" class="nav-link" data-scroll-target="#选择模型与逆概率加权">2.4.3 选择模型与逆概率加权</a></li>
+  </ul></li>
+  <li><a href="#多重共线性诊断修正与推断" id="toc-多重共线性诊断修正与推断" class="nav-link" data-scroll-target="#多重共线性诊断修正与推断">2.5 多重共线性：诊断、修正与推断</a>
+  <ul class="collapse">
+  <li><a href="#多重共线性的来源与识别" id="toc-多重共线性的来源与识别" class="nav-link" data-scroll-target="#多重共线性的来源与识别">2.5.1 多重共线性的来源与识别</a></li>
+  <li><a href="#多重共线性的后果" id="toc-多重共线性的后果" class="nav-link" data-scroll-target="#多重共线性的后果">2.5.2 多重共线性的后果</a></li>
+  <li><a href="#多重共线性的修正方法" id="toc-多重共线性的修正方法" class="nav-link" data-scroll-target="#多重共线性的修正方法">2.5.3 多重共线性的修正方法</a></li>
+  <li><a href="#高维数据的正则化方法" id="toc-高维数据的正则化方法" class="nav-link" data-scroll-target="#高维数据的正则化方法">2.5.4 高维数据的正则化方法</a></li>
+  <li><a href="#岭回归" id="toc-岭回归" class="nav-link" data-scroll-target="#岭回归">岭回归</a></li>
+  <li><a href="#降维" id="toc-降维" class="nav-link" data-scroll-target="#降维">2.5.5 降维</a></li>
+  </ul></li>
+  <li><a href="#空间与网络数据建模引论" id="toc-空间与网络数据建模引论" class="nav-link" data-scroll-target="#空间与网络数据建模引论">2.6 空间与网络数据建模引论</a>
+  <ul class="collapse">
+  <li><a href="#空间自相关的识别" id="toc-空间自相关的识别" class="nav-link" data-scroll-target="#空间自相关的识别">2.6.1 空间自相关的识别</a></li>
+  <li><a href="#空间计量模型简介" id="toc-空间计量模型简介" class="nav-link" data-scroll-target="#空间计量模型简介">2.6.2 空间计量模型简介</a></li>
+  <li><a href="#网络自相关模型" id="toc-网络自相关模型" class="nav-link" data-scroll-target="#网络自相关模型">2.6.3 网络自相关模型</a></li>
+  </ul></li>
+  <li><a href="#综合诊断框架与模型选择" id="toc-综合诊断框架与模型选择" class="nav-link" data-scroll-target="#综合诊断框架与模型选择">2.7 综合诊断框架与模型选择</a>
+  <ul class="collapse">
+  <li><a href="#系统化的诊断流程" id="toc-系统化的诊断流程" class="nav-link" data-scroll-target="#系统化的诊断流程">2.7.1 系统化的诊断流程</a></li>
+  <li><a href="#模型选择与模型平均" id="toc-模型选择与模型平均" class="nav-link" data-scroll-target="#模型选择与模型平均">2.7.2 模型选择与模型平均</a></li>
+  <li><a href="#实证研究中的报告规范" id="toc-实证研究中的报告规范" class="nav-link" data-scroll-target="#实证研究中的报告规范">2.7.3 实证研究中的报告规范</a></li>
+  </ul></li>
+  <li><a href="#案例分析与代码实现" id="toc-案例分析与代码实现" class="nav-link" data-scroll-target="#案例分析与代码实现">2.8 案例分析与代码实现</a></li>
+  <li><a href="#本章总结" id="toc-本章总结" class="nav-link" data-scroll-target="#本章总结">本章总结</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/1线性回归.html">I 数据与模型</a></li><li class="breadcrumb-item"><a href="../chapters/2横截面数据分析.html"><span class="chapter-title">2 横截面数据：假设违反的诊断与修正</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">2 横截面数据：假设违反的诊断与修正</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">作者</div>
+    <div class="quarto-title-meta-contents">
+             <p>李老师 </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="本章导读" class="level2">
+<h2 class="anchored" data-anchor-id="本章导读">本章导读</h2>
+<p>在第一章中，我们系统学习了经典线性回归模型的基本假设及其违反的后果。本章将转向现实世界中的横截面数据分析，聚焦于<strong>诊断、修正和处理</strong>各类违反经典假设的问题。横截面数据作为计量经济学中最常见的数据类型，其分析面临多重挑战：异方差、自相关、多重共线性、异常值、缺失数据以及空间相关性等。</p>
+<p>本章遵循”<strong>问题识别→理论修正→实践应用</strong>”的逻辑框架，系统介绍针对各类问题的现代解决方法。我们不仅关注技术细节，更强调<strong>方法的选择逻辑</strong>与<strong>结果的合理解释</strong>。通过学习本章，您将掌握处理”不完美”横截面数据的完整工具箱，为进行严谨的实证研究奠定坚实基础。</p>
+</section>
+<section id="异方差诊断修正与推断" class="level2">
+<h2 class="anchored" data-anchor-id="异方差诊断修正与推断">2.1 异方差：诊断、修正与推断</h2>
+<section id="异方差的来源与经济实例" class="level3">
+<h3 class="anchored" data-anchor-id="异方差的来源与经济实例">2.1.1 异方差的来源与经济实例</h3>
+<p>异方差性（heteroskedasticity）指误差项的方差随解释变量变化而变化：</p>
+<p><span class="math display">\[
+\text{Var}(\varepsilon_i|X_i) = \sigma_i^2 \neq \text{常数}
+\]</span></p>
+<p>经济学中常见的异方差来源包括：</p>
+<ol type="1">
+<li><strong>规模效应</strong>：大企业、大城市的变量波动通常更大</li>
+<li><strong>学习效应</strong>：经验积累减少行为不确定性</li>
+<li><strong>数据聚集</strong>：按组平均导致方差系统性差异</li>
+<li><strong>异质性反应</strong>：不同群体对相同政策反应不同</li>
+</ol>
+</section>
+<section id="异方差的正式检验方法" class="level3">
+<h3 class="anchored" data-anchor-id="异方差的正式检验方法">2.1.2 异方差的正式检验方法</h3>
+<section id="图示法" class="level4">
+<h4 class="anchored" data-anchor-id="图示法">图示法</h4>
+<ul>
+<li>残差-拟合值图：<span class="math inline">\(\hat{\varepsilon}_i\)</span> vs.&nbsp;<span class="math inline">\(\hat{Y}_i\)</span></li>
+<li>残差-解释变量图：<span class="math inline">\(\hat{\varepsilon}_i\)</span> vs.&nbsp;<span class="math inline">\(X_{ij}\)</span></li>
+</ul>
+</section>
+<section id="breusch-pagan检验lm检验" class="level4">
+<h4 class="anchored" data-anchor-id="breusch-pagan检验lm检验">Breusch-Pagan检验（LM检验）</h4>
+<ol type="1">
+<li>估计原模型得残差<span class="math inline">\(\hat{\varepsilon}_i\)</span></li>
+<li>辅助回归：<span class="math inline">\(\hat{\varepsilon}_i^2 = \alpha_0 + Z_i'\gamma + v_i\)</span></li>
+<li>检验统计量：<span class="math inline">\(LM = nR^2 \sim \chi^2_{p-1}\)</span>，其中<span class="math inline">\(R^2\)</span>为辅助回归决定系数</li>
+</ol>
+</section>
+<section id="white检验" class="level4">
+<h4 class="anchored" data-anchor-id="white检验">White检验</h4>
+<ol type="1">
+<li>将<span class="math inline">\(\hat{\varepsilon}_i^2\)</span>对所有<span class="math inline">\(X\)</span>、<span class="math inline">\(X^2\)</span>及交叉项回归</li>
+<li>检验统计量：<span class="math inline">\(W = nR^2 \sim \chi^2_q\)</span>，<span class="math inline">\(q\)</span>为辅助回归中解释变量个数</li>
+</ol>
+</section>
+</section>
+<section id="异方差稳健标准误" class="level3">
+<h3 class="anchored" data-anchor-id="异方差稳健标准误">2.1.3 异方差稳健标准误</h3>
+<p>当存在异方差时，OLS估计量的正确方差为：</p>
+<p><span class="math display">\[
+\text{Var}(\hat{\beta}|X) = (X'X)^{-1}(X'\Omega X)(X'X)^{-1}, \quad \Omega = \text{diag}(\sigma_1^2, ..., \sigma_n^2)
+\]</span></p>
+<p>White异方差稳健估计量：</p>
+<p><span class="math display">\[
+\widehat{\text{Var}}_{HC}(\hat{\beta}) = (X'X)^{-1} \left( \sum_{i=1}^n \hat{\varepsilon}_i^2 X_i X_i' \right) (X'X)^{-1}
+\]</span></p>
+<p>小样本修正系列： - HC0：基本White估计 - HC1：<span class="math inline">\(\frac{n}{n-k}\hat{\varepsilon}_i^2\)</span> - HC2：<span class="math inline">\(\frac{\hat{\varepsilon}_i^2}{1-h_{ii}}\)</span> - HC3：<span class="math inline">\(\frac{\hat{\varepsilon}_i^2}{(1-h_{ii})^2}\)</span></p>
+</section>
+<section id="加权最小二乘法与可行gls" class="level3">
+<h3 class="anchored" data-anchor-id="加权最小二乘法与可行gls">2.1.4 加权最小二乘法与可行GLS</h3>
+<section id="加权最小二乘法wls" class="level4">
+<h4 class="anchored" data-anchor-id="加权最小二乘法wls">加权最小二乘法（WLS）</h4>
+<p>已知方差结构<span class="math inline">\(\text{Var}(\varepsilon_i|X_i) = \sigma^2 w_i\)</span>时：</p>
+<p><span class="math display">\[
+\hat{\beta}_{WLS} = \left( \sum_{i=1}^n \frac{1}{w_i} X_i X_i' \right)^{-1} \left( \sum_{i=1}^n \frac{1}{w_i} X_i Y_i \right)
+\]</span></p>
+</section>
+<section id="可行广义最小二乘法fgls" class="level4">
+<h4 class="anchored" data-anchor-id="可行广义最小二乘法fgls">可行广义最小二乘法（FGLS）</h4>
+<p>两阶段估计： 1. OLS估计得<span class="math inline">\(\hat{\varepsilon}_i\)</span> 2. 估计<span class="math inline">\(\log(\hat{\varepsilon}_i^2) = Z_i'\delta + v_i\)</span> 3. 计算<span class="math inline">\(\hat{w}_i = \exp(Z_i'\hat{\delta})\)</span> 4. 使用WLS，权重为<span class="math inline">\(1/\hat{w}_i\)</span></p>
+</section>
+</section>
+</section>
+<section id="自相关与聚类标准误" class="level2">
+<h2 class="anchored" data-anchor-id="自相关与聚类标准误">2.2 自相关与聚类标准误</h2>
+<section id="自相关的来源与类型" class="level3">
+<h3 class="anchored" data-anchor-id="自相关的来源与类型">2.2.1 自相关的来源与类型</h3>
+<p>横截面数据中的自相关可能源于：</p>
+<ol type="1">
+<li><strong>空间相依性</strong>：地理位置接近的观测相关</li>
+<li><strong>聚类结构</strong>：同一组内观测相关（学校、企业、行业）</li>
+<li><strong>网络效应</strong>：社会网络或经济网络中的相互影响</li>
+<li><strong>时间维度</strong>：重复横截面中的时间相关性</li>
+</ol>
+</section>
+<section id="自相关的检验方法" class="level3">
+<h3 class="anchored" data-anchor-id="自相关的检验方法">2.2.2 自相关的检验方法</h3>
+<section id="空间自相关检验" class="level4">
+<h4 class="anchored" data-anchor-id="空间自相关检验">空间自相关检验</h4>
+<p>Moran’s I统计量：</p>
+<p><span class="math display">\[
+I = \frac{n}{\sum_i \sum_j w_{ij}} \cdot \frac{\sum_i \sum_j w_{ij}(Y_i-\bar{Y})(Y_j-\bar{Y})}{\sum_i (Y_i-\bar{Y})^2}
+\]</span></p>
+<p>其中<span class="math inline">\(w_{ij}\)</span>为空间权重矩阵元素。</p>
+</section>
+<section id="聚类内的自相关检验" class="level4">
+<h4 class="anchored" data-anchor-id="聚类内的自相关检验">聚类内的自相关检验</h4>
+<p>对于聚类数据，可检验组内相关性： 1. 计算组内相关系数（ICC） 2. 进行Breusch-Godfrey类型检验的聚类版本</p>
+</section>
+</section>
+<section id="自相关的修正方法" class="level3">
+<h3 class="anchored" data-anchor-id="自相关的修正方法">2.2.3 自相关的修正方法</h3>
+<section id="空间计量模型" class="level4">
+<h4 class="anchored" data-anchor-id="空间计量模型">空间计量模型</h4>
+<ul>
+<li>空间自回归模型（SAR）：<span class="math inline">\(Y = \rho WY + X\beta + \varepsilon\)</span></li>
+<li>空间误差模型（SEM）：<span class="math inline">\(Y = X\beta + u, \quad u = \lambda Wu + \varepsilon\)</span></li>
+<li>空间杜宾模型（SDM）：<span class="math inline">\(Y = \rho WY + X\beta + WX\theta + \varepsilon\)</span></li>
+</ul>
+</section>
+<section id="聚类调整估计" class="level4">
+<h4 class="anchored" data-anchor-id="聚类调整估计">聚类调整估计</h4>
+<p>对于已知聚类结构，可采用随机效应或固定效应模型。</p>
+</section>
+</section>
+<section id="聚类稳健标准误" class="level3">
+<h3 class="anchored" data-anchor-id="聚类稳健标准误">2.2.4 聚类稳健标准误</h3>
+<section id="基本聚类标准误" class="level4">
+<h4 class="anchored" data-anchor-id="基本聚类标准误">基本聚类标准误</h4>
+<p>假设数据分为<span class="math inline">\(G\)</span>个聚类，聚类内任意相关，聚类间独立：</p>
+<p><span class="math display">\[
+\widehat{\text{Var}}_{\text{cluster}}(\hat{\beta}) = (X'X)^{-1} \left( \sum_{g=1}^G X_g' \hat{\varepsilon}_g \hat{\varepsilon}_g' X_g \right) (X'X)^{-1}
+\]</span></p>
+<p>其中<span class="math inline">\(X_g\)</span>和<span class="math inline">\(\hat{\varepsilon}_g\)</span>为第<span class="math inline">\(g\)</span>个聚类的解释变量矩阵和残差向量。</p>
+</section>
+<section id="多路聚类标准误" class="level4">
+<h4 class="anchored" data-anchor-id="多路聚类标准误">多路聚类标准误</h4>
+<p>当存在多个聚类维度时（如企业-行业-年份）：</p>
+<p><span class="math display">\[
+\widehat{\text{Var}}_{\text{multi}} = \widehat{\text{Var}}_1 + \widehat{\text{Var}}_2 - \widehat{\text{Var}}_{12}
+\]</span></p>
+</section>
+<section id="少聚类问题的处理" class="level4">
+<h4 class="anchored" data-anchor-id="少聚类问题的处理">少聚类问题的处理</h4>
+<p>当聚类数量<span class="math inline">\(G\)</span>较小时： 1. 使用<span class="math inline">\(t_{G-1}\)</span>分布而非正态分布 2. Bell-McCaffrey偏差修正 3. Wild bootstrap方法</p>
+</section>
+<section id="空间自相关稳健标准误" class="level4">
+<h4 class="anchored" data-anchor-id="空间自相关稳健标准误">空间自相关稳健标准误</h4>
+<p>Conley（1999）空间HAC估计量：</p>
+<p><span class="math display">\[
+\widehat{\text{Var}}_{\text{Conley}} = (X'X)^{-1} \left( \sum_{i=1}^n \sum_{j=1}^n k(d_{ij}) X_i X_j' \hat{\varepsilon}_i \hat{\varepsilon}_j \right) (X'X)^{-1}
+\]</span></p>
+<p>其中<span class="math inline">\(k(d_{ij})\)</span>为距离<span class="math inline">\(d_{ij}\)</span>的核函数。</p>
+</section>
+</section>
+</section>
+<section id="异常值杠杆点与稳健估计" class="level2">
+<h2 class="anchored" data-anchor-id="异常值杠杆点与稳健估计">2.3 异常值、杠杆点与稳健估计</h2>
+<section id="异常值的识别与诊断" class="level3">
+<h3 class="anchored" data-anchor-id="异常值的识别与诊断">2.3.1 异常值的识别与诊断</h3>
+<section id="杠杆值" class="level4">
+<h4 class="anchored" data-anchor-id="杠杆值">杠杆值</h4>
+<p>杠杆值<span class="math inline">\(h_{ii} = X_i'(X'X)^{-1}X_i\)</span>，满足： - <span class="math inline">\(0 \leq h_{ii} \leq 1\)</span> - <span class="math inline">\(\sum_{i=1}^n h_{ii} = k\)</span> - 经验法则：<span class="math inline">\(h_{ii} &gt; 2k/n\)</span>为高杠杆点</p>
+</section>
+<section id="影响度量" class="level4">
+<h4 class="anchored" data-anchor-id="影响度量">影响度量</h4>
+<ol type="1">
+<li><strong>学生化残差</strong>：<span class="math inline">\(r_i = \frac{\hat{\varepsilon}_i}{\hat{\sigma}\sqrt{1-h_{ii}}} \sim t_{n-k-1}\)</span></li>
+<li><strong>Cook距离</strong>：<span class="math inline">\(D_i = \frac{(\hat{\beta}-\hat{\beta}_{(i)})'X'X(\hat{\beta}-\hat{\beta}_{(i)})}{k\hat{\sigma}^2}\)</span></li>
+<li><strong>DFFITS</strong>：<span class="math inline">\(\text{DFFITS}_i = \frac{\hat{Y}_i - \hat{Y}_{i(i)}}{\hat{\sigma}_{(i)}\sqrt{h_{ii}}}\)</span></li>
+</ol>
+</section>
+</section>
+<section id="异常值的处理策略" class="level3">
+<h3 class="anchored" data-anchor-id="异常值的处理策略">2.3.2 异常值的处理策略</h3>
+<section id="数据核查" class="level4">
+<h4 class="anchored" data-anchor-id="数据核查">数据核查</h4>
+<p>检查异常值是否数据错误，如是则修正或删除。</p>
+</section>
+<section id="稳健回归方法" class="level4">
+<h4 class="anchored" data-anchor-id="稳健回归方法">稳健回归方法</h4>
+<p><strong>M估计</strong>：最小化<span class="math inline">\(\sum_{i=1}^n \rho\left(\frac{Y_i-X_i'\beta}{\sigma}\right)\)</span> 常见<span class="math inline">\(\rho\)</span>函数： - Huber：<span class="math inline">\(\rho(z) = \begin{cases} z^2/2 &amp; |z|\leq c \\ c|z|-c^2/2 &amp; |z|&gt;c \end{cases}\)</span> - Tukey双权：<span class="math inline">\(\rho(z) = \begin{cases} \frac{c^2}{6}[1-(1-(z/c)^2)^3] &amp; |z|\leq c \\ c^2/6 &amp; |z|&gt;c \end{cases}\)</span></p>
+<p><strong>S估计与MM估计</strong>： - S估计：最小化残差的尺度估计，高崩溃点 - MM估计：结合高崩溃点S估计与高效率M估计</p>
+</section>
+</section>
+<section id="分位数回归" class="level3">
+<h3 class="anchored" data-anchor-id="分位数回归">2.3.3 分位数回归</h3>
+<section id="基本模型" class="level4">
+<h4 class="anchored" data-anchor-id="基本模型">基本模型</h4>
+<p><span class="math inline">\(\tau\)</span>分位数回归估计量：</p>
+<p><span class="math display">\[
+\hat{\beta}(\tau) = \arg\min_{\beta} \sum_{i=1}^n \rho_\tau(Y_i - X_i'\beta)
+\]</span></p>
+<p>其中检验函数<span class="math inline">\(\rho_\tau(u) = u(\tau - I(u&lt;0))\)</span>。</p>
+</section>
+<section id="渐近性质" class="level4">
+<h4 class="anchored" data-anchor-id="渐近性质">渐近性质</h4>
+<p>在独立同分布下：</p>
+<p><span class="math display">\[
+\sqrt{n}(\hat{\beta}(\tau) - \beta(\tau)) \stackrel{d}{\rightarrow} N(0, \tau(1-\tau)D_1^{-1}D_0D_1^{-1})
+\]</span></p>
+<p>其中<span class="math inline">\(D_0 = E[f_{Y|X}(0)X_iX_i']\)</span>，<span class="math inline">\(D_1 = E[X_iX_i']\)</span>。</p>
+</section>
+<section id="优势与应用" class="level4">
+<h4 class="anchored" data-anchor-id="优势与应用">优势与应用</h4>
+<ol type="1">
+<li>对异常值稳健</li>
+<li>描述条件分布全貌</li>
+<li>无需分布假设</li>
+<li>单调变换下性质良好</li>
+</ol>
+</section>
+</section>
+</section>
+<section id="缺失数据处理" class="level2">
+<h2 class="anchored" data-anchor-id="缺失数据处理">2.4 缺失数据处理</h2>
+<section id="缺失数据机制" class="level3">
+<h3 class="anchored" data-anchor-id="缺失数据机制">2.4.1 缺失数据机制</h3>
+<p>Rubin（1976）分类： 1. <strong>完全随机缺失（MCAR）</strong>：<span class="math inline">\(P(M_i=1|Y_i^{\text{obs}}, Y_i^{\text{mis}}, X_i) = P(M_i=1)\)</span> 2. <strong>随机缺失（MAR）</strong>：<span class="math inline">\(P(M_i=1|Y_i^{\text{obs}}, Y_i^{\text{mis}}, X_i) = P(M_i=1|Y_i^{\text{obs}}, X_i)\)</span> 3. <strong>非随机缺失（MNAR）</strong>：缺失依赖于未观测值</p>
+</section>
+<section id="多重插补方法" class="level3">
+<h3 class="anchored" data-anchor-id="多重插补方法">2.4.2 多重插补方法</h3>
+<section id="rubin规则" class="level4">
+<h4 class="anchored" data-anchor-id="rubin规则">Rubin规则</h4>
+<p>设<span class="math inline">\(m\)</span>个插补数据集，第<span class="math inline">\(j\)</span>个数据集的估计为<span class="math inline">\(\hat{\theta}_j\)</span>，方差为<span class="math inline">\(U_j\)</span>： - 合并估计：<span class="math inline">\(\bar{\theta} = \frac{1}{m}\sum_{j=1}^m \hat{\theta}_j\)</span> - 合并方差：<span class="math inline">\(T = \bar{U} + (1+\frac{1}{m})B\)</span> 其中<span class="math inline">\(\bar{U} = \frac{1}{m}\sum_{j=1}^m U_j\)</span>，<span class="math inline">\(B = \frac{1}{m-1}\sum_{j=1}^m (\hat{\theta}_j - \bar{\theta})^2\)</span></p>
+</section>
+<section id="mice算法" class="level4">
+<h4 class="anchored" data-anchor-id="mice算法">MICE算法</h4>
+<p>链式方程多重插补步骤： 1. 为每个缺失变量指定条件分布 2. 通过迭代Gibbs抽样生成插补值 3. 重复生成<span class="math inline">\(m\)</span>个完整数据集</p>
+</section>
+</section>
+<section id="选择模型与逆概率加权" class="level3">
+<h3 class="anchored" data-anchor-id="选择模型与逆概率加权">2.4.3 选择模型与逆概率加权</h3>
+<section id="heckman选择模型" class="level4">
+<h4 class="anchored" data-anchor-id="heckman选择模型">Heckman选择模型</h4>
+<p>两步估计法： 1. 选择方程：<span class="math inline">\(D_i^* = Z_i'\gamma + u_i\)</span>，<span class="math inline">\(D_i = I(D_i^* &gt; 0)\)</span> 2. 结果方程：<span class="math inline">\(Y_i = X_i'\beta + \varepsilon_i\)</span>，仅当<span class="math inline">\(D_i=1\)</span>时观测</p>
+<p>逆米尔斯比率调整： <span class="math display">\[
+E(Y_i|X_i, D_i=1) = X_i'\beta + \rho\sigma_\varepsilon \lambda(Z_i'\gamma)
+\]</span></p>
+</section>
+<section id="逆概率加权ipw" class="level4">
+<h4 class="anchored" data-anchor-id="逆概率加权ipw">逆概率加权（IPW）</h4>
+<p><span class="math display">\[
+\hat{\beta}_{\text{IPW}} = \left( \sum_{i=1}^n \frac{D_i}{\hat{p}_i} X_i X_i' \right)^{-1} \left( \sum_{i=1}^n \frac{D_i}{\hat{p}_i} X_i Y_i \right)
+\]</span> 其中<span class="math inline">\(\hat{p}_i = P(D_i=1|Z_i)\)</span>为倾向得分。</p>
+</section>
+<section id="双重稳健估计" class="level4">
+<h4 class="anchored" data-anchor-id="双重稳健估计">双重稳健估计</h4>
+<p>结合回归调整与IPW： <span class="math display">\[
+\hat{\beta}_{\text{DR}} = \left( \sum_{i=1}^n X_i X_i' \right)^{-1} \sum_{i=1}^n \left[ \frac{D_i}{\hat{p}_i}(Y_i - X_i'\hat{\beta}_{\text{reg}}) + X_i'\hat{\beta}_{\text{reg}} \right] X_i
+\]</span> 只要倾向得分模型或结果模型之一正确，估计即一致。</p>
+</section>
+</section>
+</section>
+<section id="多重共线性诊断修正与推断" class="level2">
+<h2 class="anchored" data-anchor-id="多重共线性诊断修正与推断">2.5 多重共线性：诊断、修正与推断</h2>
+<section id="多重共线性的来源与识别" class="level3">
+<h3 class="anchored" data-anchor-id="多重共线性的来源与识别">2.5.1 多重共线性的来源与识别</h3>
+<section id="来源" class="level4">
+<h4 class="anchored" data-anchor-id="来源">来源</h4>
+<ol type="1">
+<li><strong>经济变量间的内在关联</strong>：如收入与消费、价格与需求量</li>
+<li><strong>变量构造</strong>：多项式项、交互项与原始变量相关</li>
+<li><strong>数据限制</strong>：样本变异不足，变量变化范围小</li>
+<li><strong>过度参数化</strong>：模型包含过多解释变量</li>
+</ol>
+</section>
+<section id="识别方法" class="level4">
+<h4 class="anchored" data-anchor-id="识别方法">识别方法</h4>
+<ol type="1">
+<li><p><strong>方差膨胀因子（VIF）</strong>： <span class="math display">\[
+\text{VIF}_j = \frac{1}{1-R_j^2}
+\]</span> 其中<span class="math inline">\(R_j^2\)</span>是<span class="math inline">\(X_j\)</span>对其他解释变量回归的决定系数。通常VIF &gt; 10表明严重共线性。</p></li>
+<li><p><strong>条件数（Condition Number）</strong>： <span class="math display">\[
+\kappa = \sqrt{\frac{\lambda_{\max}}{\lambda_{\min}}}
+\]</span> 其中<span class="math inline">\(\lambda_{\max}\)</span>和<span class="math inline">\(\lambda_{\min}\)</span>是<span class="math inline">\(X'X\)</span>的最大和最小特征值。<span class="math inline">\(\kappa &gt; 30\)</span>表明严重共线性。</p></li>
+<li><p><strong>特征分析</strong>：小特征值对应的特征向量可识别近似线性关系。</p></li>
+</ol>
+</section>
+</section>
+<section id="多重共线性的后果" class="level3">
+<h3 class="anchored" data-anchor-id="多重共线性的后果">2.5.2 多重共线性的后果</h3>
+<section id="对估计量的影响" class="level4">
+<h4 class="anchored" data-anchor-id="对估计量的影响">对估计量的影响</h4>
+<ol type="1">
+<li><p><strong>无偏性</strong>：OLS估计量仍无偏（在外生性成立下）</p></li>
+<li><p><strong>方差增大</strong>： <span class="math display">\[
+\text{Var}(\hat{\beta}_j) = \frac{\sigma^2}{(1-R_j^2)\sum_{i=1}^n (X_{ij}-\bar{X}_j)^2}
+\]</span> 共线性使<span class="math inline">\(R_j^2 \rightarrow 1\)</span>，方差<span class="math inline">\(\rightarrow \infty\)</span></p></li>
+<li><p><strong>估计不稳定性</strong>：微小数据变化导致估计值大幅变动</p></li>
+<li><p><strong>系数符号反常</strong>：估计系数符号可能与理论预期相反</p></li>
+</ol>
+</section>
+<section id="对推断的影响" class="level4">
+<h4 class="anchored" data-anchor-id="对推断的影响">对推断的影响</h4>
+<ol type="1">
+<li><strong>t检验失效</strong>：由于方差膨胀，<span class="math inline">\(t\)</span>统计量变小，难以拒绝<span class="math inline">\(\beta_j=0\)</span>的原假设</li>
+<li><strong>置信区间变宽</strong>：参数估计的不确定性增加</li>
+<li><strong>模型预测能力下降</strong>：样本外预测方差增大</li>
+</ol>
+</section>
+</section>
+<section id="多重共线性的修正方法" class="level3">
+<h3 class="anchored" data-anchor-id="多重共线性的修正方法">2.5.3 多重共线性的修正方法</h3>
+<section id="理论与方法选择" class="level4">
+<h4 class="anchored" data-anchor-id="理论与方法选择">理论与方法选择</h4>
+<ol type="1">
+<li><strong>增加样本量</strong>：收集更多数据减少共线性</li>
+<li><strong>变量变换</strong>：对变量进行中心化、标准化或差分处理</li>
+<li><strong>删除冗余变量</strong>：基于理论或统计检验删除不必要变量</li>
+<li>降维</li>
+<li>正则化：</li>
+</ol>
+</section>
+<section id="section" class="level4">
+<h4 class="anchored" data-anchor-id="section"></h4>
+</section>
+</section>
+<section id="高维数据的正则化方法" class="level3">
+<h3 class="anchored" data-anchor-id="高维数据的正则化方法">2.5.4 高维数据的正则化方法</h3>
+</section>
+<section id="岭回归" class="level3">
+<h3 class="anchored" data-anchor-id="岭回归">岭回归</h3>
+<p>岭估计量： <span class="math display">\[
+\hat{\beta}_{\text{ridge}} = (X'X + \lambda I)^{-1}X'Y
+\]</span> 其中<span class="math inline">\(\lambda &gt; 0\)</span>为调节参数。</p>
+<p>偏差-方差权衡： - 偏差：<span class="math inline">\(E(\hat{\beta}_{\text{ridge}}) - \beta = -\lambda(X'X + \lambda I)^{-1}\beta\)</span> - 方差：<span class="math inline">\(\text{Var}(\hat{\beta}_{\text{ridge}}) = \sigma^2(X'X + \lambda I)^{-1}X'X(X'X + \lambda I)^{-1}\)</span></p>
+<section id="lasso回归" class="level4">
+<h4 class="anchored" data-anchor-id="lasso回归">Lasso回归</h4>
+<p>Lasso估计量： <span class="math display">\[
+\hat{\beta}_{\text{lasso}} = \arg\min_{\beta} \left\{ \sum_{i=1}^n (Y_i - X_i'\beta)^2 + \lambda \sum_{j=1}^p |\beta_j| \right\}
+\]</span></p>
+<p>性质： 1. 产生稀疏解，实现变量选择 2. 当<span class="math inline">\(p &gt; n\)</span>时仍可估计 3. 解路径为分段线性</p>
+</section>
+<section id="弹性网" class="level4">
+<h4 class="anchored" data-anchor-id="弹性网">弹性网</h4>
+<p>结合L1和L2惩罚： <span class="math display">\[
+\hat{\beta}_{\text{en}} = \arg\min_{\beta} \left\{ \sum_{i=1}^n (Y_i - X_i'\beta)^2 + \lambda \left[ \alpha \sum_{j=1}^p |\beta_j| + \frac{1}{2}(1-\alpha) \sum_{j=1}^p \beta_j^2 \right] \right\}
+\]</span></p>
+<p>优势： 1. 处理高度相关变量时比Lasso更稳定 2. 当<span class="math inline">\(p &gt; n\)</span>时最多可选择<span class="math inline">\(n\)</span>个变量</p>
+</section>
+<section id="高维因果推断" class="level4">
+<h4 class="anchored" data-anchor-id="高维因果推断">高维因果推断</h4>
+<p><strong>双重选择Lasso</strong>（Belloni等，2014）： 1. 用Lasso选择与处理变量<span class="math inline">\(D\)</span>相关的控制变量 2. 用Lasso选择与结果<span class="math inline">\(Y\)</span>相关的控制变量 3. 合并两步选择的变量，用OLS估计处理效应</p>
+</section>
+</section>
+<section id="降维" class="level3">
+<h3 class="anchored" data-anchor-id="降维">2.5.5 降维</h3>
+<section id="主成分回归" class="level4">
+<h4 class="anchored" data-anchor-id="主成分回归">主成分回归</h4>
+<p>设<span class="math inline">\(X\)</span>的奇异值分解：<span class="math inline">\(X = U\Lambda V'\)</span> 取前<span class="math inline">\(r\)</span>个主成分：<span class="math inline">\(Z = XV_r\)</span>，其中<span class="math inline">\(V_r\)</span>为前<span class="math inline">\(r\)</span>个右奇异向量 主成分回归估计：<span class="math inline">\(\hat{\beta}_{PCR} = V_r(V_r'X'XV_r)^{-1}V_r'X'Y\)</span></p>
+</section>
+</section>
+</section>
+<section id="空间与网络数据建模引论" class="level2">
+<h2 class="anchored" data-anchor-id="空间与网络数据建模引论">2.6 空间与网络数据建模引论</h2>
+<section id="空间自相关的识别" class="level3">
+<h3 class="anchored" data-anchor-id="空间自相关的识别">2.6.1 空间自相关的识别</h3>
+<section id="空间权重矩阵" class="level4">
+<h4 class="anchored" data-anchor-id="空间权重矩阵">空间权重矩阵</h4>
+<p>常见形式： 1. <strong>邻接矩阵</strong>：<span class="math inline">\(w_{ij} = I(i \text{与} j \text{相邻})\)</span> 2. <strong>距离矩阵</strong>：<span class="math inline">\(w_{ij} = 1/d_{ij}^\alpha\)</span> 3. <strong>k最近邻矩阵</strong>：每个单元与最近的<span class="math inline">\(k\)</span>个单元连接</p>
+</section>
+<section id="空间自相关检验-1" class="level4">
+<h4 class="anchored" data-anchor-id="空间自相关检验-1">空间自相关检验</h4>
+<p><strong>Moran’s I检验</strong>： 原假设<span class="math inline">\(H_0\)</span>：无空间自相关 标准化统计量：<span class="math inline">\(Z = \frac{I - E(I)}{\sqrt{\text{Var}(I)}} \sim N(0,1)\)</span></p>
+<p><strong>Geary’s C统计量</strong>： <span class="math display">\[
+C = \frac{(n-1)\sum_i \sum_j w_{ij}(Y_i-Y_j)^2}{2\sum_i \sum_j w_{ij} \sum_i (Y_i-\bar{Y})^2}
+\]</span></p>
+</section>
+</section>
+<section id="空间计量模型简介" class="level3">
+<h3 class="anchored" data-anchor-id="空间计量模型简介">2.6.2 空间计量模型简介</h3>
+<section id="空间自回归模型sar" class="level4">
+<h4 class="anchored" data-anchor-id="空间自回归模型sar">空间自回归模型（SAR）</h4>
+<p><span class="math display">\[
+Y = \rho WY + X\beta + \varepsilon, \quad \varepsilon \sim N(0, \sigma^2 I_n)
+\]</span> 其中<span class="math inline">\(\rho\)</span>为空间自回归系数，<span class="math inline">\(W\)</span>为空间权重矩阵。</p>
+</section>
+<section id="空间误差模型sem" class="level4">
+<h4 class="anchored" data-anchor-id="空间误差模型sem">空间误差模型（SEM）</h4>
+<p><span class="math display">\[
+Y = X\beta + u, \quad u = \lambda Wu + \varepsilon, \quad \varepsilon \sim N(0, \sigma^2 I_n)
+\]</span> 其中<span class="math inline">\(\lambda\)</span>为空间误差系数。</p>
+</section>
+<section id="空间杜宾模型sdm" class="level4">
+<h4 class="anchored" data-anchor-id="空间杜宾模型sdm">空间杜宾模型（SDM）</h4>
+<p><span class="math display">\[
+Y = \rho WY + X\beta + WX\theta + \varepsilon
+\]</span> 包含因变量和解释变量的空间滞后。</p>
+</section>
+</section>
+<section id="网络自相关模型" class="level3">
+<h3 class="anchored" data-anchor-id="网络自相关模型">2.6.3 网络自相关模型</h3>
+<section id="网络权重矩阵" class="level4">
+<h4 class="anchored" data-anchor-id="网络权重矩阵">网络权重矩阵</h4>
+<p>基于网络结构的连接矩阵<span class="math inline">\(G\)</span>： - 无向网络：<span class="math inline">\(g_{ij} = g_{ji}\)</span> - 有向网络：<span class="math inline">\(g_{ij} \neq g_{ji}\)</span>（如引文网络） - 加权网络：<span class="math inline">\(g_{ij}\)</span>表示连接强度</p>
+</section>
+<section id="网络自回归模型" class="level4">
+<h4 class="anchored" data-anchor-id="网络自回归模型">网络自回归模型</h4>
+<p><span class="math display">\[
+Y = \alpha GY + X\beta + \varepsilon
+\]</span> 其中<span class="math inline">\(\alpha\)</span>度量网络效应强度。</p>
+</section>
+<section id="识别挑战" class="level4">
+<h4 class="anchored" data-anchor-id="识别挑战">识别挑战</h4>
+<p><strong>反射问题</strong>（reflection problem）：个体的行为影响邻居，邻居的行为又影响个体，导致双向因果。解决方法： 1. 使用工具变量 2. 利用网络结构特征（如朋友的朋发特征） 3. 实验或准实验设计</p>
+</section>
+</section>
+</section>
+<section id="综合诊断框架与模型选择" class="level2">
+<h2 class="anchored" data-anchor-id="综合诊断框架与模型选择">2.7 综合诊断框架与模型选择</h2>
+<section id="系统化的诊断流程" class="level3">
+<h3 class="anchored" data-anchor-id="系统化的诊断流程">2.7.1 系统化的诊断流程</h3>
+<section id="诊断顺序建议" class="level4">
+<h4 class="anchored" data-anchor-id="诊断顺序建议">诊断顺序建议</h4>
+<ol type="1">
+<li><strong>理论先验分析</strong>：基于经济学理论判断可能问题</li>
+<li><strong>描述性统计分析</strong>：数据可视化，发现异常模式</li>
+<li><strong>基础假设检验</strong>：异方差、自相关、正态性检验</li>
+<li><strong>模型设定检验</strong>：RESET检验、非线性检验</li>
+<li><strong>多重共线性诊断</strong>：VIF、条件数分析</li>
+<li><strong>稳健性检查</strong>：不同方法、不同样本下的结果比较</li>
+</ol>
+</section>
+<section id="诊断结果整合" class="level4">
+<h4 class="anchored" data-anchor-id="诊断结果整合">诊断结果整合</h4>
+<p>建立诊断记录表，记录： - 检验方法 - 检验统计量与p值 - 问题严重程度评估 - 建议的修正措施</p>
+</section>
+</section>
+<section id="模型选择与模型平均" class="level3">
+<h3 class="anchored" data-anchor-id="模型选择与模型平均">2.7.2 模型选择与模型平均</h3>
+<section id="信息准则" class="level4">
+<h4 class="anchored" data-anchor-id="信息准则">信息准则</h4>
+<ol type="1">
+<li><p><strong>AIC</strong>（Akaike Information Criterion）： <span class="math display">\[
+\text{AIC} = 2k - 2\ln(L)
+\]</span> 倾向于选择更复杂的模型。</p></li>
+<li><p><strong>BIC</strong>（Bayesian Information Criterion）： <span class="math display">\[
+\text{BIC} = k\ln(n) - 2\ln(L)
+\]</span> 对模型复杂度惩罚更重，倾向于更简洁的模型。</p></li>
+</ol>
+</section>
+<section id="交叉验证" class="level4">
+<h4 class="anchored" data-anchor-id="交叉验证">交叉验证</h4>
+<p><strong>K折交叉验证步骤</strong>： 1. 随机将数据分为<span class="math inline">\(K\)</span>份 2. 每次用<span class="math inline">\(K-1\)</span>份训练，1份测试 3. 重复<span class="math inline">\(K\)</span>次，计算平均预测误差</p>
+<p><strong>留一法交叉验证</strong>：<span class="math inline">\(K=n\)</span>的特殊情况。</p>
+</section>
+<section id="模型平均方法" class="level4">
+<h4 class="anchored" data-anchor-id="模型平均方法">模型平均方法</h4>
+<ol type="1">
+<li><p><strong>贝叶斯模型平均（BMA）</strong>： <span class="math display">\[
+\hat{\beta}_{\text{BMA}} = \sum_{m=1}^M w_m \hat{\beta}_m
+\]</span> 其中<span class="math inline">\(w_m = P(M_m|Y)\)</span>为后验模型概率。</p></li>
+<li><p><strong>堆叠法（Stacking）</strong>： 基于交叉验证表现确定权重，最小化预测误差。</p></li>
+</ol>
+</section>
+</section>
+<section id="实证研究中的报告规范" class="level3">
+<h3 class="anchored" data-anchor-id="实证研究中的报告规范">2.7.3 实证研究中的报告规范</h3>
+<section id="透明度原则" class="level4">
+<h4 class="anchored" data-anchor-id="透明度原则">透明度原则</h4>
+<ol type="1">
+<li><strong>数据描述</strong>：清晰说明数据来源、处理过程、样本选择</li>
+<li><strong>方法报告</strong>：详细描述估计方法、检验方法、软件与版本</li>
+<li><strong>结果呈现</strong>：报告所有相关结果，包括不显著的结果</li>
+<li><strong>复制材料</strong>：提供代码、数据、详细结果供他人复制</li>
+</ol>
+</section>
+<section id="敏感性分析" class="level4">
+<h4 class="anchored" data-anchor-id="敏感性分析">敏感性分析</h4>
+<p>应报告以下敏感性分析： 1. <strong>模型设定敏感性</strong>：不同函数形式、不同控制变量集 2. <strong>估计方法敏感性</strong>：不同估计方法（OLS、IV、GMM等） 3. <strong>样本选择敏感性</strong>：不同子样本、不同时间区间 4. <strong>异常值处理敏感性</strong>：包含/排除异常值的结果比较</p>
+</section>
+<section id="谨慎解释" class="level4">
+<h4 class="anchored" data-anchor-id="谨慎解释">谨慎解释</h4>
+<ol type="1">
+<li><strong>区分统计显著性与经济显著性</strong>：不仅报告p值，还要讨论经济意义</li>
+<li><strong>承认局限性</strong>：明确说明研究的假设、局限性和推广范围</li>
+<li><strong>避免过度推断</strong>：基于证据的谨慎结论，不夸大发现</li>
+</ol>
+</section>
+</section>
+</section>
+<section id="案例分析与代码实现" class="level2">
+<h2 class="anchored" data-anchor-id="案例分析与代码实现">2.8 案例分析与代码实现</h2>
+<p><em>（本章案例将聚焦于一个综合性的实证研究，展示如何系统应用本章介绍的各种方法诊断和处理横截面数据中的多重问题。具体内容将在教材配套材料中详细展开。）</em></p>
+</section>
+<section id="本章总结" class="level2">
+<h2 class="anchored" data-anchor-id="本章总结">本章总结</h2>
+<p>本章系统介绍了处理横截面数据中违反经典回归假设的现代方法。我们从异方差这一最常见问题出发，逐步深入到更复杂的自相关、多重共线性、异常值、缺失数据以及空间网络相关问题。关键要点包括：</p>
+<ol type="1">
+<li><p><strong>诊断优先</strong>：任何修正方法的应用都应基于准确的诊断。异方差的图示法和统计检验、自相关的空间检验、多重共线性的VIF分析等，都是必要的前期工作。</p></li>
+<li><p><strong>方法选择的权衡</strong>：效率与稳健性、偏差与方差、简洁性与准确性之间的权衡是方法选择的核心考量。例如：</p>
+<ul>
+<li>当异方差形式未知时，稳健标准误比FGLS更可靠</li>
+<li>当存在异常值时，分位数回归比OLS更稳健</li>
+<li>当存在多重共线性时，岭回归比删除变量更能保留信息</li>
+</ul></li>
+<li><p><strong>标准误的稳健性至关重要</strong>：在实证研究中，正确的标准误是进行有效统计推断的基础。聚类标准误、异方差稳健标准误、空间HAC标准误等，都是应对不同相关结构的工具。</p></li>
+<li><p><strong>处理复杂数据结构的现代方法</strong>：对于高维数据、缺失数据、空间网络数据，计量经济学发展了一系列现代方法：</p>
+<ul>
+<li>正则化方法（Lasso、弹性网）处理高维数据</li>
+<li>多重插补和双重稳健估计处理缺失数据</li>
+<li>空间计量模型处理空间相关性</li>
+</ul></li>
+<li><p><strong>综合诊断与透明报告</strong>：良好的实证研究应遵循系统化的诊断流程，并透明报告所有步骤和结果。敏感性分析和稳健性检查是评估结论可靠性的关键。</p></li>
+</ol>
+<p>通过本章的学习，您将具备处理现实世界横截面数据的全面能力，为进行严谨、可信的实证经济学研究打下坚实基础。在后续章节中，我们将把重点转向因果推断这一计量经济学的核心目标，这些处理数据问题的技术将成为我们进行可信因果推断的重要前提。</p>
+<p><strong>要点回顾</strong>： - 异方差使OLS无效但依然一致，可使用稳健标准误或WLS/FGLS修正 - 自相关（空间相关、聚类相关）需使用聚类标准误或空间计量模型 - 异常值可通过稳健回归或分位数回归处理 - 缺失数据机制决定处理方法，多重插补和双重稳健估计是常用方法 - 多重共线性增加估计方差但不影响无偏性，可通过正则化方法处理 - 空间网络数据需要专门的模型和推断方法</p>
+<p>掌握这些方法的关键不仅是理解其数学原理，更是能够在具体研究问题中做出恰当的方法选择，并对结果进行合理解释。这正是计量经济学作为一门应用科学的核心要义。</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/1线性回归.html" class="pagination-link" aria-label="1 线性回归基础">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">1 线性回归基础</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/3面板数据模型.html" class="pagination-link" aria-label="3 面板数据模型">
+        <span class="nav-page-text"><span class="chapter-title">3 面板数据模型</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

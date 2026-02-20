@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="李世纪">
+
+<title>18 数值优化与矩阵方法 – 计量模型及应用</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/19机器学习在计量中的应用.html" rel="next">
+<link href="../chapters/17蒙特卡洛法与自助法.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-70a47bd5681a7291082a5b9f83d58762.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="science-textbook.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/14大样本理论.html">III 理论与算法</a></li><li class="breadcrumb-item"><a href="../chapters/18优化算法与数值方法.html"><span class="chapter-title">18 数值优化与矩阵方法</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">计量模型及应用</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">简介</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">I 数据与模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1线性回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1 线性回归基础</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2横截面数据分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2 横截面数据：假设违反的诊断与修正</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/3面板数据模型.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 面板数据模型</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/4时间序列分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4 时间序列分析</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/5离散与受限因变量模型.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">5 离散数据与受限因变量模型</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">II 因果推断方法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/6因果推断框架.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6 因果推断框架</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/7工具变量法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">7 工具变量法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/8倾向得分匹配.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">8 倾向得分匹配</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/9双重差分法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">9 双重差分法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10断点回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">10 断点回归</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11合成控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">11 合成控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12回归控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">12 回归控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13中介效应与调节效应.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">13 中介效应与调节效应</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">III 理论与算法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14大样本理论.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">14 大样本理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15最大似然估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">15 最大似然估计理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16广义矩估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">16 广义矩估计法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17蒙特卡洛法与自助法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">17 蒙特卡洛法与自助法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/18优化算法与数值方法.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">18 数值优化与矩阵方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/19机器学习在计量中的应用.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">19 机器学习在计量中的应用</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#本章导读" id="toc-本章导读" class="nav-link active" data-scroll-target="#本章导读">本章导读</a></li>
+  <li><a href="#引言从理论估计量到数值实现" id="toc-引言从理论估计量到数值实现" class="nav-link" data-scroll-target="#引言从理论估计量到数值实现">17.1 引言：从理论估计量到数值实现</a>
+  <ul class="collapse">
+  <li><a href="#计量估计的计算本质" id="toc-计量估计的计算本质" class="nav-link" data-scroll-target="#计量估计的计算本质">17.1.1 计量估计的计算本质</a></li>
+  <li><a href="#数值计算的三个核心关切" id="toc-数值计算的三个核心关切" class="nav-link" data-scroll-target="#数值计算的三个核心关切">17.1.2 数值计算的三个核心关切</a></li>
+  <li><a href="#本章的结构逻辑" id="toc-本章的结构逻辑" class="nav-link" data-scroll-target="#本章的结构逻辑">17.1.3 本章的结构逻辑</a></li>
+  </ul></li>
+  <li><a href="#数值线性代数基础核心矩阵分解" id="toc-数值线性代数基础核心矩阵分解" class="nav-link" data-scroll-target="#数值线性代数基础核心矩阵分解">17.2 数值线性代数基础：核心矩阵分解</a>
+  <ul class="collapse">
+  <li><a href="#lu分解通用线性系统求解器" id="toc-lu分解通用线性系统求解器" class="nav-link" data-scroll-target="#lu分解通用线性系统求解器">17.2.1 LU分解：通用线性系统求解器</a></li>
+  <li><a href="#cholesky分解对称正定系统的高效解法" id="toc-cholesky分解对称正定系统的高效解法" class="nav-link" data-scroll-target="#cholesky分解对称正定系统的高效解法">17.2.2 Cholesky分解：对称正定系统的高效解法</a></li>
+  <li><a href="#qr分解最小二乘问题的黄金标准" id="toc-qr分解最小二乘问题的黄金标准" class="nav-link" data-scroll-target="#qr分解最小二乘问题的黄金标准">17.2.3 QR分解：最小二乘问题的黄金标准</a></li>
+  <li><a href="#奇异值分解诊断与稳健计算的终极工具" id="toc-奇异值分解诊断与稳健计算的终极工具" class="nav-link" data-scroll-target="#奇异值分解诊断与稳健计算的终极工具">17.2.4 奇异值分解：诊断与稳健计算的终极工具</a></li>
+  <li><a href="#矩阵分解方法的选择策略" id="toc-矩阵分解方法的选择策略" class="nav-link" data-scroll-target="#矩阵分解方法的选择策略">17.2.5 矩阵分解方法的选择策略</a></li>
+  </ul></li>
+  <li><a href="#无约束优化算法寻找函数的极值" id="toc-无约束优化算法寻找函数的极值" class="nav-link" data-scroll-target="#无约束优化算法寻找函数的极值">17.3 无约束优化算法：寻找函数的极值</a>
+  <ul class="collapse">
+  <li><a href="#优化问题的数学框架与最优性条件" id="toc-优化问题的数学框架与最优性条件" class="nav-link" data-scroll-target="#优化问题的数学框架与最优性条件">17.3.1 优化问题的数学框架与最优性条件</a></li>
+  <li><a href="#迭代优化算法的通用架构" id="toc-迭代优化算法的通用架构" class="nav-link" data-scroll-target="#迭代优化算法的通用架构">17.3.2 迭代优化算法的通用架构</a></li>
+  <li><a href="#梯度下降法基础但重要的基准方法" id="toc-梯度下降法基础但重要的基准方法" class="nav-link" data-scroll-target="#梯度下降法基础但重要的基准方法">17.3.3 梯度下降法：基础但重要的基准方法</a></li>
+  <li><a href="#牛顿法利用曲率信息的快速方法" id="toc-牛顿法利用曲率信息的快速方法" class="nav-link" data-scroll-target="#牛顿法利用曲率信息的快速方法">17.3.4 牛顿法：利用曲率信息的快速方法</a></li>
+  <li><a href="#拟牛顿法平衡效率与稳定性的计量主力" id="toc-拟牛顿法平衡效率与稳定性的计量主力" class="nav-link" data-scroll-target="#拟牛顿法平衡效率与稳定性的计量主力">17.3.5 拟牛顿法：平衡效率与稳定性的计量主力</a></li>
+  </ul></li>
+  <li><a href="#稳健与专用优化策略" id="toc-稳健与专用优化策略" class="nav-link" data-scroll-target="#稳健与专用优化策略">17.4 稳健与专用优化策略</a>
+  <ul class="collapse">
+  <li><a href="#信任域法鲁棒的牛顿类方法" id="toc-信任域法鲁棒的牛顿类方法" class="nav-link" data-scroll-target="#信任域法鲁棒的牛顿类方法">17.4.1 信任域法：鲁棒的牛顿类方法</a></li>
+  <li><a href="#nelder-mead单纯形法无导数优化" id="toc-nelder-mead单纯形法无导数优化" class="nav-link" data-scroll-target="#nelder-mead单纯形法无导数优化">17.4.2 Nelder-Mead单纯形法：无导数优化</a></li>
+  <li><a href="#em算法潜变量与缺失数据问题的专用框架" id="toc-em算法潜变量与缺失数据问题的专用框架" class="nav-link" data-scroll-target="#em算法潜变量与缺失数据问题的专用框架">17.4.3 EM算法：潜变量与缺失数据问题的专用框架</a></li>
+  <li><a href="#坐标下降法与近端梯度法高维稀疏模型求解" id="toc-坐标下降法与近端梯度法高维稀疏模型求解" class="nav-link" data-scroll-target="#坐标下降法与近端梯度法高维稀疏模型求解">17.4.4 坐标下降法与近端梯度法：高维稀疏模型求解</a></li>
+  </ul></li>
+  <li><a href="#综合应用计量估计的数值实现策略" id="toc-综合应用计量估计的数值实现策略" class="nav-link" data-scroll-target="#综合应用计量估计的数值实现策略">17.5 综合应用：计量估计的数值实现策略</a>
+  <ul class="collapse">
+  <li><a href="#极大似然估计的完整数值流程" id="toc-极大似然估计的完整数值流程" class="nav-link" data-scroll-target="#极大似然估计的完整数值流程">17.5.1 极大似然估计的完整数值流程</a></li>
+  <li><a href="#病态问题的诊断与处理" id="toc-病态问题的诊断与处理" class="nav-link" data-scroll-target="#病态问题的诊断与处理">17.5.2 病态问题的诊断与处理</a></li>
+  <li><a href="#收敛失败的原因与调试策略" id="toc-收敛失败的原因与调试策略" class="nav-link" data-scroll-target="#收敛失败的原因与调试策略">17.5.3 收敛失败的原因与调试策略</a></li>
+  </ul></li>
+  <li><a href="#前沿发展与展望" id="toc-前沿发展与展望" class="nav-link" data-scroll-target="#前沿发展与展望">17.6 前沿发展与展望</a>
+  <ul class="collapse">
+  <li><a href="#大规模优化随机方法与分布式计算" id="toc-大规模优化随机方法与分布式计算" class="nav-link" data-scroll-target="#大规模优化随机方法与分布式计算">17.6.1 大规模优化：随机方法与分布式计算</a></li>
+  <li><a href="#自动微分精确高效求导" id="toc-自动微分精确高效求导" class="nav-link" data-scroll-target="#自动微分精确高效求导">17.6.2 自动微分：精确高效求导</a></li>
+  <li><a href="#贝叶斯计算中的优化视角" id="toc-贝叶斯计算中的优化视角" class="nav-link" data-scroll-target="#贝叶斯计算中的优化视角">17.6.3 贝叶斯计算中的优化视角</a></li>
+  <li><a href="#计算思维的培养" id="toc-计算思维的培养" class="nav-link" data-scroll-target="#计算思维的培养">17.6.4 计算思维的培养</a></li>
+  </ul></li>
+  <li><a href="#本章总结" id="toc-本章总结" class="nav-link" data-scroll-target="#本章总结">本章总结</a></li>
+  <li><a href="#本章习题" id="toc-本章习题" class="nav-link" data-scroll-target="#本章习题">本章习题</a>
+  <ul class="collapse">
+  <li><a href="#理论习题" id="toc-理论习题" class="nav-link" data-scroll-target="#理论习题">理论习题</a></li>
+  <li><a href="#应用习题" id="toc-应用习题" class="nav-link" data-scroll-target="#应用习题">应用习题</a></li>
+  <li><a href="#综合项目" id="toc-综合项目" class="nav-link" data-scroll-target="#综合项目">综合项目</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/14大样本理论.html">III 理论与算法</a></li><li class="breadcrumb-item"><a href="../chapters/18优化算法与数值方法.html"><span class="chapter-title">18 数值优化与矩阵方法</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">18 数值优化与矩阵方法</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">作者</div>
+    <div class="quarto-title-meta-contents">
+             <p>李世纪 </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="本章导读" class="level2">
+<h2 class="anchored" data-anchor-id="本章导读">本章导读</h2>
+<p>计量经济学的理论模型，无论是极大似然估计、广义矩估计，还是非线性最小二乘法，最终都需要通过数值计算转化为具体的参数估计值。本章深入探讨这一转化过程所依赖的<strong>两大计算支柱</strong>：<strong>数值线性代数</strong>与<strong>数值优化算法</strong>。前者为高效、稳定地处理数据与模型提供了基础数学工具，后者则利用这些工具，通过系统化的搜索策略求解最优化问题。</p>
+<p>我们将揭示：矩阵分解如何成为构建稳健计算流程的”基石”，而优化算法如何作为使用这些基石构造解决方案的”建筑蓝图”。理解这两层架构，将使研究者从被动的软件使用者转变为能够洞察计算本质、诊断数值问题并针对特定问题选择适当方法的实证分析专家。这种能力对于应对高维数据、复杂模型和大规模计算等现代计量经济学的挑战至关重要。</p>
+<p><strong>本章学习目标：</strong> 1. 掌握核心矩阵分解的原理及其在计量计算中的应用场景 2. 理解主要优化算法的数学基础、收敛性质与适用条件 3. 学会诊断和处理常见的数值稳定性问题 4. 能够为特定计量问题设计合理的数值计算策略</p>
+</section>
+<section id="引言从理论估计量到数值实现" class="level2">
+<h2 class="anchored" data-anchor-id="引言从理论估计量到数值实现">17.1 引言：从理论估计量到数值实现</h2>
+<section id="计量估计的计算本质" class="level3">
+<h3 class="anchored" data-anchor-id="计量估计的计算本质">17.1.1 计量估计的计算本质</h3>
+<p>计量经济学中的大多数估计问题最终都可以归结为以下两类数值问题：</p>
+<ol type="1">
+<li><p><strong>方程求解问题</strong>：寻找参数向量 <span class="math inline">\(\pmb{\theta} \in \mathbb{R}^p\)</span> 使得一组矩条件成立： <span class="math display">\[
+\pmb{g}_n(\pmb{\theta}) = \frac{1}{n}\sum_{i=1}^n \pmb{g}(\pmb{z}_i,\pmb{\theta}) = \pmb{0}
+\]</span> 其中 <span class="math inline">\(\pmb{g}(\cdot)\)</span> 是矩函数向量，<span class="math inline">\(\pmb{z}_i\)</span> 是第 <span class="math inline">\(i\)</span> 个观测值。</p></li>
+<li><p><strong>函数优化问题</strong>：寻找参数 <span class="math inline">\(\pmb{\theta}\)</span> 最小化（或最大化）某个准则函数： <span class="math display">\[
+\hat{\pmb{\theta}}_n = \arg\min_{\pmb{\theta} \in \Theta} Q_n(\pmb{\theta})
+\]</span> 其中 <span class="math inline">\(Q_n(\pmb{\theta})\)</span> 是样本准则函数。例如：</p>
+<ul>
+<li>在极大似然估计中，<span class="math inline">\(Q_n(\pmb{\theta}) = -\frac{1}{n}\sum_{i=1}^n \ln f(\pmb{z}_i;\pmb{\theta})\)</span></li>
+<li>在广义矩估计中，<span class="math inline">\(Q_n(\pmb{\theta}) = \pmb{g}_n(\pmb{\theta})'\pmb{W}_n\pmb{g}_n(\pmb{\theta})\)</span></li>
+<li>在非线性最小二乘中，<span class="math inline">\(Q_n(\pmb{\theta}) = \frac{1}{n}\sum_{i=1}^n [y_i - h(\pmb{x}_i;\pmb{\theta})]^2\)</span></li>
+</ul></li>
+</ol>
+<p>这两种问题在本质上相互关联。一方面，优化问题的一阶条件通常是一个方程组；另一方面，许多方程求解问题可以通过构造适当的优化问题来更稳定地求解。</p>
+</section>
+<section id="数值计算的三个核心关切" class="level3">
+<h3 class="anchored" data-anchor-id="数值计算的三个核心关切">17.1.2 数值计算的三个核心关切</h3>
+<p>在实际实现计量估计时，我们需要同时关注三个相互关联又可能冲突的目标：</p>
+<ol type="1">
+<li><p><strong>数值稳定性</strong>：算法对数据扰动、舍入误差和病态问题的不敏感性。不稳定的算法可能在小样本或病态条件下给出荒谬的结果。</p></li>
+<li><p><strong>计算效率</strong>：算法的时间和空间复杂度。随着数据维度 <span class="math inline">\(p\)</span> 和样本量 <span class="math inline">\(n\)</span> 的增长，计算成本可能成为瓶颈。</p></li>
+<li><p><strong>统计精度</strong>：数值解与理论统计性质的吻合程度。即使是渐近无偏的估计量，也可能因数值误差而在有限样本中产生偏误。</p></li>
+</ol>
+<p>这三者构成一个权衡三角（见图@ref(fig:tradeoff-triangle)）。例如，奇异值分解（SVD）通常比Cholesky分解更稳定，但计算成本更高；牛顿法收敛速度快但可能数值不稳定；梯度下降法稳定但收敛缓慢。</p>
+</section>
+<section id="本章的结构逻辑" class="level3">
+<h3 class="anchored" data-anchor-id="本章的结构逻辑">17.1.3 本章的结构逻辑</h3>
+<p>本章按照从基础到应用、从通用到专用的逻辑展开：</p>
+<ol type="1">
+<li><strong>基础工具层</strong>（第17.2节）：介绍核心矩阵分解方法，这是所有高级计算的基础。</li>
+<li><strong>核心算法层</strong>（第17.3-17.4节）：系统讲解主要优化算法的原理、性质和适用条件。</li>
+<li><strong>应用策略层</strong>（第17.5节）：展示如何将基础工具与优化算法结合，解决实际计量问题。</li>
+<li><strong>前沿展望</strong>（第17.6节）：探讨大规模计算、自动微分等现代发展。</li>
+</ol>
+</section>
+</section>
+<section id="数值线性代数基础核心矩阵分解" class="level2">
+<h2 class="anchored" data-anchor-id="数值线性代数基础核心矩阵分解">17.2 数值线性代数基础：核心矩阵分解</h2>
+<p>矩阵分解是将复杂矩阵运算分解为简单、稳定、高效运算的数学技术。在计量计算中，它不仅是实现工具，更是理解数值稳定性的关键。</p>
+<section id="lu分解通用线性系统求解器" class="level3">
+<h3 class="anchored" data-anchor-id="lu分解通用线性系统求解器">17.2.1 LU分解：通用线性系统求解器</h3>
+<p><strong>数学定义</strong>：对于任意非奇异方阵 <span class="math inline">\(A \in \mathbb{R}^{n \times n}\)</span>，LU分解将其表示为下三角矩阵 <span class="math inline">\(L\)</span> 和上三角矩阵 <span class="math inline">\(U\)</span> 的乘积： <span class="math display">\[
+A = LU
+\]</span> 其中 <span class="math inline">\(L\)</span> 是单位下三角矩阵（对角线元素为1），<span class="math inline">\(U\)</span> 是上三角矩阵。</p>
+<p>为了保证数值稳定性，实际中通常使用带行交换的LUP分解： <span class="math display">\[
+PA = LU
+\]</span> 其中 <span class="math inline">\(P\)</span> 是置换矩阵。</p>
+<p><strong>计量应用</strong>： 1. <strong>线性方程组求解</strong>：求解 <span class="math inline">\(A\pmb{x} = \pmb{b}\)</span> 通过以下步骤： - 分解：<span class="math inline">\(PA = LU\)</span> - 求解：<span class="math inline">\(L\pmb{y} = P\pmb{b}\)</span>（前向替代） - 求解：<span class="math inline">\(U\pmb{x} = \pmb{y}\)</span>（后向替代）</p>
+<ol start="2" type="1">
+<li><p><strong>行列式计算</strong>：<span class="math inline">\(\det(A) = \det(P^{-1})\det(U) = (-1)^s \prod_{i=1}^n u_{ii}\)</span>，其中 <span class="math inline">\(s\)</span> 是置换的符号。</p></li>
+<li><p><strong>矩阵求逆</strong>：通过求解 <span class="math inline">\(AX = I\)</span> 获得。</p></li>
+</ol>
+<p><strong>数值性质</strong>： - 计算复杂度：<span class="math inline">\(\frac{2}{3}n^3 + O(n^2)\)</span> 次浮点运算 - 稳定性：部分主元法（LUP）通常足够稳定 - 局限性：要求矩阵非奇异，对病态矩阵敏感</p>
+</section>
+<section id="cholesky分解对称正定系统的高效解法" class="level3">
+<h3 class="anchored" data-anchor-id="cholesky分解对称正定系统的高效解法">17.2.2 Cholesky分解：对称正定系统的高效解法</h3>
+<p><strong>数学定义</strong>：对于对称正定矩阵 <span class="math inline">\(A\)</span>（即 <span class="math inline">\(A = A'\)</span> 且 <span class="math inline">\(\pmb{x}'A\pmb{x} &gt; 0\)</span> 对所有 <span class="math inline">\(\pmb{x} \neq \pmb{0}\)</span>），Cholesky分解表示为： <span class="math display">\[
+A = LL'
+\]</span> 其中 <span class="math inline">\(L\)</span> 是下三角矩阵（对角线元素为正）。</p>
+<p><strong>存在性与唯一性</strong>：对称正定矩阵必有唯一的Cholesky分解，且 <span class="math inline">\(L\)</span> 的对角线元素 <span class="math inline">\(l_{ii} &gt; 0\)</span>。</p>
+<p><strong>计量应用</strong>： 1. <strong>OLS估计的稳定计算</strong>：求解正规方程 <span class="math inline">\((X'X)\pmb{\beta} = X'\pmb{y}\)</span>： - 计算 <span class="math inline">\(X'X\)</span> 的Cholesky分解：<span class="math inline">\(X'X = LL'\)</span> - 求解 <span class="math inline">\(L\pmb{z} = X'\pmb{y}\)</span>（前向替代） - 求解 <span class="math inline">\(L'\pmb{\beta} = \pmb{z}\)</span>（后向替代）</p>
+<p>相比直接求逆 <span class="math inline">\((X'X)^{-1}\)</span>，Cholesky方法避免了显式计算逆矩阵，数值稳定性更好。</p>
+<ol start="2" type="1">
+<li><p><strong>多元正态分布的模拟</strong>：若 <span class="math inline">\(\pmb{z} \sim N(\pmb{0}, I_n)\)</span>，则 <span class="math inline">\(\pmb{x} = \pmb{\mu} + L\pmb{z} \sim N(\pmb{\mu}, LL' = A)\)</span>。</p></li>
+<li><p><strong>似然计算</strong>：多元正态对数似然中的二次型和行列式： <span class="math display">\[
+(\pmb{y}-\pmb{\mu})'A^{-1}(\pmb{y}-\pmb{\mu}) = \|L^{-1}(\pmb{y}-\pmb{\mu})\|^2
+\]</span> <span class="math display">\[
+\ln|A| = 2\sum_{i=1}^n \ln l_{ii}
+\]</span> 通过Cholesky分解可稳定计算。</p></li>
+</ol>
+<p><strong>数值性质</strong>： - 计算复杂度：<span class="math inline">\(\frac{1}{3}n^3 + O(n^2)\)</span> 次浮点运算，约为LU分解的一半 - 稳定性：对称正定条件下非常稳定 - 病态诊断：当 <span class="math inline">\(A\)</span> 接近奇异时，<span class="math inline">\(l_{ii}\)</span> 会变得很小</p>
+</section>
+<section id="qr分解最小二乘问题的黄金标准" class="level3">
+<h3 class="anchored" data-anchor-id="qr分解最小二乘问题的黄金标准">17.2.3 QR分解：最小二乘问题的黄金标准</h3>
+<p><strong>数学定义</strong>：对于任意矩阵 <span class="math inline">\(A \in \mathbb{R}^{m \times n}\)</span>（<span class="math inline">\(m \geq n\)</span>），QR分解为： <span class="math display">\[
+A = QR
+\]</span> 其中 <span class="math inline">\(Q \in \mathbb{R}^{m \times m}\)</span> 是正交矩阵（<span class="math inline">\(Q'Q = QQ' = I_m\)</span>），<span class="math inline">\(R \in \mathbb{R}^{m \times n}\)</span> 是上三角矩阵。经济型QR分解为： <span class="math display">\[
+A = Q_1 R_1
+\]</span> 其中 <span class="math inline">\(Q_1 \in \mathbb{R}^{m \times n}\)</span> 列正交（<span class="math inline">\(Q_1'Q_1 = I_n\)</span>），<span class="math inline">\(R_1 \in \mathbb{R}^{n \times n}\)</span> 上三角。</p>
+<p><strong>计量应用</strong>： 1. <strong>线性回归的最小二乘解</strong>：考虑问题 <span class="math inline">\(\min_{\pmb{\beta}} \|\pmb{y} - X\pmb{\beta}\|^2\)</span>： - 计算 <span class="math inline">\(X\)</span> 的QR分解：<span class="math inline">\(X = QR\)</span> - 解 <span class="math inline">\(\pmb{\beta} = R^{-1}Q'\pmb{y}\)</span>（实际通过回代求解）</p>
+<p>关键优势：避免显式计算 <span class="math inline">\(X'X\)</span>，从而避免因条件数平方而放大的数值误差。</p>
+<ol start="2" type="1">
+<li><p><strong>回归诊断</strong>：帽子矩阵 <span class="math inline">\(H = X(X'X)^{-1}X' = QQ'\)</span>，其对角线元素（杠杆值）可直接从 <span class="math inline">\(Q\)</span> 获得。</p></li>
+<li><p><strong>秩亏回归</strong>：当 <span class="math inline">\(X\)</span> 不满秩时，QR分解可通过列旋转揭示秩缺陷。</p></li>
+</ol>
+<p><strong>稳定性分析</strong>： QR分解的数值稳定性源于正交变换的范数保持性质。对于最小二乘问题，解 <span class="math inline">\(\hat{\pmb{\beta}}\)</span> 的相对误差满足： <span class="math display">\[
+\frac{\|\Delta\hat{\pmb{\beta}}\|}{\|\hat{\pmb{\beta}}\|} \leq \kappa(X)\left(\frac{\|\Delta X\|}{\|X\|} + \frac{\|\Delta\pmb{y}\|}{\|\pmb{y}\|}\right) + O(\epsilon^2)
+\]</span> 其中 <span class="math inline">\(\kappa(X) = \|X\|\|X^+\|\)</span> 是条件数，<span class="math inline">\(X^+\)</span> 是伪逆。这比基于正规方程的方法（条件数为 <span class="math inline">\(\kappa(X)^2\)</span>）有显著改进。</p>
+</section>
+<section id="奇异值分解诊断与稳健计算的终极工具" class="level3">
+<h3 class="anchored" data-anchor-id="奇异值分解诊断与稳健计算的终极工具">17.2.4 奇异值分解：诊断与稳健计算的终极工具</h3>
+<p><strong>数学定义</strong>：对于任意矩阵 <span class="math inline">\(A \in \mathbb{R}^{m \times n}\)</span>，SVD分解为： <span class="math display">\[
+A = U\Sigma V'
+\]</span> 其中： - <span class="math inline">\(U \in \mathbb{R}^{m \times m}\)</span>，<span class="math inline">\(U'U = UU' = I_m\)</span> - <span class="math inline">\(V \in \mathbb{R}^{n \times n}\)</span>，<span class="math inline">\(V'V = VV' = I_n\)</span> - <span class="math inline">\(\Sigma \in \mathbb{R}^{m \times n}\)</span>，对角矩阵，对角线元素 <span class="math inline">\(\sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_r \geq 0\)</span> 为奇异值，<span class="math inline">\(r = \text{rank}(A)\)</span></p>
+<p><strong>计量应用</strong>： 1. <strong>条件数诊断</strong>：矩阵 <span class="math inline">\(A\)</span> 的2-范数条件数定义为： <span class="math display">\[
+   \kappa_2(A) = \frac{\sigma_{\max}(A)}{\sigma_{\min}(A)} = \frac{\sigma_1}{\sigma_r}
+   \]</span> 当 <span class="math inline">\(\kappa_2(A)\)</span> 很大时（如 <span class="math inline">\(&gt;10^3\)</span>），问题病态，OLS估计可能不可靠。</p>
+<ol start="2" type="1">
+<li><p><strong>主成分回归</strong>：对于病态设计矩阵 <span class="math inline">\(X\)</span>，可构造： <span class="math display">\[
+\hat{\pmb{\beta}}_{\text{PCR}} = \sum_{i=1}^k \frac{\pmb{u}_i'\pmb{y}}{\sigma_i}\pmb{v}_i, \quad k &lt; r
+\]</span> 其中截断小奇异值相当于施加平滑约束。</p></li>
+<li><p><strong>广义逆计算</strong>：Moore-Penrose伪逆为： <span class="math display">\[
+A^+ = V\Sigma^+ U' = \sum_{i=1}^r \frac{1}{\sigma_i}\pmb{v}_i\pmb{u}_i'
+\]</span></p></li>
+<li><p><strong>降维技术</strong>：主成分分析本质上是协方差矩阵的SVD。</p></li>
+</ol>
+<p><strong>数值性质</strong>： - 计算成本：<span class="math inline">\(O(mn^2)\)</span> 对 <span class="math inline">\(m \geq n\)</span>，比QR分解昂贵 - 稳定性：非常稳定，可可靠计算秩和零空间 - 截断误差：秩 <span class="math inline">\(k\)</span> 近似 <span class="math inline">\(A_k = \sum_{i=1}^k \sigma_i\pmb{u}_i\pmb{v}_i'\)</span> 满足： <span class="math display">\[
+  \|A - A_k\|_2 = \sigma_{k+1}, \quad \|A - A_k\|_F = \sqrt{\sum_{i=k+1}^r \sigma_i^2}
+  \]</span></p>
+</section>
+<section id="矩阵分解方法的选择策略" class="level3">
+<h3 class="anchored" data-anchor-id="矩阵分解方法的选择策略">17.2.5 矩阵分解方法的选择策略</h3>
+<p>选择适当的矩阵分解需要综合考虑问题结构、数值要求和计算约束。图@ref(fig:decomp-decision)展示了基于问题特性的决策流程。</p>
+<p><strong>关键决策因素</strong>： 1. <strong>矩阵结构</strong>：是否对称？是否正定？ 2. <strong>问题类型</strong>：线性方程组？最小二乘？特征值问题？ 3. <strong>数值要求</strong>：是否需要最大稳定性？是否需要秩信息？ 4. <strong>计算资源</strong>：矩阵规模？可用内存？时间限制？</p>
+<p><strong>实用指南</strong>： - 对于对称正定线性系统：<strong>Cholesky分解</strong>（高效稳定） - 对于一般线性最小二乘：<strong>QR分解</strong>（稳定性与效率的平衡） - 对于病态或秩亏问题：<strong>SVD分解</strong>（最大稳定性，完整诊断） - 对于大规模稀疏问题：考虑稀疏矩阵格式和专门分解</p>
+</section>
+</section>
+<section id="无约束优化算法寻找函数的极值" class="level2">
+<h2 class="anchored" data-anchor-id="无约束优化算法寻找函数的极值">17.3 无约束优化算法：寻找函数的极值</h2>
+<section id="优化问题的数学框架与最优性条件" class="level3">
+<h3 class="anchored" data-anchor-id="优化问题的数学框架与最优性条件">17.3.1 优化问题的数学框架与最优性条件</h3>
+<p>考虑无约束优化问题： <span class="math display">\[
+\min_{\pmb{\theta} \in \mathbb{R}^p} f(\pmb{\theta})
+\]</span> 其中 <span class="math inline">\(f: \mathbb{R}^p \rightarrow \mathbb{R}\)</span> 是二阶连续可微的目标函数。</p>
+<p><strong>一阶必要条件</strong>（驻点条件）：若 <span class="math inline">\(\pmb{\theta}^*\)</span> 是局部极小点，则 <span class="math display">\[
+\nabla f(\pmb{\theta}^*) = \pmb{0}
+\]</span> 其中 <span class="math inline">\(\nabla f(\pmb{\theta}) = \left(\frac{\partial f}{\partial \theta_1}, \ldots, \frac{\partial f}{\partial \theta_p}\right)'\)</span> 是梯度向量。</p>
+<p><strong>二阶充分条件</strong>：若 <span class="math inline">\(\pmb{\theta}^*\)</span> 满足： 1. <span class="math inline">\(\nabla f(\pmb{\theta}^*) = \pmb{0}\)</span> 2. <span class="math inline">\(\nabla^2 f(\pmb{\theta}^*) \succ 0\)</span>（Hessian矩阵正定）</p>
+<p>则 <span class="math inline">\(\pmb{\theta}^*\)</span> 是严格局部极小点。</p>
+<p><strong>收敛速度的度量</strong>： 设迭代序列 <span class="math inline">\(\{\pmb{\theta}_k\}\)</span> 收敛到 <span class="math inline">\(\pmb{\theta}^*\)</span>，定义收敛速率： - 线性收敛：<span class="math inline">\(\|\pmb{\theta}_{k+1} - \pmb{\theta}^*\| \leq c\|\pmb{\theta}_k - \pmb{\theta}^*\|\)</span>，<span class="math inline">\(0 &lt; c &lt; 1\)</span> - 超线性收敛：<span class="math inline">\(\lim_{k\to\infty} \frac{\|\pmb{\theta}_{k+1} - \pmb{\theta}^*\|}{\|\pmb{\theta}_k - \pmb{\theta}^*\|} = 0\)</span> - 二次收敛：<span class="math inline">\(\|\pmb{\theta}_{k+1} - \pmb{\theta}^*\| \leq M\|\pmb{\theta}_k - \pmb{\theta}^*\|^2\)</span>，<span class="math inline">\(M &gt; 0\)</span></p>
+</section>
+<section id="迭代优化算法的通用架构" class="level3">
+<h3 class="anchored" data-anchor-id="迭代优化算法的通用架构">17.3.2 迭代优化算法的通用架构</h3>
+<p>大多数迭代优化算法遵循以下模板：</p>
+<ol type="1">
+<li><strong>初始化</strong>：选择初始点 <span class="math inline">\(\pmb{\theta}_0\)</span>，设定收敛容差 <span class="math inline">\(\epsilon &gt; 0\)</span></li>
+<li><strong>迭代循环</strong>（<span class="math inline">\(k=0,1,2,\ldots\)</span>）：
+<ol type="a">
+<li><strong>方向计算</strong>：确定搜索方向 <span class="math inline">\(\pmb{p}_k\)</span></li>
+<li><strong>步长选择</strong>：确定步长 <span class="math inline">\(\alpha_k &gt; 0\)</span></li>
+<li><strong>参数更新</strong>：<span class="math inline">\(\pmb{\theta}_{k+1} = \pmb{\theta}_k + \alpha_k\pmb{p}_k\)</span></li>
+<li><strong>收敛检验</strong>：若 <span class="math inline">\(\|\nabla f(\pmb{\theta}_{k+1})\| &lt; \epsilon\)</span> 或满足其他停止准则，则终止</li>
+</ol></li>
+<li><strong>输出</strong>：返回近似解 <span class="math inline">\(\pmb{\theta}_{k+1}\)</span></li>
+</ol>
+<p>不同算法的区别主要在于方向 <span class="math inline">\(\pmb{p}_k\)</span> 的计算方式。</p>
+</section>
+<section id="梯度下降法基础但重要的基准方法" class="level3">
+<h3 class="anchored" data-anchor-id="梯度下降法基础但重要的基准方法">17.3.3 梯度下降法：基础但重要的基准方法</h3>
+<p><strong>算法原理</strong>：梯度下降法使用目标函数的负梯度作为搜索方向： <span class="math display">\[
+\pmb{p}_k = -\nabla f(\pmb{\theta}_k)
+\]</span> 更新公式为： <span class="math display">\[
+\pmb{\theta}_{k+1} = \pmb{\theta}_k - \alpha_k \nabla f(\pmb{\theta}_k)
+\]</span></p>
+<p><strong>步长选择策略</strong>： 1. <strong>固定步长</strong>：<span class="math inline">\(\alpha_k \equiv \alpha\)</span>，简单但不适应曲率变化 2. <strong>精确线搜索</strong>：<span class="math inline">\(\alpha_k = \arg\min_{\alpha&gt;0} f(\pmb{\theta}_k + \alpha\pmb{p}_k)\)</span>，计算成本高 3. <strong>回溯线搜索</strong>（Armijo准则）：选择 <span class="math inline">\(\alpha_k\)</span> 使得： <span class="math display">\[
+   f(\pmb{\theta}_k + \alpha_k\pmb{p}_k) \leq f(\pmb{\theta}_k) + c\alpha_k\nabla f(\pmb{\theta}_k)'\pmb{p}_k
+   \]</span> 其中 <span class="math inline">\(c \in (0,1)\)</span>，通常 <span class="math inline">\(c=10^{-4}\)</span></p>
+<p><strong>收敛性质</strong>： - 对于强凸且L-光滑函数（<span class="math inline">\(\mu I \preceq \nabla^2 f(\pmb{\theta}) \preceq LI\)</span>），梯度下降法线性收敛： <span class="math display">\[
+  f(\pmb{\theta}_k) - f(\pmb{\theta}^*) \leq \left(1 - \frac{\mu}{L}\right)^k [f(\pmb{\theta}_0) - f(\pmb{\theta}^*)]
+  \]</span> - 收敛速率取决于条件数 <span class="math inline">\(\kappa = L/\mu\)</span>，<span class="math inline">\(\kappa\)</span> 越大收敛越慢 - 实际应用中常因条件数大而表现不佳</p>
+<p><strong>在计量经济学中的角色</strong>： 虽然梯度下降法很少作为最终求解器，但它作为： 1. <strong>基准方法</strong>：用于对比更复杂算法的性能 2. <strong>预处理步骤</strong>：在更精细算法前进行粗略优化 3. <strong>随机变体</strong>：随机梯度下降是大规模机器学习的基础</p>
+</section>
+<section id="牛顿法利用曲率信息的快速方法" class="level3">
+<h3 class="anchored" data-anchor-id="牛顿法利用曲率信息的快速方法">17.3.4 牛顿法：利用曲率信息的快速方法</h3>
+<p><strong>算法原理</strong>：牛顿法基于目标函数的二阶泰勒展开： <span class="math display">\[
+f(\pmb{\theta}_k + \pmb{p}) \approx f(\pmb{\theta}_k) + \nabla f(\pmb{\theta}_k)'\pmb{p} + \frac{1}{2}\pmb{p}'\nabla^2 f(\pmb{\theta}_k)\pmb{p}
+\]</span> 最小化该二次近似得到牛顿方向： <span class="math display">\[
+\pmb{p}_k^{\text{Newton}} = -[\nabla^2 f(\pmb{\theta}_k)]^{-1}\nabla f(\pmb{\theta}_k)
+\]</span></p>
+<p><strong>算法特性</strong>： 1. <strong>收敛速度</strong>：在解附近，若 <span class="math inline">\(\nabla^2 f(\pmb{\theta}^*)\)</span> 正定且Lipschitz连续，则牛顿法二次收敛： <span class="math display">\[
+   \|\pmb{\theta}_{k+1} - \pmb{\theta}^*\| \leq M\|\pmb{\theta}_k - \pmb{\theta}^*\|^2
+   \]</span></p>
+<ol start="2" type="1">
+<li><p><strong>不变性</strong>：牛顿法在参数仿射变换下不变，而梯度下降法不变。</p></li>
+<li><p><strong>计算需求</strong>：每步需要计算Hessian矩阵 <span class="math inline">\(\nabla^2 f(\pmb{\theta}_k)\)</span> 并求解线性系统，复杂度 <span class="math inline">\(O(p^3)\)</span>。</p></li>
+</ol>
+<p><strong>数值实现的关键问题</strong>： 1. <strong>Hessian正定性</strong>：牛顿方向是下降方向当且仅当 <span class="math inline">\(\nabla^2 f(\pmb{\theta}_k)\)</span> 正定。在非凸区域可能不成立。 2. <strong>线性系统求解</strong>：需要稳定求解 <span class="math inline">\(\nabla^2 f(\pmb{\theta}_k)\pmb{p} = -\nabla f(\pmb{\theta}_k)\)</span>，通常使用： - Cholesky分解（如果Hessian正定） - LU分解（一般情况） - QR/SVD分解（病态情况） 3. <strong>步长控制</strong>：纯牛顿步（<span class="math inline">\(\alpha_k=1\)</span>）可能不下降，需结合线搜索。</p>
+<p><strong>修正牛顿法</strong>： 为保证下降方向和数值稳定性，常用修正策略： 1. <strong>阻尼牛顿法</strong>：<span class="math inline">\(\pmb{p}_k = -(\nabla^2 f(\pmb{\theta}_k) + \mu_k I)^{-1}\nabla f(\pmb{\theta}_k)\)</span>，<span class="math inline">\(\mu_k \geq 0\)</span> 2. <strong>修改Cholesky分解</strong>：将Hessian分解为 <span class="math inline">\(LDL'\)</span> 并确保 <span class="math inline">\(D\)</span> 的对角元足够正</p>
+<p><strong>在计量经济学中的应用</strong>： 牛顿法是极大似然估计的<strong>标准算法</strong>，因为： 1. MLE的渐近性质保证Hessian在解附近正定（等于信息矩阵的负值） 2. 二次收敛意味着很少迭代即可达到高精度 3. 计算Hessian的额外成本常被快速收敛所抵消</p>
+</section>
+<section id="拟牛顿法平衡效率与稳定性的计量主力" class="level3">
+<h3 class="anchored" data-anchor-id="拟牛顿法平衡效率与稳定性的计量主力">17.3.5 拟牛顿法：平衡效率与稳定性的计量主力</h3>
+<p><strong>核心思想</strong>：拟牛顿法构造Hessian矩阵的近似 <span class="math inline">\(B_k \approx \nabla^2 f(\pmb{\theta}_k)\)</span> 或其逆 <span class="math inline">\(H_k \approx [\nabla^2 f(\pmb{\theta}_k)]^{-1}\)</span>，仅使用一阶信息（梯度）更新。</p>
+<p><strong>拟牛顿条件</strong>（割线方程）： <span class="math display">\[
+B_{k+1}(\pmb{\theta}_{k+1} - \pmb{\theta}_k) = \nabla f(\pmb{\theta}_{k+1}) - \nabla f(\pmb{\theta}_k)
+\]</span> 记 <span class="math inline">\(\pmb{s}_k = \pmb{\theta}_{k+1} - \pmb{\theta}_k\)</span>，<span class="math inline">\(\pmb{y}_k = \nabla f(\pmb{\theta}_{k+1}) - \nabla f(\pmb{\theta}_k)\)</span>，则条件为： <span class="math display">\[
+B_{k+1}\pmb{s}_k = \pmb{y}_k
+\]</span></p>
+<p><strong>BFGS公式</strong>（Broyden-Fletcher-Goldfarb-Shanno）： 这是最成功的拟牛顿更新之一。逆Hessian近似 <span class="math inline">\(H_k = B_k^{-1}\)</span> 的BFGS更新为： <span class="math display">\[
+H_{k+1} = \left(I - \frac{\pmb{s}_k\pmb{y}_k'}{\pmb{y}_k'\pmb{s}_k}\right)H_k\left(I - \frac{\pmb{y}_k\pmb{s}_k'}{\pmb{y}_k'\pmb{s}_k}\right) + \frac{\pmb{s}_k\pmb{s}_k'}{\pmb{y}_k'\pmb{s}_k}
+\]</span></p>
+<p><strong>BFGS的性质</strong>： 1. <strong>正定性保持</strong>：若 <span class="math inline">\(H_k \succ 0\)</span> 且 <span class="math inline">\(\pmb{y}_k'\pmb{s}_k &gt; 0\)</span>（曲率条件），则 <span class="math inline">\(H_{k+1} \succ 0\)</span> 2. <strong>超线性收敛</strong>：在适当条件下，BFGS超线性收敛 3. <strong>自我校正</strong>：BFGS更新能自动纠正近似误差 4. <strong>计算效率</strong>：每步 <span class="math inline">\(O(p^2)\)</span> 操作，无需计算或存储Hessian</p>
+<p><strong>L-BFGS</strong>（有限内存BFGS）： 对于大规模问题（<span class="math inline">\(p\)</span> 很大），存储 <span class="math inline">\(p \times p\)</span> 矩阵 <span class="math inline">\(H_k\)</span> 不可行。L-BFGS只保存最近的 <span class="math inline">\(m\)</span> 组 <span class="math inline">\((\pmb{s}_i, \pmb{y}_i)\)</span> 对（通常 <span class="math inline">\(m=5\sim20\)</span>），通过递归公式计算矩阵-向量乘积 <span class="math inline">\(H_k\nabla f(\pmb{\theta}_k)\)</span>。</p>
+<p><strong>双循环递归算法</strong>： L-BFGS通过以下两步计算搜索方向 <span class="math inline">\(\pmb{p}_k = -H_k\nabla f(\pmb{\theta}_k)\)</span>： 1. <strong>前向循环</strong>：利用最近的历史信息 2. <strong>后向循环</strong>：对称地应用更新</p>
+<p>复杂度为 <span class="math inline">\(O(mp)\)</span>，内存需求 <span class="math inline">\(O(mp)\)</span>。</p>
+<p><strong>SR1公式</strong>（对称秩1更新）： 另一种重要的拟牛顿更新： <span class="math display">\[
+B_{k+1} = B_k + \frac{(\pmb{y}_k - B_k\pmb{s}_k)(\pmb{y}_k - B_k\pmb{s}_k)'}{(\pmb{y}_k - B_k\pmb{s}_k)'\pmb{s}_k}
+\]</span> SR1不强制正定性，但有时能产生更好的Hessian近似，特别在非凸问题中。</p>
+<p><strong>拟牛顿法的计量应用</strong>： 在计量经济学中，拟牛顿法尤其是BFGS，通常是<strong>极大似然估计的首选算法</strong>，因为： 1. 避免了Hessian的计算，对复杂模型特别有利 2. 保持了牛顿法的快速收敛特性 3. 对线搜索不敏感，实现相对简单 4. 软件包（如Stata的<code>ml</code>、R的<code>optim</code>）常默认使用BFGS或其变体</p>
+</section>
+</section>
+<section id="稳健与专用优化策略" class="level2">
+<h2 class="anchored" data-anchor-id="稳健与专用优化策略">17.4 稳健与专用优化策略</h2>
+<section id="信任域法鲁棒的牛顿类方法" class="level3">
+<h3 class="anchored" data-anchor-id="信任域法鲁棒的牛顿类方法">17.4.1 信任域法：鲁棒的牛顿类方法</h3>
+<p><strong>基本思想</strong>：信任域法在每次迭代中，在当前点 <span class="math inline">\(\pmb{\theta}_k\)</span> 周围定义一个信任域 <span class="math inline">\(\|\pmb{d}\| \leq \Delta_k\)</span>，在这个区域内优化局部模型。相比线搜索方法（先定方向再找步长），信任域法同时确定方向和步长。</p>
+<p><strong>数学表述</strong>：在第 <span class="math inline">\(k\)</span> 步，求解子问题： <span class="math display">\[
+\min_{\pmb{d} \in \mathbb{R}^p} m_k(\pmb{d}) = f(\pmb{\theta}_k) + \nabla f(\pmb{\theta}_k)'\pmb{d} + \frac{1}{2}\pmb{d}'B_k\pmb{d}
+\]</span> <span class="math display">\[
+\text{s.t.} \quad \|\pmb{d}\| \leq \Delta_k
+\]</span> 其中 <span class="math inline">\(B_k\)</span> 是Hessian或其近似，<span class="math inline">\(\|\cdot\|\)</span> 通常是欧几里得范数或其对等范数。</p>
+<p><strong>算法框架</strong>： 1. <strong>模型选择</strong>：构造局部二次模型 <span class="math inline">\(m_k(\pmb{d})\)</span> 2. <strong>子问题求解</strong>：在信任域内最小化 <span class="math inline">\(m_k(\pmb{d})\)</span> 3. <strong>接受性检验</strong>：计算实际下降与预测下降的比率： <span class="math display">\[
+   \rho_k = \frac{f(\pmb{\theta}_k) - f(\pmb{\theta}_k + \pmb{d}_k)}{m_k(\pmb{0}) - m_k(\pmb{d}_k)}
+   \]</span> 4. <strong>信任域调整</strong>： - 若 <span class="math inline">\(\rho_k\)</span> 接近1，接受步长，可能扩大 <span class="math inline">\(\Delta_k\)</span> - 若 <span class="math inline">\(\rho_k\)</span> 很小，拒绝步长，缩小 <span class="math inline">\(\Delta_k\)</span> - 若 <span class="math inline">\(\rho_k\)</span> 中等，接受步长，保持 <span class="math inline">\(\Delta_k\)</span></p>
+<p><strong>子问题求解方法</strong>： 1. <strong>柯西点法</strong>：沿最速下降方向到信任域边界 2. <strong>狗腿法</strong>：沿最速下降方向与牛顿方向的折衷路径 3. <strong>截断共轭梯度法</strong>：在边界内应用共轭梯度法 4. <strong>精确解</strong>：通过求解 <span class="math inline">\(\nabla m_k(\pmb{d}) = -\lambda\pmb{d}\)</span>，<span class="math inline">\(\lambda \geq 0\)</span></p>
+<p><strong>优势与应用场景</strong>： 1. <strong>鲁棒性强</strong>：对初始点和非凸区域不敏感 2. <strong>处理不定Hessian</strong>：信任域约束自然处理不定二次模型 3. <strong>适用于非线性最小二乘</strong>：在Gauss-Newton和Levenberg-Marquardt算法中特别有效 4. <strong>计量应用</strong>：常用于复杂的结构方程模型、非凸似然函数</p>
+<p><strong>Levenberg-Marquardt算法</strong>：非线性最小二乘的信任域特例，其中： <span class="math display">\[
+B_k = J_k'J_k + \lambda_k I
+\]</span> <span class="math inline">\(J_k\)</span> 是残差函数的雅可比矩阵，<span class="math inline">\(\lambda_k\)</span> 控制信任域大小。</p>
+</section>
+<section id="nelder-mead单纯形法无导数优化" class="level3">
+<h3 class="anchored" data-anchor-id="nelder-mead单纯形法无导数优化">17.4.2 Nelder-Mead单纯形法：无导数优化</h3>
+<p><strong>算法思想</strong>：Nelder-Mead法（下坡单纯形法）通过比较单纯形顶点的函数值，进行反射、扩张、收缩等几何操作，适用于导数不可用、不可靠或计算昂贵的情况。</p>
+<p><strong>算法步骤</strong>： 设单纯形有 <span class="math inline">\(p+1\)</span> 个顶点 <span class="math inline">\(\pmb{\theta}_0, \pmb{\theta}_1, \ldots, \pmb{\theta}_p\)</span>，对应函数值 <span class="math inline">\(f_0 \leq f_1 \leq \cdots \leq f_p\)</span>。</p>
+<ol type="1">
+<li><strong>排序</strong>：<span class="math inline">\(f(\pmb{\theta}_0) \leq f(\pmb{\theta}_1) \leq \cdots \leq f(\pmb{\theta}_p)\)</span></li>
+<li><strong>计算重心</strong>：<span class="math inline">\(\bar{\pmb{\theta}} = \frac{1}{p}\sum_{i=0}^{p-1} \pmb{\theta}_i\)</span>（排除最差点 <span class="math inline">\(\pmb{\theta}_p\)</span>）</li>
+<li><strong>反射</strong>：<span class="math inline">\(\pmb{\theta}_r = \bar{\pmb{\theta}} + \alpha(\bar{\pmb{\theta}} - \pmb{\theta}_p)\)</span>，<span class="math inline">\(\alpha &gt; 0\)</span>（通常 <span class="math inline">\(\alpha=1\)</span>）</li>
+<li><strong>决策</strong>：
+<ul>
+<li>若 <span class="math inline">\(f_0 \leq f_r &lt; f_{p-1}\)</span>：用 <span class="math inline">\(\pmb{\theta}_r\)</span> 替换 <span class="math inline">\(\pmb{\theta}_p\)</span></li>
+<li>若 <span class="math inline">\(f_r &lt; f_0\)</span>：<strong>扩张</strong>：<span class="math inline">\(\pmb{\theta}_e = \bar{\pmb{\theta}} + \gamma(\pmb{\theta}_r - \bar{\pmb{\theta}})\)</span>，<span class="math inline">\(\gamma &gt; 1\)</span>（通常 <span class="math inline">\(\gamma=2\)</span>）
+<ul>
+<li>若 <span class="math inline">\(f_e &lt; f_r\)</span>：接受 <span class="math inline">\(\pmb{\theta}_e\)</span></li>
+<li>否则：接受 <span class="math inline">\(\pmb{\theta}_r\)</span></li>
+</ul></li>
+<li>若 <span class="math inline">\(f_r \geq f_{p-1}\)</span>：<strong>收缩</strong>：
+<ul>
+<li>若 <span class="math inline">\(f_r &lt; f_p\)</span>：外收缩 <span class="math inline">\(\pmb{\theta}_c = \bar{\pmb{\theta}} + \beta(\pmb{\theta}_r - \bar{\pmb{\theta}})\)</span>，<span class="math inline">\(\beta \in (0,1)\)</span>（通常 <span class="math inline">\(\beta=0.5\)</span>）</li>
+<li>若 <span class="math inline">\(f_r \geq f_p\)</span>：内收缩 <span class="math inline">\(\pmb{\theta}_c = \bar{\pmb{\theta}} + \beta(\pmb{\theta}_p - \bar{\pmb{\theta}})\)</span></li>
+<li>若 <span class="math inline">\(f_c &lt; \min(f_r, f_p)\)</span>：接受 <span class="math inline">\(\pmb{\theta}_c\)</span></li>
+<li>否则：<strong>缩小</strong>单纯形，向最好点 <span class="math inline">\(\pmb{\theta}_0\)</span> 收缩</li>
+</ul></li>
+</ul></li>
+</ol>
+<p><strong>算法特性</strong>： 1. <strong>无需求导</strong>：只依赖函数值比较 2. <strong>适应性强</strong>：能处理不连续、不可微函数 3. <strong>收敛性</strong>：理论上可能不收敛到驻点，实践中常有效 4. <strong>维度限制</strong>：通常适用于 <span class="math inline">\(p \leq 10\)</span> 的中小规模问题</p>
+<p><strong>计量应用</strong>： 1. <strong>初始值生成</strong>：为梯度基方法提供好的起点 2. <strong>非标准模型</strong>：目标函数不可微或导数难以计算时 3. <strong>模型调试</strong>：快速获得参数的大致范围 4. <strong>鲁棒估计</strong>：某些稳健估计量（如LAD）的求解</p>
+</section>
+<section id="em算法潜变量与缺失数据问题的专用框架" class="level3">
+<h3 class="anchored" data-anchor-id="em算法潜变量与缺失数据问题的专用框架">17.4.3 EM算法：潜变量与缺失数据问题的专用框架</h3>
+<p><strong>问题背景</strong>：当观测数据 <span class="math inline">\(\pmb{y}\)</span> 不完整，存在缺失数据或潜变量 <span class="math inline">\(\pmb{z}\)</span> 时，直接最大化观测数据似然 <span class="math inline">\(f(\pmb{y};\pmb{\theta})\)</span> 可能困难。EM算法通过引入完整数据 <span class="math inline">\((\pmb{y},\pmb{z})\)</span> 简化问题。</p>
+<p><strong>算法框架</strong>： 给定当前估计 <span class="math inline">\(\pmb{\theta}^{(t)}\)</span>，EM算法迭代： 1. <strong>E步（期望步）</strong>：计算Q函数： <span class="math display">\[
+   Q(\pmb{\theta}|\pmb{\theta}^{(t)}) = \mathbb{E}_{\pmb{z}|\pmb{y},\pmb{\theta}^{(t)}}[\ln f(\pmb{y},\pmb{z};\pmb{\theta})]
+   \]</span> 2. <strong>M步（最大化步）</strong>：更新参数： <span class="math display">\[
+   \pmb{\theta}^{(t+1)} = \arg\max_{\pmb{\theta}} Q(\pmb{\theta}|\pmb{\theta}^{(t)})
+   \]</span></p>
+<p><strong>收敛性质</strong>： 1. <strong>单调性</strong>：观测数据似然不减：<span class="math inline">\(\ell(\pmb{\theta}^{(t+1)};\pmb{y}) \geq \ell(\pmb{\theta}^{(t)};\pmb{y})\)</span> 2. <strong>收敛到驻点</strong>：在适当条件下，<span class="math inline">\(\pmb{\theta}^{(t)}\)</span> 收敛到似然函数的驻点 3. <strong>收敛速度</strong>：线性收敛，速度依赖于信息缺失比例</p>
+<p><strong>EM作为优化算法</strong>： 可将EM视为一种特殊的优化算法，其中： - 方向：由Q函数与当前似然的梯度差决定 - 步长：隐式由E步和M步确定</p>
+<p><strong>加速变体</strong>： 1. <strong>ECM</strong>（期望条件最大化）：将M步分解为多个条件最大化，简化计算 2. <strong>ECME</strong>（期望条件最大化要么）：某些条件最大化直接针对观测似然而非Q函数 3. <strong>PX-EM</strong>（参数扩展EM）：引入辅助参数加速收敛</p>
+<p><strong>计量应用</strong>： 1. <strong>混合模型</strong>：有限混合分布、隐马尔可夫模型 2. <strong>面板数据</strong>：带有个体效应的非线性面板模型 3. <strong>生存分析</strong>：包含删失数据的模型 4. <strong>因子分析</strong>：潜变量结构方程模型</p>
+</section>
+<section id="坐标下降法与近端梯度法高维稀疏模型求解" class="level3">
+<h3 class="anchored" data-anchor-id="坐标下降法与近端梯度法高维稀疏模型求解">17.4.4 坐标下降法与近端梯度法：高维稀疏模型求解</h3>
+<p><strong>坐标下降法原理</strong>：每次迭代只优化一个坐标（变量），固定其他坐标： <span class="math display">\[
+\theta_j^{(k+1)} = \arg\min_{\theta_j} f(\theta_1^{(k+1)}, \ldots, \theta_{j-1}^{(k+1)}, \theta_j, \theta_{j+1}^{(k)}, \ldots, \theta_p^{(k)})
+\]</span> 循环或随机遍历所有坐标。</p>
+<p><strong>收敛条件</strong>： 1. 若 <span class="math inline">\(f\)</span> 凸且可微，且每个坐标最小化有唯一解，则收敛到全局最优 2. 对于非凸问题，收敛到驻点</p>
+<p><strong>计算优势</strong>： 1. <strong>子问题简单</strong>：单变量优化可能有解析解 2. <strong>内存效率</strong>：每步只更新一个变量 3. <strong>并行潜力</strong>：某些变体可并行计算</p>
+<p><strong>LASSO问题的坐标下降</strong>： 考虑LASSO问题： <span class="math display">\[
+\min_{\pmb{\beta}} \frac{1}{2n}\|\pmb{y} - X\pmb{\beta}\|^2 + \lambda\|\pmb{\beta}\|_1
+\]</span> 坐标更新公式为： <span class="math display">\[
+\beta_j^{\text{new}} = S\left(\frac{1}{n}\sum_{i=1}^n x_{ij}\left(y_i - \sum_{k\neq j} x_{ik}\beta_k\right), \lambda\right)
+\]</span> 其中 <span class="math inline">\(S(z,\lambda) = \text{sign}(z)(|z| - \lambda)_+\)</span> 是软阈值函数。</p>
+<p><strong>近端梯度法</strong>：适用于复合优化问题： <span class="math display">\[
+\min_{\pmb{\theta}} f(\pmb{\theta}) = g(\pmb{\theta}) + h(\pmb{\theta})
+\]</span> 其中 <span class="math inline">\(g\)</span> 可微，<span class="math inline">\(h\)</span> 可能不可微但”简单”（近端算子易计算）。</p>
+<p><strong>迭代格式</strong>： <span class="math display">\[
+\pmb{\theta}^{(k+1)} = \text{prox}_{\alpha h}\left(\pmb{\theta}^{(k)} - \alpha\nabla g(\pmb{\theta}^{(k)})\right)
+\]</span> 其中近端算子定义为： <span class="math display">\[
+\text{prox}_{\alpha h}(\pmb{v}) = \arg\min_{\pmb{\theta}} \left\{h(\pmb{\theta}) + \frac{1}{2\alpha}\|\pmb{\theta} - \pmb{v}\|^2\right\}
+\]</span></p>
+<p><strong>FISTA</strong>（快速迭代收缩阈值算法）： Nesterov加速的近端梯度法，用于LASSO等问题，达到最优收敛速率 <span class="math inline">\(O(1/k^2)\)</span>。</p>
+<p><strong>计量应用</strong>： 1. <strong>高维回归</strong>：LASSO、弹性网、稀疏组LASSO 2. <strong>结构方程模型</strong>：带稀疏约束的协方差矩阵估计 3. <strong>时间序列</strong>：向量自回归的稀疏估计 4. <strong>图形模型</strong>：高斯图模型的结构学习</p>
+</section>
+</section>
+<section id="综合应用计量估计的数值实现策略" class="level2">
+<h2 class="anchored" data-anchor-id="综合应用计量估计的数值实现策略">17.5 综合应用：计量估计的数值实现策略</h2>
+<section id="极大似然估计的完整数值流程" class="level3">
+<h3 class="anchored" data-anchor-id="极大似然估计的完整数值流程">17.5.1 极大似然估计的完整数值流程</h3>
+<p>以Logit模型为例，展示MLE的系统化实现策略。</p>
+<p><strong>模型设定</strong>： 二值选择模型 <span class="math inline">\(y_i \in \{0,1\}\)</span>，条件概率： <span class="math display">\[
+P(y_i=1|\pmb{x}_i) = \Lambda(\pmb{x}_i'\pmb{\beta}) = \frac{\exp(\pmb{x}_i'\pmb{\beta})}{1 + \exp(\pmb{x}_i'\pmb{\beta})}
+\]</span> 对数似然函数： <span class="math display">\[
+\ell(\pmb{\beta}) = \sum_{i=1}^n \left[y_i \ln \Lambda(\pmb{x}_i'\pmb{\beta}) + (1-y_i)\ln(1-\Lambda(\pmb{x}_i'\pmb{\beta}))\right]
+\]</span></p>
+<p><strong>梯度与Hessian</strong>： 记 <span class="math inline">\(p_i = \Lambda(\pmb{x}_i'\pmb{\beta})\)</span>，则有： <span class="math display">\[
+\nabla\ell(\pmb{\beta}) = \sum_{i=1}^n (y_i - p_i)\pmb{x}_i = X'(\pmb{y} - \pmb{p})
+\]</span> <span class="math display">\[
+\nabla^2\ell(\pmb{\beta}) = -\sum_{i=1}^n p_i(1-p_i)\pmb{x}_i\pmb{x}_i' = -X'DX
+\]</span> 其中 <span class="math inline">\(D = \text{diag}\{p_i(1-p_i)\}\)</span>。</p>
+<p><strong>数值实现策略</strong>：</p>
+<ol type="1">
+<li><p><strong>初始值选择</strong>：</p>
+<ul>
+<li>使用线性概率模型：<span class="math inline">\(\pmb{\beta}^{(0)} = (X'X)^{-1}X'\pmb{y}\)</span></li>
+<li>或零向量：<span class="math inline">\(\pmb{\beta}^{(0)} = \pmb{0}\)</span></li>
+</ul></li>
+<li><p><strong>优化算法选择</strong>：</p>
+<ul>
+<li><strong>牛顿法</strong>：需要计算和求逆Hessian，由于 <span class="math inline">\(-X'DX\)</span> 半负定，牛顿方向： <span class="math display">\[
+\pmb{\beta}^{(k+1)} = \pmb{\beta}^{(k)} + (X'D^{(k)}X)^{-1}X'(\pmb{y} - \pmb{p}^{(k)})
+\]</span> 这是<strong>迭代加权最小二乘</strong>（IRLS）形式。</li>
+<li><strong>拟牛顿法（BFGS）</strong>：避免构造和求逆Hessian，内存效率高。</li>
+<li><strong>信任域法</strong>：当 <span class="math inline">\(X'DX\)</span> 接近奇异时更稳定。</li>
+</ul></li>
+<li><p><strong>收敛准则</strong>：</p>
+<ul>
+<li>梯度范数：<span class="math inline">\(\|\nabla\ell(\pmb{\beta}^{(k)})\| &lt; \epsilon_1\)</span></li>
+<li>参数变化：<span class="math inline">\(\|\pmb{\beta}^{(k+1)} - \pmb{\beta}^{(k)}\| &lt; \epsilon_2(1+\|\pmb{\beta}^{(k)}\|)\)</span></li>
+<li>函数值变化：<span class="math inline">\(|\ell(\pmb{\beta}^{(k+1)}) - \ell(\pmb{\beta}^{(k)})| &lt; \epsilon_3(1+|\ell(\pmb{\beta}^{(k)})|)\)</span></li>
+</ul></li>
+<li><p><strong>数值稳定性措施</strong>：</p>
+<ul>
+<li><strong>概率裁剪</strong>：计算 <span class="math inline">\(p_i\)</span> 时避免数值溢出，如 <span class="math inline">\(p_i = \max(\epsilon, \min(1-\epsilon, \Lambda(\pmb{x}_i'\pmb{\beta})))\)</span>，<span class="math inline">\(\epsilon=10^{-8}\)</span></li>
+<li><strong>正则化</strong>：在Hessian中添加小扰动，<span class="math inline">\((X'DX + \delta I)^{-1}\)</span>，<span class="math inline">\(\delta=10^{-6}\)</span></li>
+<li><strong>重新参数化</strong>：对高度相关的协变量进行正交化</li>
+</ul></li>
+<li><p><strong>标准误计算</strong>： 信息矩阵估计：<span class="math inline">\(\hat{I}(\hat{\pmb{\beta}}) = - \nabla^2\ell(\hat{\pmb{\beta}}) = X'\hat{D}X\)</span> 协方差矩阵：<span class="math inline">\(\widehat{\text{Var}}(\hat{\pmb{\beta}}) = [X'\hat{D}X]^{-1}\)</span></p>
+<p>当 <span class="math inline">\(X'\hat{D}X\)</span> 病态时，使用：</p>
+<ul>
+<li>Cholesky分解加扰动</li>
+<li>QR分解</li>
+<li>SVD截断伪逆</li>
+</ul></li>
+</ol>
+</section>
+<section id="病态问题的诊断与处理" class="level3">
+<h3 class="anchored" data-anchor-id="病态问题的诊断与处理">17.5.2 病态问题的诊断与处理</h3>
+<p><strong>病态性来源</strong>： 1. <strong>近似多重共线性</strong>：设计矩阵 <span class="math inline">\(X\)</span> 列近似线性相关 2. <strong>尺度差异</strong>：协变量量纲差异巨大 3. <strong>分离或拟分离</strong>：在Logit/Probit模型中，某些协变量组合完美预测结果 4. <strong>稀疏数据</strong>：某些协变量取值变化很小</p>
+<p><strong>诊断工具</strong>： 1. <strong>条件数</strong>：<span class="math inline">\(\kappa(X) = \|X\|\|X^+\|\)</span>，<span class="math inline">\(\kappa(X'X) = \kappa(X)^2\)</span> - <span class="math inline">\(\kappa &lt; 10^2\)</span>：良态 - <span class="math inline">\(10^2 \leq \kappa &lt; 10^3\)</span>：轻度病态 - <span class="math inline">\(\kappa \geq 10^3\)</span>：严重病态 2. <strong>方差膨胀因子</strong>：<span class="math inline">\(\text{VIF}_j = 1/(1-R_j^2)\)</span>，<span class="math inline">\(R_j^2\)</span> 是 <span class="math inline">\(x_j\)</span> 对其他协变量的回归 <span class="math inline">\(R^2\)</span> - <span class="math inline">\(\text{VIF} &gt; 10\)</span> 表明严重共线性 3. <strong>奇异值分解</strong>：小奇异值 <span class="math inline">\(\sigma_r/\sigma_1 &lt; 10^{-6}\)</span> 表明数值秩亏 4. <strong>相关性矩阵</strong>：绝对值接近1的相关系数</p>
+<p><strong>处理策略</strong>： 1. <strong>变量选择</strong>：剔除高度相关的变量 2. <strong>正则化</strong>： - 岭回归：<span class="math inline">\(\min_{\pmb{\beta}} \|\pmb{y} - X\pmb{\beta}\|^2 + \lambda\|\pmb{\beta}\|^2\)</span> - LASSO：<span class="math inline">\(\min_{\pmb{\beta}} \|\pmb{y} - X\pmb{\beta}\|^2 + \lambda\|\pmb{\beta}\|_1\)</span> 3. <strong>主成分回归</strong>：用 <span class="math inline">\(X\)</span> 的主成分作为新设计矩阵 4. <strong>重新参数化</strong>： - 中心化：<span class="math inline">\(x_{ij} \leftarrow x_{ij} - \bar{x}_j\)</span> - 标准化：<span class="math inline">\(x_{ij} \leftarrow (x_{ij} - \bar{x}_j)/s_j\)</span> - 正交多项式：对于多项式项 5. <strong>增加数据</strong>：收集更多样本或设计实验打破共线性</p>
+<p><strong>数值稳定算法选择</strong>： 1. 对于线性回归：<strong>QR分解</strong>或<strong>SVD</strong>而非正规方程 2. 对于非线性最小二乘：<strong>Levenberg-Marquardt</strong>（带阻尼的Gauss-Newton） 3. 对于MLE：<strong>信任域牛顿法</strong>或带正则化的拟牛顿法 4. 对于高维问题：<strong>坐标下降法</strong>或<strong>近端梯度法</strong></p>
+</section>
+<section id="收敛失败的原因与调试策略" class="level3">
+<h3 class="anchored" data-anchor-id="收敛失败的原因与调试策略">17.5.3 收敛失败的原因与调试策略</h3>
+<p><strong>常见收敛问题</strong>： 1. <strong>不收敛</strong>：迭代在有限步内未达到收敛准则 2. <strong>收敛到错误点</strong>：局部最优而非全局最优 3. <strong>收敛过慢</strong>：需要过多迭代 4. <strong>数值溢出</strong>：函数值、梯度或Hessian中出现NaN或Inf</p>
+<p><strong>诊断步骤</strong>： 1. <strong>检查梯度</strong>：计算有限差分梯度与解析梯度比较： <span class="math display">\[
+   \frac{\|\nabla f_{\text{analytic}} - \nabla f_{\text{finite-diff}}\|}{\|\nabla f_{\text{analytic}}\| + 1} &lt; 10^{-6}
+   \]</span> 2. <strong>检查Hessian</strong>：验证正定性，计算最小特征值 3. <strong>轨迹分析</strong>：记录每次迭代的函数值、梯度范数、步长 4. <strong>条件数检查</strong>：计算Hessian或设计矩阵的条件数</p>
+<p><strong>调试策略</strong>： 1. <strong>尝试不同初始值</strong>：使用网格搜索、随机抽样或简化模型获得初始值 2. <strong>调整算法参数</strong>： - 线搜索参数（Wolfe条件常数） - 信任域半径初始值和更新策略 - 正则化参数 3. <strong>变换参数空间</strong>： - 对数变换：<span class="math inline">\(\theta \leftarrow \exp(\phi)\)</span> 对正参数 - Logit变换：<span class="math inline">\(\theta \leftarrow \Lambda(\phi)\)</span> 对 <span class="math inline">\((0,1)\)</span> 内参数 - 标准化：使参数量级相近 4. <strong>简化模型</strong>：先估计简化形式，逐步增加复杂度 5. <strong>使用鲁棒算法</strong>：从单纯形法开始，然后切换到梯度基方法</p>
+<p><strong>软件实现提示</strong>： 1. <strong>梯度检查</strong>：大多数优化库提供梯度检查选项 2. <strong>详细输出</strong>：请求输出每次迭代的信息 3. <strong>多种算法尝试</strong>：比较不同算法的结果 4. <strong>缩放选项</strong>：利用软件的自动缩放功能</p>
+</section>
+</section>
+<section id="前沿发展与展望" class="level2">
+<h2 class="anchored" data-anchor-id="前沿发展与展望">17.6 前沿发展与展望</h2>
+<section id="大规模优化随机方法与分布式计算" class="level3">
+<h3 class="anchored" data-anchor-id="大规模优化随机方法与分布式计算">17.6.1 大规模优化：随机方法与分布式计算</h3>
+<p><strong>随机梯度下降</strong>：对于样本量 <span class="math inline">\(n\)</span> 很大的问题，计算全梯度 <span class="math inline">\(\nabla f(\pmb{\theta}) = \frac{1}{n}\sum_{i=1}^n \nabla f_i(\pmb{\theta})\)</span> 成本高。SGD每次迭代使用单个或小批量样本： <span class="math display">\[
+\pmb{\theta}_{k+1} = \pmb{\theta}_k - \alpha_k \nabla f_{i_k}(\pmb{\theta}_k)
+\]</span></p>
+<p><strong>自适应方法</strong>： 1. <strong>AdaGrad</strong>：为每个参数调整学习率 2. <strong>RMSProp</strong>：使用指数加权移动平均调整 3. <strong>Adam</strong>：结合动量和自适应学习率</p>
+<p><strong>分布式优化</strong>： 1. <strong>同步并行</strong>：参数服务器架构，所有工作节点同步更新 2. <strong>异步并行</strong>：允许延迟更新，减少通信开销 3. <strong>联邦学习</strong>：分散数据下的隐私保护优化</p>
+</section>
+<section id="自动微分精确高效求导" class="level3">
+<h3 class="anchored" data-anchor-id="自动微分精确高效求导">17.6.2 自动微分：精确高效求导</h3>
+<p><strong>基本原理</strong>：自动微分通过计算图追踪运算，应用链式法则，提供精确到机器精度的导数。</p>
+<p><strong>两种模式</strong>： 1. <strong>前向模式</strong>：计算 <span class="math inline">\(\dot{y} = \nabla f(\pmb{x}) \cdot \dot{\pmb{x}}\)</span>，适合输入维度低的情况 2. <strong>反向模式</strong>：计算 <span class="math inline">\(\bar{\pmb{x}} = \nabla f(\pmb{x})' \cdot \bar{y}\)</span>，适合输出维度低的情况（最常见）</p>
+<p><strong>优势</strong>： 1. 比有限差分更精确 2. 比符号微分更高效 3. 方便实现高阶导数 4. 与现代机器学习框架（TensorFlow, PyTorch）集成</p>
+<p><strong>在计量经济学中的应用前景</strong>： 1. 复杂结构模型的梯度计算 2. 基于梯度的贝叶斯计算（HMC, NUTS） 3. 高维模型的正则化路径计算</p>
+</section>
+<section id="贝叶斯计算中的优化视角" class="level3">
+<h3 class="anchored" data-anchor-id="贝叶斯计算中的优化视角">17.6.3 贝叶斯计算中的优化视角</h3>
+<p><strong>最大后验估计</strong>：MAP估计可视为带先验的MLE： <span class="math display">\[
+\hat{\pmb{\theta}}_{\text{MAP}} = \arg\max_{\pmb{\theta}} [\ell(\pmb{\theta};\pmb{y}) + \ln p(\pmb{\theta})]
+\]</span></p>
+<p><strong>变分推断</strong>：将后验分布 <span class="math inline">\(p(\pmb{\theta}|\pmb{y})\)</span> 近似为简单分布 <span class="math inline">\(q(\pmb{\theta};\pmb{\phi})\)</span>，通过优化证据下界（ELBO）： <span class="math display">\[
+\text{ELBO}(\pmb{\phi}) = \mathbb{E}_{q}[\ln p(\pmb{y},\pmb{\theta}) - \ln q(\pmb{\theta};\pmb{\phi})]
+\]</span></p>
+<p><strong>随机变分推断</strong>：结合随机梯度与自然梯度，处理大规模数据。</p>
+<p><strong>优化与抽样的结合</strong>： 1. <strong>哈密顿蒙特卡洛</strong>：使用梯度信息指导MCMC采样 2. <strong>朗之万动力学</strong>：带噪声的梯度下降，连接优化与抽样 3. <strong>模拟退火</strong>：从优化到抽样的温度调度</p>
+</section>
+<section id="计算思维的培养" class="level3">
+<h3 class="anchored" data-anchor-id="计算思维的培养">17.6.4 计算思维的培养</h3>
+<p><strong>从封闭形式到数值解</strong>： 传统计量教学强调存在解析解的特殊情况，但现实问题多需数值解。计算思维包括： 1. 将理论估计量转化为可计算形式 2. 理解数值算法的假设与局限 3. 诊断和解决计算问题 4. 验证数值结果的可靠性</p>
+<p><strong>可重复计算实践</strong>： 1. <strong>代码文档化</strong>：记录算法选择、参数设置、收敛准则 2. <strong>敏感性分析</strong>：检查结果对初始值、算法参数、数值容差的敏感性 3. <strong>基准测试</strong>：与已知解或替代方法比较 4. <strong>版本控制</strong>：跟踪代码和数据的变化</p>
+<p><strong>跨学科工具借鉴</strong>： 1. 从数值分析借鉴稳定算法 2. 从优化理论借鉴收敛分析 3. 从计算机科学借鉴数据结构与算法 4. 从机器学习借鉴大规模优化方法</p>
+</section>
+</section>
+<section id="本章总结" class="level2">
+<h2 class="anchored" data-anchor-id="本章总结">本章总结</h2>
+<p>本章系统构建了计量经济学数值实现的知识体系，涵盖了从基础矩阵分解到高级优化算法的完整链条。</p>
+<p><strong>核心要点回顾</strong>：</p>
+<ol type="1">
+<li><strong>矩阵分解是数值稳定性的基石</strong>：
+<ul>
+<li><strong>Cholesky分解</strong> 为对称正定系统提供高效求解</li>
+<li><strong>QR分解</strong> 是线性最小二乘的黄金标准，避免条件数平方</li>
+<li><strong>SVD分解</strong> 提供最完整的矩阵分析和稳健计算</li>
+<li>分解方法的选择应基于问题结构、数值需求和计算约束</li>
+</ul></li>
+<li><strong>优化算法是参数估计的引擎</strong>：
+<ul>
+<li><strong>梯度下降法</strong> 是基础基准，适合大规模问题但收敛慢</li>
+<li><strong>牛顿法</strong> 利用二阶信息快速收敛，是MLE的标准选择</li>
+<li><strong>拟牛顿法（BFGS）</strong> 平衡效率与稳定性，是计量实践的主力</li>
+<li><strong>信任域法</strong> 更鲁棒，适合非凸问题和不定Hessian</li>
+<li><strong>坐标下降法</strong> 是高维稀疏模型的高效求解器</li>
+</ul></li>
+<li><strong>专用算法解决特定问题</strong>：
+<ul>
+<li><strong>EM算法</strong> 处理缺失数据和潜变量</li>
+<li><strong>Nelder-Mead法</strong> 在导数不可用时提供无导数优化</li>
+<li><strong>近端梯度法</strong> 处理非光滑正则化项</li>
+</ul></li>
+<li><strong>系统化实现策略</strong>：
+<ul>
+<li>从合理初始值开始</li>
+<li>选择适合问题特性的算法</li>
+<li>实施数值稳定性措施</li>
+<li>建立全面的收敛诊断</li>
+<li>验证结果的可靠性</li>
+</ul></li>
+</ol>
+<p><strong>关键启示</strong>：</p>
+<p>计量经济学的数值实现不是简单的”黑箱”操作，而是需要深入理解的科学过程。成功的数值实现需要：</p>
+<ol type="1">
+<li><strong>算法与问题的匹配</strong>：没有一种算法适合所有问题。理解算法的假设、收敛性质和数值行为是选择合适算法的前提。</li>
+<li><strong>稳定性优先于速度</strong>：在计量应用中，获得稳定、可靠的结果比快速计算更重要。有时需要牺牲一些效率来保证数值稳定性。</li>
+<li><strong>诊断驱动的开发</strong>：实施系统化的诊断流程，包括梯度检查、条件数分析、收敛轨迹监控等。</li>
+<li><strong>分层设计</strong>：从简单模型开始，逐步增加复杂性；从鲁棒算法开始，再切换到高效算法。</li>
+</ol>
+<p><strong>未来方向</strong>：</p>
+<p>随着计量经济学问题日益复杂和数据规模不断增长，数值计算方法的重要性只会增加。值得关注的发展包括：</p>
+<ol type="1">
+<li><strong>自动化算法选择</strong>：基于问题特征自动推荐合适算法</li>
+<li><strong>混合方法</strong>：结合不同算法的优势，如随机方法与二阶方法结合</li>
+<li><strong>硬件感知计算</strong>：利用GPU、TPU等专用硬件加速</li>
+<li><strong>不确定性量化</strong>：不仅提供点估计，还量化数值误差的影响</li>
+</ol>
+<p>掌握本章介绍的工具和思维，将使研究者能够更自信地处理复杂的计量模型，更深入地理解软件输出背后的计算过程，并在面对新的计量挑战时设计有效的数值解决方案。</p>
+</section>
+<section id="本章习题" class="level2">
+<h2 class="anchored" data-anchor-id="本章习题">本章习题</h2>
+<section id="理论习题" class="level3">
+<h3 class="anchored" data-anchor-id="理论习题">理论习题</h3>
+<ol type="1">
+<li><strong>矩阵分解比较</strong>：设 <span class="math inline">\(X \in \mathbb{R}^{n \times p}\)</span> 是列满秩设计矩阵，<span class="math inline">\(n &gt; p\)</span>。比较求解OLS估计 <span class="math inline">\(\hat{\pmb{\beta}} = (X'X)^{-1}X'\pmb{y}\)</span> 的三种方法：直接求逆、Cholesky分解和QR分解。
+<ul>
+<li>推导每种方法的计算复杂度（以浮点运算次数表示）</li>
+<li>分析每种方法的数值稳定性，特别是当 <span class="math inline">\(X\)</span> 病态时</li>
+<li>说明在什么条件下应选择哪种方法</li>
+</ul></li>
+<li><strong>收敛性分析</strong>：考虑梯度下降法应用于强凸且L-光滑函数 <span class="math inline">\(f: \mathbb{R}^p \rightarrow \mathbb{R}\)</span>，即存在 <span class="math inline">\(\mu, L &gt; 0\)</span> 使得 <span class="math inline">\(\mu I \preceq \nabla^2 f(\pmb{\theta}) \preceq LI\)</span> 对所有 <span class="math inline">\(\pmb{\theta}\)</span> 成立。
+<ul>
+<li>证明固定步长 <span class="math inline">\(\alpha = 1/L\)</span> 的梯度下降法满足： <span class="math display">\[
+f(\pmb{\theta}_k) - f(\pmb{\theta}^*) \leq \left(1 - \frac{\mu}{L}\right)^k [f(\pmb{\theta}_0) - f(\pmb{\theta}^*)]
+\]</span></li>
+<li>解释条件数 <span class="math inline">\(\kappa = L/\mu\)</span> 如何影响收敛速度</li>
+<li>对比梯度下降法与牛顿法在相同假设下的收敛速率</li>
+</ul></li>
+<li><strong>拟牛顿条件与更新唯一性</strong>：设 <span class="math inline">\(B_k\)</span> 是Hessian近似，<span class="math inline">\(\pmb{s}_k = \pmb{\theta}_{k+1} - \pmb{\theta}_k\)</span>，<span class="math inline">\(\pmb{y}_k = \nabla f(\pmb{\theta}_{k+1}) - \nabla f(\pmb{\theta}_k)\)</span>。
+<ul>
+<li>证明满足拟牛顿条件 <span class="math inline">\(B_{k+1}\pmb{s}_k = \pmb{y}_k\)</span> 且 <span class="math inline">\(B_{k+1} - B_k\)</span> 秩最小的更新是SR1（对称秩1）更新</li>
+<li>证明在 <span class="math inline">\(B_{k+1} - B_k\)</span> 秩为2且对称正定的约束下，BFGS更新是唯一的</li>
+<li>讨论为何BFGS在实践中比SR1更常用</li>
+</ul></li>
+<li><strong>信任域法的全局收敛</strong>：考虑信任域法应用于一般非线性函数 <span class="math inline">\(f(\pmb{\theta})\)</span>，局部模型为 <span class="math inline">\(m_k(\pmb{d}) = f(\pmb{\theta}_k) + \nabla f(\pmb{\theta}_k)'\pmb{d} + \frac{1}{2}\pmb{d}'B_k\pmb{d}\)</span>，其中 <span class="math inline">\(B_k\)</span> 对称。
+<ul>
+<li>定义柯西点 <span class="math inline">\(\pmb{d}_k^c\)</span> 并证明它至少提供与最速下降方向成比例的下降量</li>
+<li>证明如果每次迭代选择的步长 <span class="math inline">\(\pmb{d}_k\)</span> 至少提供与柯西点成比例的下降，且 <span class="math inline">\(B_k\)</span> 一致有界，则算法全局收敛到驻点</li>
+<li>对比信任域法与线搜索方法在全局收敛性保证方面的差异</li>
+</ul></li>
+</ol>
+</section>
+<section id="应用习题" class="level3">
+<h3 class="anchored" data-anchor-id="应用习题">应用习题</h3>
+<ol start="5" type="1">
+<li><strong>Logit模型MLE的实现设计</strong>：考虑二值Logit模型 <span class="math inline">\(P(y_i=1|\pmb{x}_i) = \Lambda(\pmb{x}_i'\pmb{\beta})\)</span>，样本量为 <span class="math inline">\(n\)</span>，协变量维度为 <span class="math inline">\(p\)</span>。
+<ul>
+<li>设计基于牛顿法的完整实现方案，包括初始值选择、迭代格式、收敛准则和标准误计算</li>
+<li>讨论当 <span class="math inline">\(X'DX\)</span> 接近奇异时的处理策略，其中 <span class="math inline">\(D = \text{diag}\{\Lambda(\pmb{x}_i'\pmb{\beta})[1-\Lambda(\pmb{x}_i'\pmb{\beta})]\}\)</span></li>
+<li>对比牛顿法与拟牛顿法（BFGS）在此问题上的计算复杂度和存储需求</li>
+</ul></li>
+<li><strong>病态回归问题的诊断与处理</strong>：假设在线性回归 <span class="math inline">\(y = X\pmb{\beta} + \pmb{\varepsilon}\)</span> 中，设计矩阵 <span class="math inline">\(X\)</span> 存在严重多重共线性。
+<ul>
+<li>列出诊断病态性的数值方法，包括条件数、VIF、奇异值分析</li>
+<li>比较岭回归、主成分回归和LASSO在处理此问题上的优缺点</li>
+<li>设计一个系统流程，从数据检查到模型估计再到结果验证</li>
+</ul></li>
+<li><strong>高维稀疏回归的算法选择</strong>：考虑高维线性回归 <span class="math inline">\(p \gg n\)</span>，假设真实参数 <span class="math inline">\(\pmb{\beta}^*\)</span> 是稀疏的（大多数元素为零）。
+<ul>
+<li>解释为什么坐标下降法特别适合求解LASSO问题</li>
+<li>推导LASSO的坐标更新公式，并说明软阈值函数的作用</li>
+<li>讨论在什么情况下应使用近端梯度法或加速变体（如FISTA）而非坐标下降法</li>
+</ul></li>
+<li><strong>优化失败案例分析与调试</strong>：分析以下优化失败场景，提出诊断和解决策略：
+<ul>
+<li>牛顿法迭代中Hessian矩阵不正定</li>
+<li>拟牛顿法收敛到明显错误的解</li>
+<li>算法在达到收敛准则前停止，但梯度仍很大</li>
+<li>函数值在迭代中不单调下降</li>
+</ul></li>
+</ol>
+</section>
+<section id="综合项目" class="level3">
+<h3 class="anchored" data-anchor-id="综合项目">综合项目</h3>
+<ol start="9" type="1">
+<li><strong>完整计量模型的数值实现</strong>：选择一个中等复杂的计量模型（如Tobit模型、多层模型或动态面板模型），完成以下任务：
+<ul>
+<li>推导对数似然函数、梯度和Hessian矩阵</li>
+<li>设计数值实现方案，包括初始值策略、优化算法选择和收敛准则</li>
+<li>讨论潜在的数值问题及应对措施</li>
+<li>设计模拟实验验证实现的正确性和效率</li>
+</ul></li>
+<li><strong>算法性能比较研究</strong>：对一个具体的计量估计问题（如MLE for Probit模型），设计实验比较不同优化算法的性能：
+<ul>
+<li>包括梯度下降法、牛顿法、BFGS、L-BFGS、信任域法和Nelder-Mead法</li>
+<li>性能指标：迭代次数、计算时间、最终精度、对初始值的敏感性</li>
+<li>在不同问题设置下测试（不同样本量、不同条件数、不同噪声水平）</li>
+<li>基于结果给出算法选择的实用建议</li>
+</ul></li>
+</ol>
+<p>这些习题旨在巩固本章的核心概念，并培养将理论知识应用于实际计量问题的能力。理论习题强调数学推导和性质分析，应用习题侧重实践设计和问题解决，综合项目则提供完整的建模与实现体验。</p>
+<p><em>本章介绍了计量经济学数值计算的核心方法。矩阵分解提供了稳定高效的基础运算，而优化算法则利用这些基础求解复杂的估计问题。理解这两者的原理和相互作用，是进行可靠计量实证研究的关键能力。随着计算技术的发展，这些数值方法将继续演化，但其中蕴含的稳定性、效率和精度权衡的基本原则将始终重要。</em></p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/17蒙特卡洛法与自助法.html" class="pagination-link" aria-label="17 蒙特卡洛法与自助法">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">17 蒙特卡洛法与自助法</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/19机器学习在计量中的应用.html" class="pagination-link" aria-label="19 机器学习在计量中的应用">
+        <span class="nav-page-text"><span class="chapter-title">19 机器学习在计量中的应用</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

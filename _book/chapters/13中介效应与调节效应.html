@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>13 中介效应与调节效应 – 计量模型及应用</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/14大样本理论.html" rel="next">
+<link href="../chapters/12回归控制法.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-70a47bd5681a7291082a5b9f83d58762.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="science-textbook.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/6因果推断框架.html">II 因果推断方法</a></li><li class="breadcrumb-item"><a href="../chapters/13中介效应与调节效应.html"><span class="chapter-title">13 中介效应与调节效应</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">计量模型及应用</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">简介</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">I 数据与模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1线性回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1 线性回归基础</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2横截面数据分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2 横截面数据：假设违反的诊断与修正</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/3面板数据模型.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 面板数据模型</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/4时间序列分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4 时间序列分析</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/5离散与受限因变量模型.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">5 离散数据与受限因变量模型</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">II 因果推断方法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/6因果推断框架.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6 因果推断框架</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/7工具变量法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">7 工具变量法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/8倾向得分匹配.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">8 倾向得分匹配</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/9双重差分法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">9 双重差分法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10断点回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">10 断点回归</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11合成控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">11 合成控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12回归控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">12 回归控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13中介效应与调节效应.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">13 中介效应与调节效应</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">III 理论与算法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14大样本理论.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">14 大样本理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15最大似然估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">15 最大似然估计理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16广义矩估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">16 广义矩估计法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17蒙特卡洛法与自助法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">17 蒙特卡洛法与自助法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/18优化算法与数值方法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">18 数值优化与矩阵方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/19机器学习在计量中的应用.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">19 机器学习在计量中的应用</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#本章导读" id="toc-本章导读" class="nav-link active" data-scroll-target="#本章导读">本章导读</a></li>
+  <li><a href="#从因果识别到因果解释机制与异质性分析的角色定位" id="toc-从因果识别到因果解释机制与异质性分析的角色定位" class="nav-link" data-scroll-target="#从因果识别到因果解释机制与异质性分析的角色定位">13.1 从因果识别到因果解释：机制与异质性分析的角色定位</a>
+  <ul class="collapse">
+  <li><a href="#中介效应拆解黑箱揭示因果路径" id="toc-中介效应拆解黑箱揭示因果路径" class="nav-link" data-scroll-target="#中介效应拆解黑箱揭示因果路径">13.1.1 中介效应：拆解”黑箱”，揭示因果路径</a></li>
+  <li><a href="#调节效应界定边界理解效应异质性" id="toc-调节效应界定边界理解效应异质性" class="nav-link" data-scroll-target="#调节效应界定边界理解效应异质性">13.1.2 调节效应：界定边界，理解效应异质性</a></li>
+  <li><a href="#两者核心区别与联系过程机制-vs.-情境条件" id="toc-两者核心区别与联系过程机制-vs.-情境条件" class="nav-link" data-scroll-target="#两者核心区别与联系过程机制-vs.-情境条件">13.1.3 两者核心区别与联系：过程机制 vs.&nbsp;情境条件</a></li>
+  <li><a href="#一个前置警告忽略核心因果识别将使机制分析失去根基" id="toc-一个前置警告忽略核心因果识别将使机制分析失去根基" class="nav-link" data-scroll-target="#一个前置警告忽略核心因果识别将使机制分析失去根基">13.1.4 一个前置警告：忽略核心因果识别将使机制分析失去根基</a></li>
+  </ul></li>
+  <li><a href="#中介效应分析的传统方法与模型" id="toc-中介效应分析的传统方法与模型" class="nav-link" data-scroll-target="#中介效应分析的传统方法与模型">13.2 中介效应分析的传统方法与模型</a>
+  <ul class="collapse">
+  <li><a href="#中介变量的定义选择与理论依据" id="toc-中介变量的定义选择与理论依据" class="nav-link" data-scroll-target="#中介变量的定义选择与理论依据">13.2.1 中介变量的定义、选择与理论依据</a></li>
+  <li><a href="#经典三步回归法baron-kenny流程与局限" id="toc-经典三步回归法baron-kenny流程与局限" class="nav-link" data-scroll-target="#经典三步回归法baron-kenny流程与局限">13.2.2 经典三步回归法（Baron &amp; Kenny）流程与局限</a></li>
+  <li><a href="#结构方程模型下的中介分析" id="toc-结构方程模型下的中介分析" class="nav-link" data-scroll-target="#结构方程模型下的中介分析">13.2.3 结构方程模型下的中介分析</a></li>
+  </ul></li>
+  <li><a href="#因果中介分析框架迈向更严谨的机制检验" id="toc-因果中介分析框架迈向更严谨的机制检验" class="nav-link" data-scroll-target="#因果中介分析框架迈向更严谨的机制检验">13.3 因果中介分析框架：迈向更严谨的机制检验</a>
+  <ul class="collapse">
+  <li><a href="#传统方法的困境混淆与内生性威胁" id="toc-传统方法的困境混淆与内生性威胁" class="nav-link" data-scroll-target="#传统方法的困境混淆与内生性威胁">13.3.1 传统方法的困境：混淆与内生性威胁</a></li>
+  <li><a href="#基于潜在结果模型的因果中介效应定义" id="toc-基于潜在结果模型的因果中介效应定义" class="nav-link" data-scroll-target="#基于潜在结果模型的因果中介效应定义">13.3.2 基于潜在结果模型的因果中介效应定义</a></li>
+  <li><a href="#识别假设序贯可忽略性及其不可检验性" id="toc-识别假设序贯可忽略性及其不可检验性" class="nav-link" data-scroll-target="#识别假设序贯可忽略性及其不可检验性">13.3.3 识别假设：序贯可忽略性及其不可检验性</a></li>
+  <li><a href="#估计方法参数化模型与半参数bootstrap" id="toc-估计方法参数化模型与半参数bootstrap" class="nav-link" data-scroll-target="#估计方法参数化模型与半参数bootstrap">13.3.4 估计方法：参数化模型与半参数Bootstrap</a></li>
+  </ul></li>
+  <li><a href="#中介效应的估计检验与解读" id="toc-中介效应的估计检验与解读" class="nav-link" data-scroll-target="#中介效应的估计检验与解读">13.4 中介效应的估计、检验与解读</a>
+  <ul class="collapse">
+  <li><a href="#效应分解总效应直接效应与间接中介效应" id="toc-效应分解总效应直接效应与间接中介效应" class="nav-link" data-scroll-target="#效应分解总效应直接效应与间接中介效应">13.4.1 效应分解：总效应、直接效应与间接（中介）效应</a></li>
+  <li><a href="#bootstrap法检验间接效应的推荐方法" id="toc-bootstrap法检验间接效应的推荐方法" class="nav-link" data-scroll-target="#bootstrap法检验间接效应的推荐方法">13.4.2 Bootstrap法：检验间接效应的推荐方法</a></li>
+  <li><a href="#结果报告规范与图示" id="toc-结果报告规范与图示" class="nav-link" data-scroll-target="#结果报告规范与图示">13.4.3 结果报告规范与图示</a></li>
+  <li><a href="#多重中介与链式中介模型简介" id="toc-多重中介与链式中介模型简介" class="nav-link" data-scroll-target="#多重中介与链式中介模型简介">13.4.4 多重中介与链式中介模型简介</a></li>
+  </ul></li>
+  <li><a href="#调节效应分析模型估计与展示" id="toc-调节效应分析模型估计与展示" class="nav-link" data-scroll-target="#调节效应分析模型估计与展示">13.5 调节效应分析：模型、估计与展示</a>
+  <ul class="collapse">
+  <li><a href="#调节变量的定义与类型分类连续" id="toc-调节变量的定义与类型分类连续" class="nav-link" data-scroll-target="#调节变量的定义与类型分类连续">13.5.1 调节变量的定义与类型（分类/连续）</a></li>
+  <li><a href="#含交互项的调节效应模型设定" id="toc-含交互项的调节效应模型设定" class="nav-link" data-scroll-target="#含交互项的调节效应模型设定">13.5.2 含交互项的调节效应模型设定</a></li>
+  <li><a href="#调节效应的图形化呈现简单斜率分析" id="toc-调节效应的图形化呈现简单斜率分析" class="nav-link" data-scroll-target="#调节效应的图形化呈现简单斜率分析">13.5.3 调节效应的图形化呈现：简单斜率分析</a></li>
+  <li><a href="#johnson-neyman区间与调节效应区域" id="toc-johnson-neyman区间与调节效应区域" class="nav-link" data-scroll-target="#johnson-neyman区间与调节效应区域">13.5.4 Johnson-Neyman区间与调节效应区域</a></li>
+  </ul></li>
+  <li><a href="#调节效应的估计检验与结果解读" id="toc-调节效应的估计检验与结果解读" class="nav-link" data-scroll-target="#调节效应的估计检验与结果解读">13.6 调节效应的估计、检验与结果解读</a>
+  <ul class="collapse">
+  <li><a href="#交互项系数的估计与假设检验" id="toc-交互项系数的估计与假设检验" class="nav-link" data-scroll-target="#交互项系数的估计与假设检验">13.6.1 交互项系数的估计与假设检验</a></li>
+  <li><a href="#调节效应的简单斜率检验步骤" id="toc-调节效应的简单斜率检验步骤" class="nav-link" data-scroll-target="#调节效应的简单斜率检验步骤">13.6.2 调节效应的简单斜率检验步骤</a></li>
+  <li><a href="#如何正确解读与报告调节效应结果" id="toc-如何正确解读与报告调节效应结果" class="nav-link" data-scroll-target="#如何正确解读与报告调节效应结果">13.6.3 如何正确解读与报告调节效应结果</a></li>
+  <li><a href="#调节效应中的多重共线性问题与处理" id="toc-调节效应中的多重共线性问题与处理" class="nav-link" data-scroll-target="#调节效应中的多重共线性问题与处理">13.6.4 调节效应中的多重共线性问题与处理</a></li>
+  </ul></li>
+  <li><a href="#整合模型有调节的中介与有中介的调节" id="toc-整合模型有调节的中介与有中介的调节" class="nav-link" data-scroll-target="#整合模型有调节的中介与有中介的调节">13.7 整合模型：有调节的中介与有中介的调节</a>
+  <ul class="collapse">
+  <li><a href="#有调节的中介模型中介路径受调节" id="toc-有调节的中介模型中介路径受调节" class="nav-link" data-scroll-target="#有调节的中介模型中介路径受调节">13.7.1 有调节的中介模型：中介路径受调节</a></li>
+  <li><a href="#被中介的调节效应模型调节作用通过中介实现" id="toc-被中介的调节效应模型调节作用通过中介实现" class="nav-link" data-scroll-target="#被中介的调节效应模型调节作用通过中介实现">13.7.2 被中介的调节效应模型：调节作用通过中介实现</a></li>
+  <li><a href="#整合模型的构建估计与检验策略" id="toc-整合模型的构建估计与检验策略" class="nav-link" data-scroll-target="#整合模型的构建估计与检验策略">13.7.3 整合模型的构建、估计与检验策略</a></li>
+  <li><a href="#整合模型的应用实例与理论贡献" id="toc-整合模型的应用实例与理论贡献" class="nav-link" data-scroll-target="#整合模型的应用实例与理论贡献">13.7.4 整合模型的应用实例与理论贡献</a></li>
+  </ul></li>
+  <li><a href="#应用实践常见误区与稳健性讨论" id="toc-应用实践常见误区与稳健性讨论" class="nav-link" data-scroll-target="#应用实践常见误区与稳健性讨论">13.8 应用实践、常见误区与稳健性讨论</a>
+  <ul class="collapse">
+  <li><a href="#stata与r中的操作命令与流程示例" id="toc-stata与r中的操作命令与流程示例" class="nav-link" data-scroll-target="#stata与r中的操作命令与流程示例">13.8.1 Stata与R中的操作命令与流程示例</a></li>
+  <li><a href="#中介与调节分析中的常见误用与误读" id="toc-中介与调节分析中的常见误用与误读" class="nav-link" data-scroll-target="#中介与调节分析中的常见误用与误读">13.8.2 中介与调节分析中的常见误用与误读</a></li>
+  <li><a href="#内生性问题的挑战中介调节变量本身的内生性" id="toc-内生性问题的挑战中介调节变量本身的内生性" class="nav-link" data-scroll-target="#内生性问题的挑战中介调节变量本身的内生性">13.8.3 内生性问题的挑战：中介/调节变量本身的内生性</a></li>
+  <li><a href="#机制分析的稳健性检验与替代解释排除" id="toc-机制分析的稳健性检验与替代解释排除" class="nav-link" data-scroll-target="#机制分析的稳健性检验与替代解释排除">13.8.4 机制分析的稳健性检验与替代解释排除</a></li>
+  </ul></li>
+  <li><a href="#本章总结与因果推断模块回顾" id="toc-本章总结与因果推断模块回顾" class="nav-link" data-scroll-target="#本章总结与因果推断模块回顾">本章总结与因果推断模块回顾</a>
+  <ul class="collapse">
+  <li><a href="#本章总结" id="toc-本章总结" class="nav-link" data-scroll-target="#本章总结">本章总结</a></li>
+  <li><a href="#因果推断模块回顾" id="toc-因果推断模块回顾" class="nav-link" data-scroll-target="#因果推断模块回顾">因果推断模块回顾</a></li>
+  <li><a href="#方法论启示" id="toc-方法论启示" class="nav-link" data-scroll-target="#方法论启示">方法论启示</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/6因果推断框架.html">II 因果推断方法</a></li><li class="breadcrumb-item"><a href="../chapters/13中介效应与调节效应.html"><span class="chapter-title">13 中介效应与调节效应</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">13 中介效应与调节效应</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>机制与异质性：中介效应与调节效应分析</p>
+<section id="本章导读" class="level2">
+<h2 class="anchored" data-anchor-id="本章导读">本章导读</h2>
+<p>在运用第7-12章的方法可信地识别出”X是否导致Y”之后，科学研究必然走向更深入的追问：这一影响<strong>通过何种机制</strong>传导？又在<strong>何种情境下</strong>更强或更弱？本章将系统介绍用于回答这两个问题的核心工具——中介效应与调节效应分析。需要预先<strong>强烈警示</strong>：本章方法<strong>并非</strong>用于解决核心因果关系的识别问题，其有效性严重依赖于”X→Y”关系本身已得到无偏估计，且对机制变量（M）的测量与模型设定有极其严苛的要求。本章是因果推断链条的深化与拓展，而非起点。学习本章前，必须确保已掌握第6章的基本框架和前几章至少一种因果识别方法。</p>
+</section>
+<section id="从因果识别到因果解释机制与异质性分析的角色定位" class="level2">
+<h2 class="anchored" data-anchor-id="从因果识别到因果解释机制与异质性分析的角色定位">13.1 从因果识别到因果解释：机制与异质性分析的角色定位</h2>
+<section id="中介效应拆解黑箱揭示因果路径" class="level3">
+<h3 class="anchored" data-anchor-id="中介效应拆解黑箱揭示因果路径">13.1.1 中介效应：拆解”黑箱”，揭示因果路径</h3>
+<p>在确认了”X导致Y”的基本因果关系后，研究者自然希望了解这一影响是如何发生的。中介效应分析正是为了揭示这一”黑箱”机制而设计。其核心思想是：自变量X对因变量Y的影响并非全部直接发生，而是部分或全部通过一个或多个中间变量M（称为中介变量）传递。</p>
+<p><strong>形式化表述</strong>： 设X为自变量，Y为因变量，M为中介变量。完整的中介过程包含三条路径： 1. X对Y的总效应：<span class="math inline">\(X \rightarrow Y\)</span> 2. X对M的影响：<span class="math inline">\(X \rightarrow M\)</span> 3. M对Y的影响（控制X后）：<span class="math inline">\(M \rightarrow Y\)</span></p>
+<p>中介效应分析旨在量化通过M传递的间接效应，并将其与X对Y的直接效应区分开来。</p>
+</section>
+<section id="调节效应界定边界理解效应异质性" class="level3">
+<h3 class="anchored" data-anchor-id="调节效应界定边界理解效应异质性">13.1.2 调节效应：界定边界，理解效应异质性</h3>
+<p>与中介效应关注”如何发生”不同，调节效应关注”何时发生”或”对谁发生”。调节效应分析检验第三个变量W（称为调节变量）如何改变X与Y之间关系的强度或方向。</p>
+<p><strong>形式化表述</strong>： 调节效应表现为X与W的交互项对Y的影响。如果X与Y的关系随W的变化而变化，则W起到了调节作用。</p>
+<p><strong>调节的类型</strong>： 1. <strong>增强型调节</strong>：W增强了X对Y的影响 2. <strong>削弱型调节</strong>：W削弱了X对Y的影响 3. <strong>反转型调节</strong>：W改变了X对Y影响的方向</p>
+</section>
+<section id="两者核心区别与联系过程机制-vs.-情境条件" class="level3">
+<h3 class="anchored" data-anchor-id="两者核心区别与联系过程机制-vs.-情境条件">13.1.3 两者核心区别与联系：过程机制 vs.&nbsp;情境条件</h3>
+<p><strong>核心区别</strong>： | 维度 | 中介效应 | 调节效应 | |——|———-|———-| | 研究问题 | X如何影响Y？ | X何时/对谁影响Y？ | | 理论角色 | M是机制变量 | W是边界条件变量 | | 统计模型 | 路径分析，效应分解 | 交互项分析 | | 变量时序 | 通常<span class="math inline">\(X \rightarrow M \rightarrow Y\)</span> | X和W通常同时影响Y | | 关注焦点 | 解释过程 | 界定条件 |</p>
+<p><strong>联系</strong>： 1. 中介和调节可以结合在同一个分析框架中 2. 两者都涉及第三个变量的作用 3. 在复杂的理论模型中，一个变量可能同时起到中介和调节作用</p>
+</section>
+<section id="一个前置警告忽略核心因果识别将使机制分析失去根基" class="level3">
+<h3 class="anchored" data-anchor-id="一个前置警告忽略核心因果识别将使机制分析失去根基">13.1.4 一个前置警告：忽略核心因果识别将使机制分析失去根基</h3>
+<p><strong>重要警示</strong>： 1. <strong>中介效应的基础是已识别的X→Y关系</strong>：如果X与Y之间的因果关系因内生性问题而未能得到准确估计，那么在此基础上进行的中介分析将是无效的。 2. <strong>中介变量M的内生性</strong>：即使X→Y的关系得到准确识别，中介变量M本身可能也存在内生性问题（如遗漏变量、测量误差等），这会威胁中介效应估计的准确性。 3. <strong>调节变量的选择</strong>：调节变量W的选择应有充分的理论依据，而非数据挖掘的结果。</p>
+<p><strong>建议的研究流程</strong>： 1. 首先使用第7-12章的方法准确识别X→Y的因果关系 2. 在确认X→Y关系的基础上，进行机制（中介）分析 3. 同时或在独立分析中，进行异质性（调节）分析 4. 对中介变量M可能存在的内生性进行充分讨论和检验</p>
+</section>
+</section>
+<section id="中介效应分析的传统方法与模型" class="level2">
+<h2 class="anchored" data-anchor-id="中介效应分析的传统方法与模型">13.2 中介效应分析的传统方法与模型</h2>
+<section id="中介变量的定义选择与理论依据" class="level3">
+<h3 class="anchored" data-anchor-id="中介变量的定义选择与理论依据">13.2.1 中介变量的定义、选择与理论依据</h3>
+<p><strong>中介变量的定义</strong>： 中介变量M是自变量X影响因变量Y的中间机制或传递路径。它同时受到X的影响并影响Y。</p>
+<p><strong>中介变量的选择标准</strong>： 1. <strong>理论依据</strong>：M的选择应有充分的理论支持 2. <strong>时间顺序</strong>：理想情况下应有<span class="math inline">\(X \rightarrow M \rightarrow Y\)</span>的时间顺序 3. <strong>测量质量</strong>：M应能得到准确、可靠的测量 4. <strong>概念区分</strong>：M应与X和Y在概念上明确区分</p>
+<p><strong>常见的中介变量类型</strong>： 1. <strong>心理机制</strong>：态度、信念、情绪等 2. <strong>行为机制</strong>：具体的行为表现 3. <strong>生理机制</strong>：生理指标、神经活动等 4. <strong>社会机制</strong>：社会互动、网络关系等</p>
+</section>
+<section id="经典三步回归法baron-kenny流程与局限" class="level3">
+<h3 class="anchored" data-anchor-id="经典三步回归法baron-kenny流程与局限">13.2.2 经典三步回归法（Baron &amp; Kenny）流程与局限</h3>
+<p>Baron和Kenny（1986）提出的三步回归法是中介效应分析最经典的方法。</p>
+<p><strong>三步回归法的步骤</strong>：</p>
+<p><strong>第一步</strong>：检验总效应 <span class="math display">\[
+Y = i_1 + cX + e_1
+\]</span> 检验系数<span class="math inline">\(c\)</span>是否显著。如果<span class="math inline">\(c\)</span>不显著，通常认为不存在中介效应（但有例外情况）。</p>
+<p><strong>第二步</strong>：检验X对M的影响 <span class="math display">\[
+M = i_2 + aX + e_2
+\]</span> 检验系数<span class="math inline">\(a\)</span>是否显著。如果<span class="math inline">\(a\)</span>不显著，说明X对M没有影响，中介效应不存在。</p>
+<p><strong>第三步</strong>：检验M对Y的影响（控制X） <span class="math display">\[
+Y = i_3 + c'X + bM + e_3
+\]</span> 检验系数<span class="math inline">\(b\)</span>是否显著。如果<span class="math inline">\(b\)</span>显著，且第一步中的<span class="math inline">\(c\)</span>也显著，则可能存在中介效应。</p>
+<p><strong>判断标准</strong>： 1. 如果<span class="math inline">\(a\)</span>和<span class="math inline">\(b\)</span>都显著，且<span class="math inline">\(c'\)</span>变得不显著或显著减小，则为完全中介 2. 如果<span class="math inline">\(a\)</span>和<span class="math inline">\(b\)</span>都显著，且<span class="math inline">\(c'\)</span>仍然显著但减小，则为部分中介</p>
+<p><strong>效应分解</strong>： - 总效应：<span class="math inline">\(c\)</span> - 直接效应：<span class="math inline">\(c'\)</span> - 间接效应（中介效应）：<span class="math inline">\(ab\)</span></p>
+<p><strong>三步回归法的局限</strong>： 1. <strong>低统计功效</strong>：需要三个独立的显著性检验，增加了II类错误的风险 2. <strong>Sobel检验的局限</strong>：检验间接效应<span class="math inline">\(ab\)</span>的Sobel检验要求<span class="math inline">\(ab\)</span>服从正态分布，但通常不满足 3. <strong>无法处理复杂模型</strong>：难以处理多重中介、链式中介等复杂情况 4. <strong>忽略内生性</strong>：未考虑中介变量M可能存在的内生性问题</p>
+</section>
+<section id="结构方程模型下的中介分析" class="level3">
+<h3 class="anchored" data-anchor-id="结构方程模型下的中介分析">13.2.3 结构方程模型下的中介分析</h3>
+<p>结构方程模型为中介分析提供了更灵活的框架。</p>
+<p><strong>SEM中的中介模型</strong>： 在SEM框架下，中介模型可以表示为： <span class="math display">\[
+\begin{aligned}
+M &amp;= \alpha_1 + aX + \epsilon_1 \\
+Y &amp;= \alpha_2 + c'X + bM + \epsilon_2
+\end{aligned}
+\]</span></p>
+<p><strong>SEM的优势</strong>： 1. 可以同时估计所有路径系数 2. 可以方便地处理测量误差 3. 可以估计模型的整体拟合度 4. 可以处理更复杂的模型（如多重中介）</p>
+<p><strong>SEM的局限</strong>： 1. 对大样本量的要求较高 2. 模型设定需要较强的理论指导 3. 同样面临中介变量内生性的问题</p>
+</section>
+</section>
+<section id="因果中介分析框架迈向更严谨的机制检验" class="level2">
+<h2 class="anchored" data-anchor-id="因果中介分析框架迈向更严谨的机制检验">13.3 因果中介分析框架：迈向更严谨的机制检验</h2>
+<section id="传统方法的困境混淆与内生性威胁" class="level3">
+<h3 class="anchored" data-anchor-id="传统方法的困境混淆与内生性威胁">13.3.1 传统方法的困境：混淆与内生性威胁</h3>
+<p>传统中介分析方法面临的主要挑战是<strong>混淆偏误</strong>，特别是： 1. <strong>X-M关系的混淆</strong>：可能存在未观测变量同时影响X和M 2. <strong>M-Y关系的混淆</strong>（控制X后）：可能存在未观测变量同时影响M和Y</p>
+<p>这些混淆会导致中介效应估计的偏误。</p>
+<p><strong>以教育回报率为例</strong>： 假设我们研究教育（X）通过认知能力（M）影响工资（Y）的中介机制。问题在于： 1. 家庭背景可能同时影响教育选择和认知能力 2. 动机可能同时影响认知能力和工资</p>
+<p>如果不控制这些混淆因素，中介效应估计将是有偏的。</p>
+</section>
+<section id="基于潜在结果模型的因果中介效应定义" class="level3">
+<h3 class="anchored" data-anchor-id="基于潜在结果模型的因果中介效应定义">13.3.2 基于潜在结果模型的因果中介效应定义</h3>
+<p>Imai等人（2010）将中介分析置于反事实框架下，提出了因果中介分析。</p>
+<p><strong>定义</strong>： 设<span class="math inline">\(Y_i(x, m)\)</span>表示当个体i的X取值为x、M取值为m时的潜在结果。<span class="math inline">\(M_i(x)\)</span>表示当X取值为x时，个体i的M的潜在值。</p>
+<p><strong>因果中介效应</strong>： 对于个体i，在控制X从<span class="math inline">\(x\)</span>变为<span class="math inline">\(x^*\)</span>时，通过M传递的间接效应为： <span class="math display">\[
+\delta_i(x) = Y_i(x, M_i(x^*)) - Y_i(x, M_i(x))
+\]</span></p>
+<p><strong>直接效应</strong>： <span class="math display">\[
+\zeta_i(x) = Y_i(x^*, M_i(x)) - Y_i(x, M_i(x))
+\]</span></p>
+<p><strong>总效应</strong>： <span class="math display">\[
+\tau_i = Y_i(x^*, M_i(x^*)) - Y_i(x, M_i(x)) = \delta_i(x) + \zeta_i(x^*)
+\]</span></p>
+<p>在个体层面，<span class="math inline">\(\delta_i(x)\)</span>和<span class="math inline">\(\zeta_i(x)\)</span>通常不可识别，但我们关心的是平均因果中介效应和平均直接效应。</p>
+</section>
+<section id="识别假设序贯可忽略性及其不可检验性" class="level3">
+<h3 class="anchored" data-anchor-id="识别假设序贯可忽略性及其不可检验性">13.3.3 识别假设：序贯可忽略性及其不可检验性</h3>
+<p>因果中介效应的识别依赖于<strong>序贯可忽略性假设</strong>：</p>
+<p><strong>假设1</strong>（可忽略处理分配）： <span class="math display">\[
+\{Y_i(x', m), M_i(x)\} \perp X_i | W_i = w
+\]</span> 给定预处理协变量W，处理分配X与潜在结果和潜在中介变量独立。</p>
+<p><strong>假设2</strong>（可忽略中介变量分配）： <span class="math display">\[
+Y_i(x', m) \perp M_i | X_i = x, W_i = w
+\]</span> 给定处理状态X和协变量W，中介变量M与潜在结果独立。</p>
+<p><strong>假设3</strong>（无交互作用）： 对于所有的<span class="math inline">\(x \neq x'\)</span>和<span class="math inline">\(m\)</span>， <span class="math display">\[
+Y_i(x, m) - Y_i(x', m) = Y_i(x, m') - Y_i(x', m')
+\]</span> 即直接效应不依赖于中介变量的取值。</p>
+<p><strong>这些假设的挑战</strong>： 1. 特别是假设2，要求在控制X和W后，M与Y之间没有未观测的混淆 2. 这些假设无法直接检验 3. 在实践中很难完全满足</p>
+</section>
+<section id="估计方法参数化模型与半参数bootstrap" class="level3">
+<h3 class="anchored" data-anchor-id="估计方法参数化模型与半参数bootstrap">13.3.4 估计方法：参数化模型与半参数Bootstrap</h3>
+<p><strong>参数化方法</strong>： 在序贯可忽略性假设下，可以使用参数模型估计因果中介效应。常见的方法是：</p>
+<ol type="1">
+<li>用参数模型（如线性回归）估计中介方程：<span class="math inline">\(M_i = \alpha_2 + \beta_2 X_i + \epsilon_{2i}\)</span></li>
+<li>用参数模型估计结果方程：<span class="math inline">\(Y_i = \alpha_3 + \beta_3 X_i + \gamma M_i + \epsilon_{3i}\)</span></li>
+<li>计算平均因果中介效应：<span class="math inline">\(\hat{\delta} = \hat{\beta}_2 \hat{\gamma}\)</span></li>
+</ol>
+<p><strong>半参数Bootstrap方法</strong>： 由于中介效应的抽样分布通常不是正态的，推荐使用Bootstrap方法进行推断。</p>
+<p><strong>Bootstrap步骤</strong>： 1. 从原始样本中有放回地抽取B个Bootstrap样本（通常B=1000-5000） 2. 在每个Bootstrap样本中估计中介效应 3. 基于B个估计值构建置信区间（如百分位数区间、偏差校正区间）</p>
+<p><strong>敏感性分析</strong>： 由于序贯可忽略性假设无法检验，需要进行敏感性分析，评估结论对未观测混淆的稳健性。</p>
+</section>
+</section>
+<section id="中介效应的估计检验与解读" class="level2">
+<h2 class="anchored" data-anchor-id="中介效应的估计检验与解读">13.4 中介效应的估计、检验与解读</h2>
+<section id="效应分解总效应直接效应与间接中介效应" class="level3">
+<h3 class="anchored" data-anchor-id="效应分解总效应直接效应与间接中介效应">13.4.1 效应分解：总效应、直接效应与间接（中介）效应</h3>
+<p>在中介分析中，总效应被分解为直接效应和间接效应。</p>
+<p><strong>效应分解公式</strong>： 对于线性模型： <span class="math display">\[
+\begin{aligned}
+\text{总效应} &amp;: c = a \times b + c' \\
+\text{间接效应} &amp;: a \times b \\
+\text{直接效应} &amp;: c'
+\end{aligned}
+\]</span></p>
+<p>其中： - <span class="math inline">\(a\)</span>: X对M的效应 - <span class="math inline">\(b\)</span>: M对Y的效应（控制X） - <span class="math inline">\(c'\)</span>: X对Y的直接效应（控制M）</p>
+<p><strong>效应量指标</strong>： 1. <strong>中介比例</strong>：<span class="math inline">\(\frac{ab}{c} = \frac{ab}{ab + c'}\)</span> 2. <strong>效应大小</strong>：标准化间接效应（如完全标准化、部分标准化）</p>
+</section>
+<section id="bootstrap法检验间接效应的推荐方法" class="level3">
+<h3 class="anchored" data-anchor-id="bootstrap法检验间接效应的推荐方法">13.4.2 Bootstrap法：检验间接效应的推荐方法</h3>
+<p>由于间接效应<span class="math inline">\(ab\)</span>的乘积通常不服从正态分布，Bootstrap法成为检验间接效应的首选方法。</p>
+<p><strong>百分位Bootstrap</strong>： 1. 从原始样本中有放回地抽取B个Bootstrap样本 2. 在每个样本中计算间接效应估计值<span class="math inline">\(\widehat{ab}^{(b)}\)</span> 3. 将B个估计值从小到大排序 4. 取第2.5百分位数和第97.5百分位数作为95%置信区间</p>
+<p><strong>偏差校正Bootstrap</strong>： 对百分位Bootstrap进行偏差校正，可以提高置信区间的准确性，特别是在小样本或非对称分布的情况下。</p>
+<p><strong>Bootstrap样本量建议</strong>： - 至少1000次，推荐5000次 - 对于偏差校正Bootstrap，可能需要更多次数</p>
+</section>
+<section id="结果报告规范与图示" class="level3">
+<h3 class="anchored" data-anchor-id="结果报告规范与图示">13.4.3 结果报告规范与图示</h3>
+<p><strong>中介分析报告应包括</strong>： 1. 描述性统计和相关矩阵 2. 各回归方程的结果（系数、标准误、显著性） 3. 间接效应的点估计和置信区间 4. 直接效应和总效应的估计 5. 效应量指标（如中介比例） 6. 模型检验信息（如SEM的拟合指数）</p>
+<p><strong>中介分析图示</strong>： 标准的路径图应包括： 1. 所有变量（X, M, Y） 2. 路径系数（a, b, c’） 3. 误差项 4. 必要时标注协变量</p>
+<p>示例路径图：</p>
+<pre><code>     a         b
+X -------&gt; M ------&gt; Y
+ \                   /
+  \                 /
+   \------ c' -----/</code></pre>
+</section>
+<section id="多重中介与链式中介模型简介" class="level3">
+<h3 class="anchored" data-anchor-id="多重中介与链式中介模型简介">13.4.4 多重中介与链式中介模型简介</h3>
+<p><strong>多重中介模型</strong>： 当有多个并行中介变量时，可以使用多重中介模型： <span class="math display">\[
+\begin{aligned}
+M_1 &amp;= a_1 X + e_1 \\
+M_2 &amp;= a_2 X + e_2 \\
+Y &amp;= c' X + b_1 M_1 + b_2 M_2 + e_3
+\end{aligned}
+\]</span></p>
+<p>总间接效应为：<span class="math inline">\(a_1 b_1 + a_2 b_2\)</span></p>
+<p><strong>链式中介模型</strong>： 当中介变量之间存在序列关系时，可以使用链式中介模型： <span class="math display">\[
+\begin{aligned}
+M_1 &amp;= a_1 X + e_1 \\
+M_2 &amp;= a_2 X + d_{21} M_1 + e_2 \\
+Y &amp;= c' X + b_1 M_1 + b_2 M_2 + e_3
+\end{aligned}
+\]</span></p>
+<p>间接效应包括： 1. 通过M1：<span class="math inline">\(a_1 b_1\)</span> 2. 通过M2：<span class="math inline">\(a_2 b_2\)</span> 3. 通过M1和M2：<span class="math inline">\(a_1 d_{21} b_2\)</span></p>
+<p>总间接效应为：<span class="math inline">\(a_1 b_1 + a_2 b_2 + a_1 d_{21} b_2\)</span></p>
+</section>
+</section>
+<section id="调节效应分析模型估计与展示" class="level2">
+<h2 class="anchored" data-anchor-id="调节效应分析模型估计与展示">13.5 调节效应分析：模型、估计与展示</h2>
+<section id="调节变量的定义与类型分类连续" class="level3">
+<h3 class="anchored" data-anchor-id="调节变量的定义与类型分类连续">13.5.1 调节变量的定义与类型（分类/连续）</h3>
+<p><strong>调节变量的定义</strong>： 调节变量W影响自变量X与因变量Y之间关系的强度或方向。</p>
+<p><strong>调节变量的类型</strong>： 1. <strong>分类调节变量</strong>：如性别、种族、实验条件等 2. <strong>连续调节变量</strong>：如年龄、收入、态度分数等 3. <strong>类别与连续的交互</strong>：分类变量与连续变量的交互</p>
+</section>
+<section id="含交互项的调节效应模型设定" class="level3">
+<h3 class="anchored" data-anchor-id="含交互项的调节效应模型设定">13.5.2 含交互项的调节效应模型设定</h3>
+<p><strong>基本调节模型</strong>： <span class="math display">\[
+Y = \beta_0 + \beta_1 X + \beta_2 W + \beta_3 X \times W + \epsilon
+\]</span></p>
+<p>其中： - <span class="math inline">\(\beta_1\)</span>: X的主效应（当W=0时） - <span class="math inline">\(\beta_2\)</span>: W的主效应（当X=0时） - <span class="math inline">\(\beta_3\)</span>: 交互效应，表示调节效应</p>
+<p><strong>连续调节变量的中心化</strong>： 为了避免多重共线性并提高系数的可解释性，通常对连续变量进行中心化： <span class="math display">\[
+X_c = X - \bar{X}, \quad W_c = W - \bar{W}
+\]</span></p>
+<p>然后估计模型： <span class="math display">\[
+Y = \beta_0 + \beta_1 X_c + \beta_2 W_c + \beta_3 X_c \times W_c + \epsilon
+\]</span></p>
+<p>此时，<span class="math inline">\(\beta_1\)</span>表示在W取均值时，X对Y的效应。</p>
+</section>
+<section id="调节效应的图形化呈现简单斜率分析" class="level3">
+<h3 class="anchored" data-anchor-id="调节效应的图形化呈现简单斜率分析">13.5.3 调节效应的图形化呈现：简单斜率分析</h3>
+<p>简单斜率分析是理解和呈现调节效应的关键工具。</p>
+<p><strong>简单斜率的计算</strong>： 对于模型<span class="math inline">\(Y = \beta_0 + \beta_1 X + \beta_2 W + \beta_3 XW + \epsilon\)</span>，X对Y的简单斜率为： <span class="math display">\[
+\frac{\partial Y}{\partial X} = \beta_1 + \beta_3 W
+\]</span></p>
+<p>这意味着X对Y的影响随W的值而变化。</p>
+<p><strong>简单斜率检验</strong>： 检验在W的特定取值下，简单斜率是否显著不为零。</p>
+<p><strong>Johnson-Neyman技术</strong>： 确定W的哪些取值范围内，简单斜率是统计显著的。</p>
+</section>
+<section id="johnson-neyman区间与调节效应区域" class="level3">
+<h3 class="anchored" data-anchor-id="johnson-neyman区间与调节效应区域">13.5.4 Johnson-Neyman区间与调节效应区域</h3>
+<p><strong>Johnson-Neyman技术</strong>： 该方法确定调节变量W的”显著性区域”，即在该区域内，X对Y的简单斜率显著不为零。</p>
+<p><strong>计算步骤</strong>： 1. 计算简单斜率的方差：<span class="math inline">\(Var(\beta_1 + \beta_3 W) = Var(\beta_1) + W^2 Var(\beta_3) + 2W Cov(\beta_1, \beta_3)\)</span> 2. 构建t统计量：<span class="math inline">\(t = \frac{\beta_1 + \beta_3 W}{\sqrt{Var(\beta_1 + \beta_3 W)}}\)</span> 3. 解方程<span class="math inline">\(t^2 = t_{critical}^2\)</span>，得到W的临界值 4. 确定W的取值范围，使得<span class="math inline">\(|t| &gt; t_{critical}\)</span></p>
+<p><strong>结果解释</strong>： Johnson-Neyman技术提供了调节变量W的取值区间，在该区间内X对Y有显著影响。这比选择几个特定点进行简单斜率检验更全面。</p>
+</section>
+</section>
+<section id="调节效应的估计检验与结果解读" class="level2">
+<h2 class="anchored" data-anchor-id="调节效应的估计检验与结果解读">13.6 调节效应的估计、检验与结果解读</h2>
+<section id="交互项系数的估计与假设检验" class="level3">
+<h3 class="anchored" data-anchor-id="交互项系数的估计与假设检验">13.6.1 交互项系数的估计与假设检验</h3>
+<p><strong>交互项系数的估计</strong>： 使用OLS估计包含交互项的模型，重点关注交互项系数<span class="math inline">\(\beta_3\)</span>的估计值和标准误。</p>
+<p><strong>假设检验</strong>： 检验<span class="math inline">\(H_0: \beta_3 = 0\)</span>，即不存在调节效应。 如果<span class="math inline">\(\beta_3\)</span>显著不为零，则拒绝原假设，认为存在调节效应。</p>
+<p><strong>注意事项</strong>： 1. 即使<span class="math inline">\(\beta_3\)</span>显著，也应结合简单斜率分析进行解释 2. 主效应<span class="math inline">\(\beta_1\)</span>和<span class="math inline">\(\beta_2\)</span>的解释依赖于变量的编码或中心化方式 3. 调节效应的大小应结合变量的测量尺度进行评估</p>
+</section>
+<section id="调节效应的简单斜率检验步骤" class="level3">
+<h3 class="anchored" data-anchor-id="调节效应的简单斜率检验步骤">13.6.2 调节效应的简单斜率检验步骤</h3>
+<p><strong>简单斜率检验步骤</strong>： 1. 选择一个或多个有理论意义的调节变量取值点（如均值、均值±1标准差等） 2. 计算每个点上的简单斜率：<span class="math inline">\(\theta = \beta_1 + \beta_3 W_0\)</span> 3. 计算简单斜率的方差：<span class="math inline">\(Var(\theta) = Var(\beta_1) + W_0^2 Var(\beta_3) + 2W_0 Cov(\beta_1, \beta_3)\)</span> 4. 构建t统计量：<span class="math inline">\(t = \frac{\theta}{\sqrt{Var(\theta)}}\)</span> 5. 进行显著性检验</p>
+<p><strong>简单斜率的置信区间</strong>： <span class="math inline">\(\theta \pm t_{df, 1-\alpha/2} \times \sqrt{Var(\theta)}\)</span></p>
+</section>
+<section id="如何正确解读与报告调节效应结果" class="level3">
+<h3 class="anchored" data-anchor-id="如何正确解读与报告调节效应结果">13.6.3 如何正确解读与报告调节效应结果</h3>
+<p><strong>调节效应的解读要点</strong>： 1. <strong>方向</strong>：调节效应是增强型（<span class="math inline">\(\beta_3\)</span>与<span class="math inline">\(\beta_1\)</span>同号）还是削弱型（<span class="math inline">\(\beta_3\)</span>与<span class="math inline">\(\beta_1\)</span>异号）？ 2. <strong>大小</strong>：调节效应的实际大小是多少？（考虑变量的测量单位） 3. <strong>范围</strong>：在调节变量的哪些取值范围内，X对Y的影响是显著的？ 4. <strong>理论意义</strong>：调节效应如何支持或扩展现有理论？</p>
+<p><strong>结果报告应包括</strong>： 1. 包含和不包含交互项的模型结果 2. 交互项系数的估计值、标准误和显著性 3. 简单斜率分析结果 4. Johnson-Neyman显著性区域（如适用） 5. 调节效应图示</p>
+</section>
+<section id="调节效应中的多重共线性问题与处理" class="level3">
+<h3 class="anchored" data-anchor-id="调节效应中的多重共线性问题与处理">13.6.4 调节效应中的多重共线性问题与处理</h3>
+<p><strong>多重共线性问题</strong>： 在包含交互项的模型中，X、W和X×W之间通常存在高度相关，导致： 1. 系数估计不稳定 2. 标准误增大 3. 统计检验功效降低</p>
+<p><strong>处理方法</strong>： 1. <strong>中心化</strong>：对连续自变量和调节变量进行中心化 - 减少X与X×W、W与X×W之间的相关 - 提高系数的可解释性 2. <strong>标准化</strong>：将变量标准化为z分数 - 便于比较不同变量的效应大小 - 减少多重共线性 3. <strong>岭回归或LASSO</strong>：在严重多重共线性时考虑使用正则化方法 4. <strong>增加样本量</strong>：更大的样本量可以缓解多重共线性的影响</p>
+<p><strong>中心化后的模型</strong>： <span class="math display">\[
+Y = \beta_0 + \beta_1 (X - \bar{X}) + \beta_2 (W - \bar{W}) + \beta_3 (X - \bar{X})(W - \bar{W}) + \epsilon
+\]</span></p>
+<p>此时，<span class="math inline">\(\beta_1\)</span>表示当W取均值时，X对Y的效应；<span class="math inline">\(\beta_2\)</span>表示当X取均值时，W对Y的效应。</p>
+</section>
+</section>
+<section id="整合模型有调节的中介与有中介的调节" class="level2">
+<h2 class="anchored" data-anchor-id="整合模型有调节的中介与有中介的调节">13.7 整合模型：有调节的中介与有中介的调节</h2>
+<section id="有调节的中介模型中介路径受调节" class="level3">
+<h3 class="anchored" data-anchor-id="有调节的中介模型中介路径受调节">13.7.1 有调节的中介模型：中介路径受调节</h3>
+<p>有调节的中介模型检验中介效应是否受到调节变量的影响。即，中介路径（X→M或M→Y）的强度是否随调节变量W的变化而变化。</p>
+<p><strong>模型设定</strong>： 有调节的中介模型有多种形式，最常见的是： 1. <strong>第一阶段调节</strong>：调节变量W调节X→M路径 <span class="math display">\[
+   \begin{aligned}
+   M &amp;= a_0 + a_1 X + a_2 W + a_3 XW + e_M \\
+   Y &amp;= b_0 + c' X + b_1 M + e_Y
+   \end{aligned}
+   \]</span> 此时，中介效应为<span class="math inline">\((a_1 + a_3 W) \times b_1\)</span>，它随W的变化而变化。</p>
+<ol start="2" type="1">
+<li><p><strong>第二阶段调节</strong>：调节变量W调节M→Y路径 <span class="math display">\[
+\begin{aligned}
+M &amp;= a_0 + a_1 X + e_M \\
+Y &amp;= b_0 + c' X + b_1 M + b_2 W + b_3 MW + e_Y
+\end{aligned}
+\]</span> 此时，中介效应为<span class="math inline">\(a_1 \times (b_1 + b_3 W)\)</span>。</p></li>
+<li><p><strong>两阶段调节</strong>：W同时调节X→M和M→Y路径</p></li>
+</ol>
+<p><strong>检验方法</strong>： 使用Bootstrap法检验在不同W取值下的条件间接效应。</p>
+</section>
+<section id="被中介的调节效应模型调节作用通过中介实现" class="level3">
+<h3 class="anchored" data-anchor-id="被中介的调节效应模型调节作用通过中介实现">13.7.2 被中介的调节效应模型：调节作用通过中介实现</h3>
+<p>被中介的调节模型检验调节效应是否通过中介变量传递。即，X与W的交互效应是否通过M影响Y。</p>
+<p><strong>模型设定</strong>： <span class="math display">\[
+\begin{aligned}
+M &amp;= a_0 + a_1 X + a_2 W + a_3 XW + e_M \\
+Y &amp;= b_0 + c' X + b_2 W + b_3 XW + b_1 M + e_Y
+\end{aligned}
+\]</span></p>
+<p><strong>被中介的调节效应</strong>： 如果<span class="math inline">\(a_3\)</span>和<span class="math inline">\(b_1\)</span>都显著，且<span class="math inline">\(b_3\)</span>变得不显著或减小，则调节效应被M中介。</p>
+<p><strong>效应分解</strong>： 1. 直接调节效应：<span class="math inline">\(b_3\)</span> 2. 被中介的调节效应：<span class="math inline">\(a_3 \times b_1\)</span></p>
+</section>
+<section id="整合模型的构建估计与检验策略" class="level3">
+<h3 class="anchored" data-anchor-id="整合模型的构建估计与检验策略">13.7.3 整合模型的构建、估计与检验策略</h3>
+<p><strong>整合模型的类型</strong>： 根据Edwards和Lambert（2007），整合模型可以分为： 1. 第一阶段调节模型 2. 第二阶段调节模型 3. 两阶段调节模型</p>
+<p><strong>估计方法</strong>： 1. 使用结构方程模型同时估计所有路径 2. 使用分层回归或路径分析 3. 使用Bootstrap法进行推断</p>
+<p><strong>检验策略</strong>： 1. 检验调节效应：交互项系数是否显著？ 2. 检验中介效应：间接效应是否显著？ 3. 检验有调节的中介：条件间接效应在不同W水平下是否不同？ 4. 检验被中介的调节：交互效应是否通过中介变量传递？</p>
+</section>
+<section id="整合模型的应用实例与理论贡献" class="level3">
+<h3 class="anchored" data-anchor-id="整合模型的应用实例与理论贡献">13.7.4 整合模型的应用实例与理论贡献</h3>
+<p><strong>整合模型的理论贡献</strong>： 1. 提供更精细的理论解释 2. 揭示更复杂的因果关系模式 3. 整合不同理论视角</p>
+<p><strong>应用实例</strong>： 例如，研究领导风格（X）对员工绩效（Y）的影响： - 中介变量：员工工作投入（M） - 调节变量：工作复杂性（W）</p>
+<p>可以检验： 1. 领导风格是否通过工作投入影响绩效？（中介） 2. 这种中介效应是否受工作复杂性的调节？（有调节的中介） 3. 领导风格与工作复杂的交互效应是否通过工作投入传递？（被中介的调节）</p>
+</section>
+</section>
+<section id="应用实践常见误区与稳健性讨论" class="level2">
+<h2 class="anchored" data-anchor-id="应用实践常见误区与稳健性讨论">13.8 应用实践、常见误区与稳健性讨论</h2>
+<section id="stata与r中的操作命令与流程示例" class="level3">
+<h3 class="anchored" data-anchor-id="stata与r中的操作命令与流程示例">13.8.1 Stata与R中的操作命令与流程示例</h3>
+</section>
+<section id="中介与调节分析中的常见误用与误读" class="level3">
+<h3 class="anchored" data-anchor-id="中介与调节分析中的常见误用与误读">13.8.2 中介与调节分析中的常见误用与误读</h3>
+<p><strong>常见误区</strong>： 1. <strong>忽视内生性</strong>：在核心因果关系或中介变量存在内生性时进行中介分析 2. <strong>错误的时序</strong>：中介变量测量时间晚于结果变量 3. <strong>过度解读</strong>：将统计上的中介效应等同于理论上的机制 4. <strong>忽略检验前提</strong>：未检验中介分析的前提假设 5. <strong>多重比较问题</strong>：在探索性分析中测试多个中介模型而不校正显著性水平 6. <strong>样本量不足</strong>：在小样本中进行复杂的中介或调节分析</p>
+<p><strong>正确做法</strong>： 1. 首先确保核心因果关系的识别 2. 基于理论选择中介和调节变量 3. 检验分析的前提假设 4. 使用适当的方法（如Bootstrap）进行检验 5. 进行敏感性分析 6. 谨慎解释结果，考虑替代解释</p>
+</section>
+<section id="内生性问题的挑战中介调节变量本身的内生性" class="level3">
+<h3 class="anchored" data-anchor-id="内生性问题的挑战中介调节变量本身的内生性">13.8.3 内生性问题的挑战：中介/调节变量本身的内生性</h3>
+<p><strong>中介变量的内生性</strong>： 中介变量M可能存在内生性，原因包括： 1. 遗漏变量同时影响M和Y 2. M的测量误差 3. M与Y之间的双向因果关系</p>
+<p><strong>后果</strong>： 中介效应估计有偏，可能： 1. 高估中介效应 2. 低估中介效应 3. 错误地识别不存在的中介效应</p>
+<p><strong>解决方法</strong>： 1. <strong>工具变量法</strong>：为中介变量寻找工具变量 2. <strong>固定效应模型</strong>：如果有面板数据，可以控制个体固定效应 3. <strong>实验操纵</strong>：在实验中直接操纵中介变量 4. <strong>敏感性分析</strong>：评估结论对未观测混淆的稳健性</p>
+</section>
+<section id="机制分析的稳健性检验与替代解释排除" class="level3">
+<h3 class="anchored" data-anchor-id="机制分析的稳健性检验与替代解释排除">13.8.4 机制分析的稳健性检验与替代解释排除</h3>
+<p><strong>稳健性检验方法</strong>： 1. <strong>不同模型设定</strong>：尝试不同的函数形式或控制变量组合 2. <strong>不同估计方法</strong>：比较不同方法（如SEM、Bootstrap）的结果 3. <strong>子样本分析</strong>：在不同子样本中检验结果的稳健性 4. <strong>安慰剂检验</strong>：使用理论上不应有影响的变量进行”伪中介”分析</p>
+<p><strong>排除替代解释</strong>： 1. <strong>反向因果</strong>：检验Y对M的影响是否可能 2. <strong>共同原因</strong>：寻找可能的第三变量同时影响X、M和Y 3. <strong>测量误差</strong>：评估关键变量的测量质量 4. <strong>选择偏误</strong>：检查样本选择是否可能导致偏误</p>
+<p><strong>透明度要求</strong>： 研究报告应： 1. 明确说明所有分析的前提假设 2. 报告所有稳健性检验的结果 3. 讨论分析的局限性 4. 提供足够的信息让读者可以重复分析</p>
+</section>
+</section>
+<section id="本章总结与因果推断模块回顾" class="level2">
+<h2 class="anchored" data-anchor-id="本章总结与因果推断模块回顾">本章总结与因果推断模块回顾</h2>
+<section id="本章总结" class="level3">
+<h3 class="anchored" data-anchor-id="本章总结">本章总结</h3>
+<p>本章系统学习了在确认主效应后，探究其作用机制与边界条件的方法。必须再次强调，<strong>机制分析的质量上限由核心因果关系的识别质量决定</strong>。中介与调节分析是强大的理论检验工具，但其结论的稳健性依赖于严苛的假设、精良的测量以及对未观测混淆的持续警惕。</p>
+<p><strong>中介效应分析</strong>帮助我们理解X如何通过M影响Y，但面临中介变量内生性的严峻挑战。传统方法（如Baron &amp; Kenny三步法）简单易用但统计功效有限，而基于反事实框架的因果中介分析提供了更严谨但假设更强的替代方案。</p>
+<p><strong>调节效应分析</strong>帮助我们理解X对Y的影响何时更强或更弱，通过检验X与W的交互作用来实现。正确解释调节效应需要结合简单斜率分析和Johnson-Neyman技术。</p>
+<p><strong>整合模型</strong>（如有调节的中介、被中介的调节）让我们能够检验更复杂的理论命题，但对数据质量和样本量有更高要求。</p>
+</section>
+<section id="因果推断模块回顾" class="level3">
+<h3 class="anchored" data-anchor-id="因果推断模块回顾">因果推断模块回顾</h3>
+<p>回顾第6-13章，我们完成了从理解内生性问题、掌握多种因果识别策略（IV, DID, RDD, PSM, SCM, RC），到深化因果解释（中介、调节）的完整训练。</p>
+<p><strong>第6章</strong>建立了因果推断的基本框架——反事实模型，并系统阐述了内生性问题及其来源。</p>
+<p><strong>第7-12章</strong>提供了解决内生性问题的工具箱： - <strong>第7章</strong>：工具变量法，解决测量误差和双向因果问题 - <strong>第8章</strong>：倾向得分匹配，解决可观测选择偏误 - <strong>第9章</strong>：双重差分法，利用政策实施前后的变化 - <strong>第10章</strong>：断点回归，利用制度断点创造局部随机性 - <strong>第11章</strong>：合成控制法，为单一处理单元构造反事实 - <strong>第12章</strong>：回归控制法，通过回归模型预测反事实</p>
+<p><strong>第13章</strong>：在前述方法识别出可靠因果关系的基础上，进一步探究机制（中介）和边界条件（调节）。</p>
+</section>
+<section id="方法论启示" class="level3">
+<h3 class="anchored" data-anchor-id="方法论启示">方法论启示</h3>
+<p>因果推断并非应用一套公式，而是<strong>基于理论、数据与方法的不断对话</strong>。研究者应像侦探一样，运用不同的工具寻找证据，同时始终保持对证据局限性的清醒认识，从而在不确定性中做出最合理的因果判断。</p>
+<p><strong>关键原则</strong>： 1. <strong>没有免费的午餐</strong>：每种方法都有其前提假设和局限性 2. <strong>透明度至上</strong>：明确报告所有假设、检验和局限性 3. <strong>稳健性检验</strong>：通过多种方法检验结果的稳健性 4. <strong>理论指导</strong>：方法选择应由研究问题和理论指导，而非数据驱动 5. <strong>谦虚态度</strong>：认识到因果推断的固有不确定性</p>
+<p>通过这8章的学习，希望读者不仅掌握了各种因果推断方法的技术细节，更重要的是培养了严谨的因果思维习惯——在面对任何因果主张时，都会本能地追问：识别策略是什么？关键假设是什么？这些假设合理吗？有哪些证据支持或反对这些假设？这种思维习惯是进行严谨社会科学研究的核心素养。</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/12回归控制法.html" class="pagination-link" aria-label="12 回归控制法">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">12 回归控制法</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/14大样本理论.html" class="pagination-link" aria-label="14 大样本理论">
+        <span class="nav-page-text"><span class="chapter-title">14 大样本理论</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

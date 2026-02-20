@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>12 回归控制法 – 计量模型及应用</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/13中介效应与调节效应.html" rel="next">
+<link href="../chapters/11合成控制法.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-70a47bd5681a7291082a5b9f83d58762.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="science-textbook.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/6因果推断框架.html">II 因果推断方法</a></li><li class="breadcrumb-item"><a href="../chapters/12回归控制法.html"><span class="chapter-title">12 回归控制法</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">计量模型及应用</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">简介</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">I 数据与模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1线性回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1 线性回归基础</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2横截面数据分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2 横截面数据：假设违反的诊断与修正</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/3面板数据模型.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 面板数据模型</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/4时间序列分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4 时间序列分析</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/5离散与受限因变量模型.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">5 离散数据与受限因变量模型</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">II 因果推断方法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/6因果推断框架.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6 因果推断框架</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/7工具变量法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">7 工具变量法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/8倾向得分匹配.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">8 倾向得分匹配</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/9双重差分法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">9 双重差分法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10断点回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">10 断点回归</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11合成控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">11 合成控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12回归控制法.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">12 回归控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13中介效应与调节效应.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">13 中介效应与调节效应</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">III 理论与算法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14大样本理论.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">14 大样本理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15最大似然估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">15 最大似然估计理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16广义矩估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">16 广义矩估计法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17蒙特卡洛法与自助法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">17 蒙特卡洛法与自助法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/18优化算法与数值方法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">18 数值优化与矩阵方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/19机器学习在计量中的应用.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">19 机器学习在计量中的应用</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#本章导读" id="toc-本章导读" class="nav-link active" data-scroll-target="#本章导读">本章导读</a></li>
+  <li><a href="#回归控制法的两种框架hsiao等人的方法与atc方法" id="toc-回归控制法的两种框架hsiao等人的方法与atc方法" class="nav-link" data-scroll-target="#回归控制法的两种框架hsiao等人的方法与atc方法">12.1 回归控制法的两种框架：Hsiao等人的方法与ATC方法</a>
+  <ul class="collapse">
+  <li><a href="#核心问题如何利用控制单元面板数据预测处理单元的反事实" id="toc-核心问题如何利用控制单元面板数据预测处理单元的反事实" class="nav-link" data-scroll-target="#核心问题如何利用控制单元面板数据预测处理单元的反事实">12.1.1 核心问题：如何利用控制单元面板数据预测处理单元的反事实？</a></li>
+  <li><a href="#hsiao等人的方法将处理单元视为控制单元的线性组合加上误差项" id="toc-hsiao等人的方法将处理单元视为控制单元的线性组合加上误差项" class="nav-link" data-scroll-target="#hsiao等人的方法将处理单元视为控制单元的线性组合加上误差项">12.1.2 Hsiao等人的方法：将处理单元视为控制单元的线性组合加上误差项</a></li>
+  <li><a href="#atc方法使用弹性网络等正则化回归直接预测结果" id="toc-atc方法使用弹性网络等正则化回归直接预测结果" class="nav-link" data-scroll-target="#atc方法使用弹性网络等正则化回归直接预测结果">12.1.3 ATC方法：使用弹性网络等正则化回归直接预测结果</a></li>
+  </ul></li>
+  <li><a href="#hsiao等人的回归控制法原理与估计" id="toc-hsiao等人的回归控制法原理与估计" class="nav-link" data-scroll-target="#hsiao等人的回归控制法原理与估计">12.2 Hsiao等人的回归控制法：原理与估计</a>
+  <ul class="collapse">
+  <li><a href="#模型设定因子模型视角" id="toc-模型设定因子模型视角" class="nav-link" data-scroll-target="#模型设定因子模型视角">12.2.1 模型设定：因子模型视角</a></li>
+  <li><a href="#最佳线性预测与系数估计" id="toc-最佳线性预测与系数估计" class="nav-link" data-scroll-target="#最佳线性预测与系数估计">12.2.2 最佳线性预测与系数估计</a></li>
+  <li><a href="#处理效应的点估计与置信区间构造" id="toc-处理效应的点估计与置信区间构造" class="nav-link" data-scroll-target="#处理效应的点估计与置信区间构造">12.2.3 处理效应的点估计与置信区间构造</a></li>
+  </ul></li>
+  <li><a href="#基于正则化回归的回归控制法" id="toc-基于正则化回归的回归控制法" class="nav-link" data-scroll-target="#基于正则化回归的回归控制法">12.3 基于正则化回归的回归控制法</a>
+  <ul class="collapse">
+  <li><a href="#高维控制问题与正则化岭回归lasso弹性网络" id="toc-高维控制问题与正则化岭回归lasso弹性网络" class="nav-link" data-scroll-target="#高维控制问题与正则化岭回归lasso弹性网络">12.3.1 高维控制问题与正则化（岭回归、LASSO、弹性网络）</a></li>
+  <li><a href="#atc估计量双重稳健与渐进性质" id="toc-atc估计量双重稳健与渐进性质" class="nav-link" data-scroll-target="#atc估计量双重稳健与渐进性质">12.3.2 ATC估计量：双重稳健与渐进性质</a></li>
+  <li><a href="#交叉验证选择调优参数" id="toc-交叉验证选择调优参数" class="nav-link" data-scroll-target="#交叉验证选择调优参数">12.3.3 交叉验证选择调优参数</a></li>
+  </ul></li>
+  <li><a href="#回归控制法的统计推断" id="toc-回归控制法的统计推断" class="nav-link" data-scroll-target="#回归控制法的统计推断">12.4 回归控制法的统计推断</a>
+  <ul class="collapse">
+  <li><a href="#基于残差自举法的推断" id="toc-基于残差自举法的推断" class="nav-link" data-scroll-target="#基于残差自举法的推断">12.4.1 基于残差自举法的推断</a></li>
+  <li><a href="#基于预测区间的推断" id="toc-基于预测区间的推断" class="nav-link" data-scroll-target="#基于预测区间的推断">12.4.2 基于预测区间的推断</a></li>
+  <li><a href="#与scm安慰剂检验的对比" id="toc-与scm安慰剂检验的对比" class="nav-link" data-scroll-target="#与scm安慰剂检验的对比">12.4.3 与SCM安慰剂检验的对比</a></li>
+  </ul></li>
+  <li><a href="#回归控制法与合成控制法的比较与选择" id="toc-回归控制法与合成控制法的比较与选择" class="nav-link" data-scroll-target="#回归控制法与合成控制法的比较与选择">12.5 回归控制法与合成控制法的比较与选择</a>
+  <ul class="collapse">
+  <li><a href="#方法逻辑对比参数化-vs.-非参数化外推-vs.-内插" id="toc-方法逻辑对比参数化-vs.-非参数化外推-vs.-内插" class="nav-link" data-scroll-target="#方法逻辑对比参数化-vs.-非参数化外推-vs.-内插">12.5.1 方法逻辑对比：参数化 vs.&nbsp;非参数化，外推 vs.&nbsp;内插</a></li>
+  <li><a href="#适用场景与假设差异" id="toc-适用场景与假设差异" class="nav-link" data-scroll-target="#适用场景与假设差异">12.5.2 适用场景与假设差异</a></li>
+  <li><a href="#实证应用中的选择指南" id="toc-实证应用中的选择指南" class="nav-link" data-scroll-target="#实证应用中的选择指南">12.5.3 实证应用中的选择指南</a></li>
+  </ul></li>
+  <li><a href="#应用实例与操作指南" id="toc-应用实例与操作指南" class="nav-link" data-scroll-target="#应用实例与操作指南">12.6 应用实例与操作指南</a>
+  <ul class="collapse">
+  <li><a href="#案例欧元区对成员国经济增长的影响" id="toc-案例欧元区对成员国经济增长的影响" class="nav-link" data-scroll-target="#案例欧元区对成员国经济增长的影响">12.6.1 案例：欧元区对成员国经济增长的影响</a></li>
+  <li><a href="#r-gsynth-fect-和-stata-中的实现" id="toc-r-gsynth-fect-和-stata-中的实现" class="nav-link" data-scroll-target="#r-gsynth-fect-和-stata-中的实现">12.6.2 R (<code>gsynth</code>, <code>fect</code>) 和 Stata 中的实现</a></li>
+  <li><a href="#结果报告与诊断图" id="toc-结果报告与诊断图" class="nav-link" data-scroll-target="#结果报告与诊断图">12.6.3 结果报告与诊断图</a></li>
+  </ul></li>
+  <li><a href="#本章总结" id="toc-本章总结" class="nav-link" data-scroll-target="#本章总结">本章总结</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/6因果推断框架.html">II 因果推断方法</a></li><li class="breadcrumb-item"><a href="../chapters/12回归控制法.html"><span class="chapter-title">12 回归控制法</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">12 回归控制法</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="本章导读" class="level2">
+<h2 class="anchored" data-anchor-id="本章导读">本章导读</h2>
+<p>回归控制法是一种基于回归模型的政策评估方法，特别适用于处理单元数量较少的情境。与合成控制法类似，RC方法也旨在为处理单元构造一个反事实的“合成对照组”，但其核心思想是通过回归模型利用控制单元的面板数据来预测处理单元的反事实结果。本章将系统介绍回归控制法的两种主流框架——Hsiao等人的方法与基于正则化回归的ATC方法，阐述其原理、估计、推断以及与合成控制法的比较，帮助读者掌握这一在小样本政策评估中的重要工具。</p>
+</section>
+<section id="回归控制法的两种框架hsiao等人的方法与atc方法" class="level2">
+<h2 class="anchored" data-anchor-id="回归控制法的两种框架hsiao等人的方法与atc方法">12.1 回归控制法的两种框架：Hsiao等人的方法与ATC方法</h2>
+<section id="核心问题如何利用控制单元面板数据预测处理单元的反事实" class="level3">
+<h3 class="anchored" data-anchor-id="核心问题如何利用控制单元面板数据预测处理单元的反事实">12.1.1 核心问题：如何利用控制单元面板数据预测处理单元的反事实？</h3>
+<p>回归控制法的核心问题与合成控制法相同：当处理单元数量很少（甚至只有一个）时，如何利用未受处理的控制单元数据来预测处理单元如果没有接受处理时的结果（即反事实结果）？</p>
+<p><strong>基本设定</strong>： 假设我们有 <span class="math inline">\(N+1\)</span> 个单元（如地区、企业等），其中第一个单元在时间 <span class="math inline">\(T_0\)</span> 后接受处理，其余 <span class="math inline">\(N\)</span> 个单元始终未接受处理。观测时间跨度为 <span class="math inline">\(t=1,2,\dots,T\)</span>，其中 <span class="math inline">\(T_0\)</span> 为政策干预时点。令 <span class="math inline">\(Y_{it}\)</span> 表示单元 <span class="math inline">\(i\)</span> 在时间 <span class="math inline">\(t\)</span> 的结果变量。对于处理单元（<span class="math inline">\(i=1\)</span>），我们观测到的是处理后的结果 <span class="math inline">\(Y_{1t}^I\)</span>（当 <span class="math inline">\(t&gt;T_0\)</span>），但我们想要估计的是其反事实结果 <span class="math inline">\(Y_{1t}^N\)</span>（即如果没有接受处理的结果）。</p>
+<p>回归控制法的基本思想是：处理单元的反事实结果可以通过控制单元结果的线性组合来预测，即 <span class="math display">\[
+Y_{1t}^N = \sum_{j=2}^{N+1} \beta_j Y_{jt} + \varepsilon_t, \quad t=1,\dots,T_0
+\]</span> 然后利用估计出的关系来预测 <span class="math inline">\(t&gt;T_0\)</span> 时的反事实结果。</p>
+</section>
+<section id="hsiao等人的方法将处理单元视为控制单元的线性组合加上误差项" class="level3">
+<h3 class="anchored" data-anchor-id="hsiao等人的方法将处理单元视为控制单元的线性组合加上误差项">12.1.2 Hsiao等人的方法：将处理单元视为控制单元的线性组合加上误差项</h3>
+<p>Hsiao等人（2012）提出了一种基于线性回归的预测方法。他们认为，处理单元的结果变量可以由控制单元的结果变量线性表示，再加上一个随机误差项。</p>
+<p><strong>模型设定</strong>： 假设在处理前时期（<span class="math inline">\(t \leq T_0\)</span>），处理单元的结果变量满足以下关系： <span class="math display">\[
+Y_{1t} = \alpha + \sum_{j=2}^{N+1} \beta_j Y_{jt} + \varepsilon_t, \quad t=1,\dots,T_0
+\]</span> 其中 <span class="math inline">\(\alpha\)</span> 是截距项，<span class="math inline">\(\beta_j\)</span> 是系数，<span class="math inline">\(\varepsilon_t\)</span> 是随机误差项，满足 <span class="math inline">\(E(\varepsilon_t)=0\)</span>。</p>
+<p><strong>关键假设</strong>： 1. 线性关系：处理单元与控制单元之间的关系是线性的。 2. 参数稳定性：这种线性关系在处理前和处理后保持不变（即系数 <span class="math inline">\(\beta_j\)</span> 不随时间变化）。 3. 控制单元不受政策影响：控制单元的结果变量 <span class="math inline">\(Y_{jt}\)</span>（<span class="math inline">\(j=2,\dots,N+1\)</span>）在政策干预后不受影响，即 <span class="math inline">\(Y_{jt}\)</span> 在 <span class="math inline">\(t&gt;T_0\)</span> 时仍为 <span class="math inline">\(Y_{jt}^N\)</span>。</p>
+<p>在Hsiao等人的框架中，通常使用处理前的数据（<span class="math inline">\(t=1,\dots,T_0\)</span>）来估计模型参数，然后用估计的模型预测处理后的反事实结果： <span class="math display">\[
+\hat{Y}_{1t}^N = \hat{\alpha} + \sum_{j=2}^{N+1} \hat{\beta}_j Y_{jt}, \quad t&gt;T_0
+\]</span> 处理效应则通过比较实际观测值与预测值得到：<span class="math inline">\(\hat{\tau}_{1t} = Y_{1t} - \hat{Y}_{1t}^N\)</span>。</p>
+</section>
+<section id="atc方法使用弹性网络等正则化回归直接预测结果" class="level3">
+<h3 class="anchored" data-anchor-id="atc方法使用弹性网络等正则化回归直接预测结果">12.1.3 ATC方法：使用弹性网络等正则化回归直接预测结果</h3>
+<p>ATC（Augmented Synthetic Control）方法是一种结合了正则化回归的回归控制法，由Ben-Michael、Feller和Rothstein（2021）提出。它通过正则化回归（如岭回归、LASSO或弹性网络）来估计控制单元的权重，从而预测处理单元的反事实结果。</p>
+<p><strong>基本思想</strong>： 与合成控制法类似，ATC方法也试图用控制单元的加权组合来预测处理单元的结果，但它允许权重为负，并且通过正则化处理来解决控制单元数量较多时的过拟合问题。</p>
+<p><strong>模型设定</strong>： ATC方法通常使用以下形式的回归模型： <span class="math display">\[
+Y_{1t} = \sum_{j=2}^{N+1} w_j Y_{jt} + \varepsilon_t, \quad t=1,\dots,T_0
+\]</span> 其中权重 <span class="math inline">\(w_j\)</span> 通过正则化回归估计得到。例如，使用弹性网络时，我们求解以下优化问题： <span class="math display">\[
+\min_{w} \sum_{t=1}^{T_0} \left( Y_{1t} - \sum_{j=2}^{N+1} w_j Y_{jt} \right)^2 + \lambda \left( \alpha \sum_{j=2}^{N+1} |w_j| + (1-\alpha) \sum_{j=2}^{N+1} w_j^2 \right)
+\]</span> 其中 <span class="math inline">\(\lambda\)</span> 是正则化参数，<span class="math inline">\(\alpha\)</span> 控制LASSO惩罚（L1）和岭回归惩罚（L2）的相对比例。</p>
+<p><strong>优势</strong>： 1. 可以处理控制单元数量较多的情况，通过正则化避免过拟合。 2. 权重可以为负，提供了更大的灵活性。 3. 可以通过交叉验证选择正则化参数，提高预测精度。</p>
+</section>
+</section>
+<section id="hsiao等人的回归控制法原理与估计" class="level2">
+<h2 class="anchored" data-anchor-id="hsiao等人的回归控制法原理与估计">12.2 Hsiao等人的回归控制法：原理与估计</h2>
+<section id="模型设定因子模型视角" class="level3">
+<h3 class="anchored" data-anchor-id="模型设定因子模型视角">12.2.1 模型设定：因子模型视角</h3>
+<p>Hsiao等人的方法可以从因子模型的角度来理解。假设每个单元的结果变量由以下因子模型生成： <span class="math display">\[
+Y_{it}^N = \mu_i + \lambda_t + \sum_{k=1}^K \theta_{ik} f_{kt} + \varepsilon_{it}
+\]</span> 其中 <span class="math inline">\(\mu_i\)</span> 是单元固定效应，<span class="math inline">\(\lambda_t\)</span> 是时间固定效应，<span class="math inline">\(f_{kt}\)</span> 是 <span class="math inline">\(K\)</span> 个不可观测的共同因子，<span class="math inline">\(\theta_{ik}\)</span> 是单元 <span class="math inline">\(i\)</span> 在因子 <span class="math inline">\(k\)</span> 上的载荷，<span class="math inline">\(\varepsilon_{it}\)</span> 是 idiosyncratic 冲击。</p>
+<p>对于处理单元 <span class="math inline">\(i=1\)</span>，假设其潜在结果可以表示为控制单元结果的线性组合，这是因为控制单元的结果变量中包含了共同因子 <span class="math inline">\(f_{kt}\)</span> 的信息。如果控制单元足够多，且它们与处理单元受到相同的共同因子影响，那么处理单元的反事实结果就可以通过控制单元的线性组合来预测。</p>
+<p><strong>Hsiao等人的模型</strong>： 在实际应用中，Hsiao等人通常使用以下形式的回归模型： <span class="math display">\[
+Y_{1t} = \alpha + \sum_{j=2}^{N+1} \beta_j Y_{jt} + \varepsilon_t, \quad t=1,\dots,T_0
+\]</span> 其中，他们假设 <span class="math inline">\(\varepsilon_t\)</span> 为独立同分布的误差项。为了获得更好的预测，有时也会在回归中加入一些协变量。</p>
+</section>
+<section id="最佳线性预测与系数估计" class="level3">
+<h3 class="anchored" data-anchor-id="最佳线性预测与系数估计">12.2.2 最佳线性预测与系数估计</h3>
+<p>在Hsiao等人的框架中，系数 <span class="math inline">\(\beta_j\)</span> 的估计是通过最小化处理前时期的预测误差来实现的。即，我们使用处理前数据 <span class="math inline">\((Y_{1t}, Y_{2t}, \dots, Y_{N+1,t})\)</span> 对 <span class="math inline">\(t=1,\dots,T_0\)</span> 来估计回归系数。</p>
+<p><strong>估计方法</strong>： 通常使用普通最小二乘法（OLS）来估计参数 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta_j\)</span>。设 <span class="math inline">\(Y_1 = (Y_{11}, \dots, Y_{1T_0})'\)</span> 为处理单元在处理前时期的结果变量向量，<span class="math inline">\(X\)</span> 为一个 <span class="math inline">\(T_0 \times (N+1)\)</span> 的矩阵，其中第一列为全1向量（对应截距），其余列为控制单元的结果变量（<span class="math inline">\(Y_{jt}, j=2,\dots,N+1\)</span>）。则回归模型可写为： <span class="math display">\[
+Y_1 = X \beta + \varepsilon
+\]</span> 其中 <span class="math inline">\(\beta = (\alpha, \beta_2, \dots, \beta_{N+1})'\)</span>。OLS估计量为： <span class="math display">\[
+\hat{\beta} = (X'X)^{-1} X' Y_1
+\]</span></p>
+<p><strong>注意事项</strong>： 当控制单元数量 <span class="math inline">\(N\)</span> 较大，而处理前时期 <span class="math inline">\(T_0\)</span> 相对较小时，OLS估计可能会出现过拟合问题（即样本内拟合很好，但样本外预测很差）。因此，Hsiao等人建议只选择一部分控制单元进入回归模型，或者使用主成分回归等降维技术。</p>
+</section>
+<section id="处理效应的点估计与置信区间构造" class="level3">
+<h3 class="anchored" data-anchor-id="处理效应的点估计与置信区间构造">12.2.3 处理效应的点估计与置信区间构造</h3>
+<p><strong>点估计</strong>： 在估计出回归系数后，处理单元在政策实施后的反事实结果预测为： <span class="math display">\[
+\hat{Y}_{1t}^N = \hat{\alpha} + \sum_{j=2}^{N+1} \hat{\beta}_j Y_{jt}, \quad t=T_0+1,\dots,T
+\]</span> 处理效应的点估计为实际观测值与预测值之差： <span class="math display">\[
+\hat{\tau}_{1t} = Y_{1t} - \hat{Y}_{1t}^N, \quad t&gt;T_0
+\]</span> 平均处理效应（ATE）为： <span class="math display">\[
+\hat{\tau} = \frac{1}{T-T_0} \sum_{t=T_0+1}^T \hat{\tau}_{1t}
+\]</span></p>
+<p><strong>置信区间构造</strong>： 由于只有一个处理单元，传统的标准误计算方法不适用。Hsiao等人建议使用自助法（bootstrap）来构造置信区间。</p>
+<p><strong>自助法步骤</strong>： 1. 从处理前时期的残差 <span class="math inline">\(\{\hat{\varepsilon}_t\}_{t=1}^{T_0}\)</span> 中有放回地抽取 <span class="math inline">\(T_0\)</span> 个残差，得到自助样本残差 <span class="math inline">\(\{\hat{\varepsilon}_t^*\}_{t=1}^{T_0}\)</span>。 2. 生成自助样本的处理前结果：<span class="math inline">\(Y_{1t}^* = \hat{\alpha} + \sum_{j=2}^{N+1} \hat{\beta}_j Y_{jt} + \hat{\varepsilon}_t^*\)</span>。 3. 使用自助样本 <span class="math inline">\((Y_{1t}^*, Y_{2t}, \dots, Y_{N+1,t})\)</span> 重新估计回归系数，得到 <span class="math inline">\(\hat{\beta}^*\)</span>。 4. 利用 <span class="math inline">\(\hat{\beta}^*\)</span> 预测处理后的反事实结果 <span class="math inline">\(\hat{Y}_{1t}^{N*}\)</span>，并计算自助样本的处理效应 <span class="math inline">\(\hat{\tau}_{1t}^* = Y_{1t} - \hat{Y}_{1t}^{N*}\)</span>（注意：这里 <span class="math inline">\(Y_{1t}\)</span> 是实际观测值，因为政策实施后的结果没有重抽样）。 5. 重复以上步骤多次（如1000次），得到处理效应的自助分布，然后利用该分布构造置信区间（如百分位数区间）。</p>
+<p><strong>注意</strong>：这种自助法假设误差项 <span class="math inline">\(\varepsilon_t\)</span> 是独立同分布的，且模型设定正确。如果这些假设不成立，自助法可能无效。</p>
+</section>
+</section>
+<section id="基于正则化回归的回归控制法" class="level2">
+<h2 class="anchored" data-anchor-id="基于正则化回归的回归控制法">12.3 基于正则化回归的回归控制法</h2>
+<section id="高维控制问题与正则化岭回归lasso弹性网络" class="level3">
+<h3 class="anchored" data-anchor-id="高维控制问题与正则化岭回归lasso弹性网络">12.3.1 高维控制问题与正则化（岭回归、LASSO、弹性网络）</h3>
+<p>当控制单元数量 <span class="math inline">\(N\)</span> 较大，甚至超过处理前时期 <span class="math inline">\(T_0\)</span> 时，传统的OLS估计会面临高维问题（即自变量数量多于观测值数量），此时OLS无法求解，或者即使可求也会导致严重的过拟合。</p>
+<p><strong>正则化方法</strong>： 为了解决高维问题，我们可以使用正则化回归，通过在损失函数中加入惩罚项来约束系数的大小，从而获得更稳定的估计。</p>
+<p><strong>岭回归</strong>： 岭回归在OLS损失函数中加入系数的L2惩罚项： <span class="math display">\[
+\min_{\beta} \sum_{t=1}^{T_0} \left( Y_{1t} - \sum_{j=2}^{N+1} \beta_j Y_{jt} \right)^2 + \lambda \sum_{j=2}^{N+1} \beta_j^2
+\]</span> 其中 <span class="math inline">\(\lambda \geq 0\)</span> 是正则化参数。岭回归的估计结果通常会使系数向零收缩，但不会将系数 exactly 设为零。</p>
+<p><strong>LASSO</strong>： LASSO在OLS损失函数中加入系数的L1惩罚项： <span class="math display">\[
+\min_{\beta} \sum_{t=1}^{T_0} \left( Y_{1t} - \sum_{j=2}^{N+1} \beta_j Y_{jt} \right)^2 + \lambda \sum_{j=2}^{N+1} |\beta_j|
+\]</span> LASSO倾向于产生稀疏解，即将一些系数 exactly 设为零，从而实现了变量选择。</p>
+<p><strong>弹性网络</strong>： 弹性网络结合了L1和L2惩罚项： <span class="math display">\[
+\min_{\beta} \sum_{t=1}^{T_0} \left( Y_{1t} - \sum_{j=2}^{N+1} \beta_j Y_{jt} \right)^2 + \lambda \left( \alpha \sum_{j=2}^{N+1} |\beta_j| + (1-\alpha) \sum_{j=2}^{N+1} \beta_j^2 \right)
+\]</span> 其中 <span class="math inline">\(\alpha \in [0,1]\)</span> 控制两种惩罚的比例。弹性网络综合了岭回归和LASSO的优点，特别适用于高维且变量间存在相关性的情况。</p>
+</section>
+<section id="atc估计量双重稳健与渐进性质" class="level3">
+<h3 class="anchored" data-anchor-id="atc估计量双重稳健与渐进性质">12.3.2 ATC估计量：双重稳健与渐进性质</h3>
+<p><strong>ATC估计量</strong>： Ben-Michael等人（2021）提出的ATC方法实际上是一种双重稳健的估计量。它结合了回归调整和逆概率加权（IPW）的思想，但在这里我们主要关注其回归调整的部分。</p>
+<p><strong>模型设定</strong>： 假设我们有一个面板数据集，其中 <span class="math inline">\(i=1,\dots,N+1\)</span> 个单元，<span class="math inline">\(t=1,\dots,T\)</span> 个时间点。处理发生在 <span class="math inline">\(T_0\)</span> 之后，且只有第一个单元接受处理。我们想要估计处理单元的平均处理效应。</p>
+<p>ATC方法首先通过正则化回归（如弹性网络）来估计一个预测模型，用于预测处理单元的反事实结果。具体而言，我们使用处理前数据来估计以下模型： <span class="math display">\[
+Y_{1t} = \sum_{j=2}^{N+1} w_j Y_{jt} + \varepsilon_t, \quad t=1,\dots,T_0
+\]</span> 其中权重 <span class="math inline">\(w_j\)</span> 通过弹性网络等正则化回归估计得到。</p>
+<p><strong>双重稳健性</strong>： ATC估计量具有双重稳健性：只要预测模型（回归部分）或倾向得分模型（加权部分）其中之一设定正确，估计量就是一致的。但在回归控制法的语境下，通常我们只使用回归部分，因此双重稳健性并不直接体现。不过，ATC方法通过正则化回归提高了预测的稳健性。</p>
+<p><strong>渐进性质</strong>： 在一定的正则条件下，ATC估计量是渐近正态的，并且可以通过自助法进行推断。当单元数量和时间维度都增加时，ATC估计量收敛于真实处理效应。</p>
+</section>
+<section id="交叉验证选择调优参数" class="level3">
+<h3 class="anchored" data-anchor-id="交叉验证选择调优参数">12.3.3 交叉验证选择调优参数</h3>
+<p>在正则化回归中，正则化参数 <span class="math inline">\(\lambda\)</span>（以及弹性网络中的 <span class="math inline">\(\alpha\)</span>）的选择至关重要。通常，我们使用交叉验证来选择这些调优参数。</p>
+<p><strong>交叉验证步骤</strong>： 1. 将处理前时期的数据随机分成 <span class="math inline">\(K\)</span> 折（通常 <span class="math inline">\(K=5\)</span> 或 <span class="math inline">\(10\)</span>）。 2. 对于每一组候选参数 <span class="math inline">\((\lambda, \alpha)\)</span>，进行以下操作： a. 对于 <span class="math inline">\(k=1,\dots,K\)</span>，使用除第 <span class="math inline">\(k\)</span> 折外的所有数据拟合模型，得到权重估计 <span class="math inline">\(\hat{w}^{-k}\)</span>。 b. 使用 <span class="math inline">\(\hat{w}^{-k}\)</span> 预测第 <span class="math inline">\(k\)</span> 折中处理单元的结果，计算预测误差。 c.&nbsp;将 <span class="math inline">\(K\)</span> 折的预测误差平均，得到交叉验证误差。 3. 选择使交叉验证误差最小的参数组合 <span class="math inline">\((\lambda^*, \alpha^*)\)</span>。</p>
+<p><strong>注意事项</strong>： 由于时间序列数据可能存在自相关，因此简单的随机分割可能会破坏时间结构。一种替代方法是使用滚动时间窗口交叉验证：用前 <span class="math inline">\(M\)</span> 个时期的数据训练模型，预测下一个时期，然后移动窗口，重复此过程。</p>
+</section>
+</section>
+<section id="回归控制法的统计推断" class="level2">
+<h2 class="anchored" data-anchor-id="回归控制法的统计推断">12.4 回归控制法的统计推断</h2>
+<section id="基于残差自举法的推断" class="level3">
+<h3 class="anchored" data-anchor-id="基于残差自举法的推断">12.4.1 基于残差自举法的推断</h3>
+<p>由于回归控制法通常用于小样本（尤其是处理单元很少），传统的渐进推断可能不适用。因此，自助法成为主要的推断工具。</p>
+<p><strong>残差自助法</strong>： 假设我们已通过回归控制法得到处理效应的估计 <span class="math inline">\(\hat{\tau}_{1t}\)</span>。为了构造置信区间，我们可以对残差进行自助抽样。具体步骤如下（以Hsiao等人的方法为例）：</p>
+<ol type="1">
+<li>估计处理前时期的模型：<span class="math inline">\(Y_{1t} = \alpha + \sum_{j=2}^{N+1} \beta_j Y_{jt} + \varepsilon_t\)</span>，得到残差 <span class="math inline">\(\hat{\varepsilon}_t, t=1,\dots,T_0\)</span>。</li>
+<li>对残差进行中心化处理：<span class="math inline">\(\tilde{\varepsilon}_t = \hat{\varepsilon}_t - \frac{1}{T_0}\sum_{s=1}^{T_0} \hat{\varepsilon}_s\)</span>。</li>
+<li>从中心化后的残差 <span class="math inline">\(\{\tilde{\varepsilon}_t\}\)</span> 中有放回地抽取 <span class="math inline">\(T_0\)</span> 个残差，得到自助残差 <span class="math inline">\(\varepsilon_t^*\)</span>。</li>
+<li>生成自助样本的处理前结果：<span class="math inline">\(Y_{1t}^* = \hat{\alpha} + \sum_{j=2}^{N+1} \hat{\beta}_j Y_{jt} + \varepsilon_t^*\)</span>。</li>
+<li>使用自助样本 <span class="math inline">\((Y_{1t}^*, Y_{2t}, \dots, Y_{N+1,t})\)</span> 重新估计回归系数 <span class="math inline">\(\beta^*\)</span>。</li>
+<li>利用 <span class="math inline">\(\beta^*\)</span> 预测处理后的反事实结果 <span class="math inline">\(\hat{Y}_{1t}^{N*}\)</span>，并计算自助样本的处理效应 <span class="math inline">\(\hat{\tau}_{1t}^* = Y_{1t} - \hat{Y}_{1t}^{N*}\)</span>（注意：政策实施后的 <span class="math inline">\(Y_{1t}\)</span> 仍使用原始观测值）。</li>
+<li>重复步骤3-6多次（如1000次），得到处理效应的自助分布。</li>
+<li>基于自助分布构造置信区间，例如，取2.5%和97.5%分位数作为95%置信区间。</li>
+</ol>
+<p><strong>适用性</strong>：残差自助法假设模型设定正确且误差项独立同分布。如果这些假设不成立，可以考虑使用块自助法（block bootstrap）来捕捉时间序列相关性。</p>
+</section>
+<section id="基于预测区间的推断" class="level3">
+<h3 class="anchored" data-anchor-id="基于预测区间的推断">12.4.2 基于预测区间的推断</h3>
+<p>另一种推断方法是构造反事实结果的预测区间。预测区间反映了反事实预测的不确定性，从而可以判断处理效应是否显著不为零。</p>
+<p><strong>预测区间构造</strong>： 假设反事实预测模型为 <span class="math inline">\(\hat{Y}_{1t}^N = f(\{Y_{jt}\}_{j=2}^{N+1}; \hat{\beta})\)</span>，预测误差主要来自两个方面：参数估计的不确定性和模型误差。我们可以通过模拟来构造预测区间。</p>
+<p>步骤： 1. 估计模型参数 <span class="math inline">\(\hat{\beta}\)</span> 及其方差-协方差矩阵 <span class="math inline">\(\hat{\Sigma}\)</span>（如果可用）。 2. 从参数分布中抽取 <span class="math inline">\(\beta^* \sim N(\hat{\beta}, \hat{\Sigma})\)</span>（或者使用自助法得到参数分布）。 3. 对于每个 <span class="math inline">\(\beta^*\)</span>，计算反事实预测 <span class="math inline">\(\hat{Y}_{1t}^{N*} = f(\{Y_{jt}\}_{j=2}^{N+1}; \beta^*)\)</span>。 4. 重复步骤2-3多次，得到反事实预测的分布。 5. 取该分布的 <span class="math inline">\(\alpha/2\)</span> 和 <span class="math inline">\(1-\alpha/2\)</span> 分位数作为 <span class="math inline">\(1-\alpha\)</span> 预测区间。</p>
+<p>如果实际观测值 <span class="math inline">\(Y_{1t}\)</span> 落在预测区间之外，则表明处理效应显著。</p>
+</section>
+<section id="与scm安慰剂检验的对比" class="level3">
+<h3 class="anchored" data-anchor-id="与scm安慰剂检验的对比">12.4.3 与SCM安慰剂检验的对比</h3>
+<p>合成控制法通常使用安慰剂检验（permutation test）进行推断，即将处理状态随机分配给控制单元，观察“伪处理效应”的分布。回归控制法也可以采用类似的安慰剂检验。</p>
+<p><strong>安慰剂检验步骤</strong>： 1. 依次将每个控制单元视为“伪处理单元”，假设它在 <span class="math inline">\(T_0\)</span> 后接受处理。 2. 对每个伪处理单元，使用回归控制法估计其“伪处理效应”。 3. 将所有伪处理效应与真实的处理效应进行比较。 4. 计算真实处理效应在伪处理效应分布中的位置，得到p值：<span class="math inline">\(p = \frac{\text{伪处理效应} \geq \text{真实处理效应}}{\text{伪处理单元数量} + 1}\)</span>。</p>
+<p><strong>与SCM安慰剂检验的异同</strong>： - 相似点：都是通过置换处理状态来构建经验分布。 - 不同点：SCM的安慰剂检验中，每个伪处理单元都需要重新计算权重（因为权重是非负且和为1的凸组合），而回归控制法中，伪处理单元的回归模型可能允许负权重，且不一定有凸组合约束。</p>
+<p><strong>注意事项</strong>：安慰剂检验要求控制单元之间相互独立且与处理单元可比。如果控制单元数量很少，安慰剂检验的功效可能很低。</p>
+</section>
+</section>
+<section id="回归控制法与合成控制法的比较与选择" class="level2">
+<h2 class="anchored" data-anchor-id="回归控制法与合成控制法的比较与选择">12.5 回归控制法与合成控制法的比较与选择</h2>
+<section id="方法逻辑对比参数化-vs.-非参数化外推-vs.-内插" class="level3">
+<h3 class="anchored" data-anchor-id="方法逻辑对比参数化-vs.-非参数化外推-vs.-内插">12.5.1 方法逻辑对比：参数化 vs.&nbsp;非参数化，外推 vs.&nbsp;内插</h3>
+<p><strong>回归控制法</strong>： - <strong>参数化</strong>：RC通常假设处理单元的反事实结果可以通过控制单元的线性组合来预测，且这种关系在处理前后保持不变。这是一种参数化假设。 - <strong>外推</strong>：RC允许权重为负，因此合成控制单元可以是控制单元的外推（即超出控制单元观测值的范围），这可能导致不合理的预测（例如，预测值远超出控制单元的实际范围）。</p>
+<p><strong>合成控制法</strong>： - <strong>非参数化</strong>：SCM不预设具体的函数形式，而是通过数据驱动的方式寻找权重，使处理前拟合最优。它更接近于非参数方法。 - <strong>内插</strong>：SCM要求权重非负且和为1，这意味着合成控制单元是控制单元的凸组合，即内插。这通常被认为更安全，因为内插通常比外推更稳健。</p>
+<p><strong>可视化对比</strong>： 在二维空间中，假设有两个控制单元A和B，它们的结果变量构成一个平面。处理单元的反事实预测可以看作是这个平面上的一个点。SCM要求这个点必须在A和B的连线上（凸组合），而RC允许这个点在线段的两侧延长线上（外推）。</p>
+</section>
+<section id="适用场景与假设差异" class="level3">
+<h3 class="anchored" data-anchor-id="适用场景与假设差异">12.5.2 适用场景与假设差异</h3>
+<p><strong>适用场景</strong>： - <strong>回归控制法</strong>：适用于控制单元数量较多，且处理单元与控制单元之间的关系可能是线性的情况。特别是当处理前时期 <span class="math inline">\(T_0\)</span> 较大时，RC可以通过回归估计更多参数。 - <strong>合成控制法</strong>：适用于控制单元数量适中，且我们希望合成控制单元是实际存在的控制单元的加权平均（即内插）的情况。SCM对处理前时期长度的要求相对较低，因为它只需要拟合一条时间路径。</p>
+<p><strong>假设差异</strong>： - <strong>RC的关键假设</strong>：线性关系稳定（即处理前后的系数不变），误差项满足一定条件（如独立同分布）。 - <strong>SCM的关键假设</strong>：存在一组权重，使得合成控制单元在处理前的结果变量路径与处理单元非常接近，且这种相似性在处理后仍保持（即无政策干预时，平行趋势成立）。</p>
+<p><strong>模型灵活性</strong>： RC通常更灵活，因为允许负权重，并且可以通过加入更多控制变量（如协变量）来改进预测。SCM则通过权重约束（凸组合）来避免外推，但可能因此损失一些拟合精度。</p>
+</section>
+<section id="实证应用中的选择指南" class="level3">
+<h3 class="anchored" data-anchor-id="实证应用中的选择指南">12.5.3 实证应用中的选择指南</h3>
+<p>在实际应用中，选择回归控制法还是合成控制法，可以考虑以下因素：</p>
+<ol type="1">
+<li><strong>数据规模</strong>：
+<ul>
+<li>如果控制单元数量很多（远大于处理前时期长度），考虑使用正则化的回归控制法（如LASSO、弹性网络）来防止过拟合。</li>
+<li>如果控制单元数量适中，且处理前时期较长，两种方法都可以尝试。</li>
+</ul></li>
+<li><strong>理论基础</strong>：
+<ul>
+<li>如果理论或先验知识表明处理单元可能是控制单元的凸组合（例如，处理单元是从控制单元所在群体中选取的），则SCM更合适。</li>
+<li>如果理论允许处理单元与控制单元之间存在更复杂的关系（可能涉及负权重），则RC可能更合适。</li>
+</ul></li>
+<li><strong>处理前拟合</strong>：
+<ul>
+<li>比较两种方法在处理前时期的拟合效果（如均方预测误差）。拟合更好的方法可能更可靠，但要注意过拟合问题。</li>
+</ul></li>
+<li><strong>稳健性检验</strong>：
+<ul>
+<li>尝试多种方法（包括不同设定下的RC和SCM），观察处理效应估计是否稳健。如果不同方法给出的结论一致，则结果更可信。</li>
+</ul></li>
+<li><strong>结果解释</strong>：
+<ul>
+<li>SCM的权重通常更容易解释，因为它们是非负的且和为1，可以看作是控制单元的“贡献度”。RC的权重可能为负，解释起来更复杂。</li>
+</ul></li>
+</ol>
+<p><strong>建议做法</strong>： 在实证研究中，可以同时报告RC和SCM的结果，并进行比较。如果两者结果相似，则增强了结论的可信度。如果结果差异很大，则需要深入分析原因，并检查模型假设是否成立。</p>
+</section>
+</section>
+<section id="应用实例与操作指南" class="level2">
+<h2 class="anchored" data-anchor-id="应用实例与操作指南">12.6 应用实例与操作指南</h2>
+<section id="案例欧元区对成员国经济增长的影响" class="level3">
+<h3 class="anchored" data-anchor-id="案例欧元区对成员国经济增长的影响">12.6.1 案例：欧元区对成员国经济增长的影响</h3>
+</section>
+<section id="r-gsynth-fect-和-stata-中的实现" class="level3">
+<h3 class="anchored" data-anchor-id="r-gsynth-fect-和-stata-中的实现">12.6.2 R (<code>gsynth</code>, <code>fect</code>) 和 Stata 中的实现</h3>
+</section>
+<section id="结果报告与诊断图" class="level3">
+<h3 class="anchored" data-anchor-id="结果报告与诊断图">12.6.3 结果报告与诊断图</h3>
+</section>
+</section>
+<section id="本章总结" class="level2">
+<h2 class="anchored" data-anchor-id="本章总结">本章总结</h2>
+<p>回归控制法为小样本政策评估提供了另一种强有力的、基于回归模型的工具。它通过利用控制单元的面板数据来预测处理单元的反事实结果，从而估计处理效应。本章介绍了两种主要的回归控制法框架：Hsiao等人的方法和基于正则化回归的ATC方法。</p>
+<p>Hsiao等人的方法简单直观，通过线性回归建立处理单元与控制单元之间的关系，并假设这种关系在处理前后保持不变。但当控制单元数量较多时，容易产生过拟合问题。正则化回归方法（如岭回归、LASSO、弹性网络）通过引入惩罚项来解决高维问题，提高了预测的稳定性和准确性。</p>
+<p>在统计推断方面，由于处理单元数量少，传统渐进推断不适用，因此我们介绍了基于自助法和安慰剂检验的推断方法。这些方法可以帮助我们评估处理效应的显著性。</p>
+<p>与合成控制法相比，回归控制法更加灵活（允许负权重），但可能因此进行外推，导致不合理的预测。合成控制法通过权重约束（凸组合）确保内插，通常更稳健。在实际应用中，研究者应根据数据特征和理论背景选择合适的方法，或者同时使用两种方法以验证结果的稳健性。</p>
+<p>回归控制法的有效性依赖于模型假设的正确性，包括线性关系稳定、误差项独立同分布等。因此，在使用回归控制法时，必须进行充分的稳健性检验，包括模型设定检验、残差诊断、安慰剂检验等。</p>
+<p>随着计量经济学和机器学习的发展，回归控制法也在不断演进，例如与因子模型、矩阵补全等方法的结合。这些发展为小样本政策评估提供了更丰富、更稳健的工具箱。然而，无论方法如何扩展，对数据生成过程的理解和严格的模型检验始终是获得可靠因果推断的基石。</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/11合成控制法.html" class="pagination-link" aria-label="11 合成控制法">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">11 合成控制法</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/13中介效应与调节效应.html" class="pagination-link" aria-label="13 中介效应与调节效应">
+        <span class="nav-page-text"><span class="chapter-title">13 中介效应与调节效应</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

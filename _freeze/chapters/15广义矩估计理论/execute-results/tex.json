@@ -1,0 +1,19 @@
+{
+  "hash": "eb355b475ab48a8c94a25757b7d8e54c",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"GMM\"\nauthor: \"李世纪\"\nformat: html\n---\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(haven)\ndata=read_dta(\"data/mpyr.dta\")\nstr(data)\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\ntibble [90 x 7] (S3: tbl_df/tbl/data.frame)\n $ logm1: num [1:90] 1.72 1.86 1.94 1.98 2.03 ...\n  ..- attr(*, \"label\")= chr \"Log of M1 (money supply)\"\n  ..- attr(*, \"format.stata\")= chr \"%9.0g\"\n $ logp : num [1:90] 2.09 2.09 2.12 2.13 2.15 ...\n  ..- attr(*, \"label\")= chr \"Log of price level\"\n  ..- attr(*, \"format.stata\")= chr \"%9.0g\"\n $ logy : num [1:90] 0.903 1.013 1.011 1.055 1.033 ...\n  ..- attr(*, \"label\")= chr \"Log of income\"\n  ..- attr(*, \"format.stata\")= chr \"%9.0g\"\n $ r    : num [1:90] 4.38 4.28 4.92 5.47 4.2 ...\n  ..- attr(*, \"label\")= chr \"Nominal interest rate\"\n  ..- attr(*, \"format.stata\")= chr \"%9.0g\"\n $ year : num [1:90] 1900 1901 1902 1903 1904 ...\n  ..- attr(*, \"label\")= chr \"Year\"\n  ..- attr(*, \"format.stata\")= chr \"%8.0g\"\n $ logmr: num [1:90] -0.374 -0.23 -0.184 -0.145 -0.12 ...\n  ..- attr(*, \"label\")= chr \"Log of real money (logm1-logp)\"\n  ..- attr(*, \"format.stata\")= chr \"%9.0g\"\n $ logv : num [1:90] -1.28 -1.24 -1.2 -1.2 -1.15 ...\n  ..- attr(*, \"label\")= chr \"Log of M1 Velocity = logmr - logy\"\n  ..- attr(*, \"format.stata\")= chr \"%9.0g\"\n```\n\n\n:::\n:::\n\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {
+      "knitr": [
+        "{\"type\":\"list\",\"attributes\":{},\"value\":[]}"
+      ]
+    },
+    "preserve": null,
+    "postProcess": false
+  }
+}

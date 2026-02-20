@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>9 双重差分法 – 计量模型及应用</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/10断点回归.html" rel="next">
+<link href="../chapters/8倾向得分匹配.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-70a47bd5681a7291082a5b9f83d58762.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="science-textbook.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/6因果推断框架.html">II 因果推断方法</a></li><li class="breadcrumb-item"><a href="../chapters/9双重差分法.html"><span class="chapter-title">9 双重差分法</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">计量模型及应用</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">简介</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">I 数据与模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1线性回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1 线性回归基础</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2横截面数据分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2 横截面数据：假设违反的诊断与修正</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/3面板数据模型.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 面板数据模型</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/4时间序列分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4 时间序列分析</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/5离散与受限因变量模型.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">5 离散数据与受限因变量模型</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">II 因果推断方法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/6因果推断框架.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6 因果推断框架</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/7工具变量法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">7 工具变量法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/8倾向得分匹配.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">8 倾向得分匹配</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/9双重差分法.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">9 双重差分法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10断点回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">10 断点回归</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11合成控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">11 合成控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12回归控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">12 回归控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13中介效应与调节效应.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">13 中介效应与调节效应</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">III 理论与算法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14大样本理论.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">14 大样本理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15最大似然估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">15 最大似然估计理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16广义矩估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">16 广义矩估计法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17蒙特卡洛法与自助法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">17 蒙特卡洛法与自助法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/18优化算法与数值方法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">18 数值优化与矩阵方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/19机器学习在计量中的应用.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">19 机器学习在计量中的应用</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#第9章-双重差分法" id="toc-第9章-双重差分法" class="nav-link active" data-scroll-target="#第9章-双重差分法">第9章 双重差分法</a>
+  <ul class="collapse">
+  <li><a href="#本章导读" id="toc-本章导读" class="nav-link" data-scroll-target="#本章导读">本章导读</a></li>
+  <li><a href="#双重差分法的基本思想与模型设定" id="toc-双重差分法的基本思想与模型设定" class="nav-link" data-scroll-target="#双重差分法的基本思想与模型设定">9.1 双重差分法的基本思想与模型设定</a>
+  <ul class="collapse">
+  <li><a href="#双重差分法的直观逻辑与基本框架" id="toc-双重差分法的直观逻辑与基本框架" class="nav-link" data-scroll-target="#双重差分法的直观逻辑与基本框架">9.1.1 双重差分法的直观逻辑与基本框架</a></li>
+  <li><a href="#经典双重差分模型two-way-fixed-effects-model" id="toc-经典双重差分模型two-way-fixed-effects-model" class="nav-link" data-scroll-target="#经典双重差分模型two-way-fixed-effects-model">9.1.2 经典双重差分模型（Two-way Fixed Effects Model）</a></li>
+  <li><a href="#处理效应的图形化展示与直观理解" id="toc-处理效应的图形化展示与直观理解" class="nav-link" data-scroll-target="#处理效应的图形化展示与直观理解">9.1.3 处理效应的图形化展示与直观理解</a></li>
+  <li><a href="#did与简单前后比较截面比较的差异" id="toc-did与简单前后比较截面比较的差异" class="nav-link" data-scroll-target="#did与简单前后比较截面比较的差异">9.1.4 DID与简单前后比较、截面比较的差异</a></li>
+  </ul></li>
+  <li><a href="#平行趋势假设did的识别基石" id="toc-平行趋势假设did的识别基石" class="nav-link" data-scroll-target="#平行趋势假设did的识别基石">9.2 平行趋势假设：DID的识别基石</a>
+  <ul class="collapse">
+  <li><a href="#平行趋势假设的核心内涵与经济学解释" id="toc-平行趋势假设的核心内涵与经济学解释" class="nav-link" data-scroll-target="#平行趋势假设的核心内涵与经济学解释">9.2.1 平行趋势假设的核心内涵与经济学解释</a></li>
+  <li><a href="#平行趋势的检验方法" id="toc-平行趋势的检验方法" class="nav-link" data-scroll-target="#平行趋势的检验方法">9.2.2 平行趋势的检验方法</a></li>
+  <li><a href="#平行趋势不满足时的后果与应对策略" id="toc-平行趋势不满足时的后果与应对策略" class="nav-link" data-scroll-target="#平行趋势不满足时的后果与应对策略">9.2.3 平行趋势不满足时的后果与应对策略</a></li>
+  <li><a href="#替代性假设与敏感性分析" id="toc-替代性假设与敏感性分析" class="nav-link" data-scroll-target="#替代性假设与敏感性分析">9.2.4 替代性假设与敏感性分析</a></li>
+  </ul></li>
+  <li><a href="#双重差分法的估计推断与稳健标准误" id="toc-双重差分法的估计推断与稳健标准误" class="nav-link" data-scroll-target="#双重差分法的估计推断与稳健标准误">9.3 双重差分法的估计、推断与稳健标准误</a>
+  <ul class="collapse">
+  <li><a href="#did模型的参数估计与处理效应解释" id="toc-did模型的参数估计与处理效应解释" class="nav-link" data-scroll-target="#did模型的参数估计与处理效应解释">9.3.1 DID模型的参数估计与处理效应解释</a></li>
+  <li><a href="#聚类稳健标准误为何在did中至关重要" id="toc-聚类稳健标准误为何在did中至关重要" class="nav-link" data-scroll-target="#聚类稳健标准误为何在did中至关重要">9.3.2 聚类稳健标准误：为何在DID中至关重要</a></li>
+  <li><a href="#conley估计bootstrap等替代推断方法" id="toc-conley估计bootstrap等替代推断方法" class="nav-link" data-scroll-target="#conley估计bootstrap等替代推断方法">9.3.3 Conley估计、bootstrap等替代推断方法</a></li>
+  <li><a href="#处理组样本量较小时的统计推断问题" id="toc-处理组样本量较小时的统计推断问题" class="nav-link" data-scroll-target="#处理组样本量较小时的统计推断问题">9.3.4 处理组样本量较小时的统计推断问题</a></li>
+  </ul></li>
+  <li><a href="#双重差分法的扩展模型" id="toc-双重差分法的扩展模型" class="nav-link" data-scroll-target="#双重差分法的扩展模型">9.4 双重差分法的扩展模型</a>
+  <ul class="collapse">
+  <li><a href="#多期did与异质性处理效应交错did问题" id="toc-多期did与异质性处理效应交错did问题" class="nav-link" data-scroll-target="#多期did与异质性处理效应交错did问题">9.4.1 多期DID与异质性处理效应（交错DID）问题</a></li>
+  <li><a href="#异质性处理效应的识别" id="toc-异质性处理效应的识别" class="nav-link" data-scroll-target="#异质性处理效应的识别">9.4.2 异质性处理效应的识别</a></li>
+  <li><a href="#连续型处理与强度did" id="toc-连续型处理与强度did" class="nav-link" data-scroll-target="#连续型处理与强度did">9.4.3 连续型处理与强度DID</a></li>
+  <li><a href="#三重差分法排除混杂政策的影响" id="toc-三重差分法排除混杂政策的影响" class="nav-link" data-scroll-target="#三重差分法排除混杂政策的影响">9.4.4 三重差分法：排除混杂政策的影响</a></li>
+  </ul></li>
+  <li><a href="#双重差分法的常见陷阱批评与最新进展" id="toc-双重差分法的常见陷阱批评与最新进展" class="nav-link" data-scroll-target="#双重差分法的常见陷阱批评与最新进展">9.5 双重差分法的常见陷阱、批评与最新进展</a>
+  <ul class="collapse">
+  <li><a href="#坏对照组问题与处理组选择偏误" id="toc-坏对照组问题与处理组选择偏误" class="nav-link" data-scroll-target="#坏对照组问题与处理组选择偏误">9.5.1 “坏对照组”问题与处理组选择偏误</a></li>
+  <li><a href="#政策内生性与预期效应" id="toc-政策内生性与预期效应" class="nav-link" data-scroll-target="#政策内生性与预期效应">9.5.2 政策内生性与预期效应</a></li>
+  <li><a href="#最近的方法论争论与反思" id="toc-最近的方法论争论与反思" class="nav-link" data-scroll-target="#最近的方法论争论与反思">9.5.3 最近的方法论争论与反思</a></li>
+  <li><a href="#合成控制法匹配did等混合方法" id="toc-合成控制法匹配did等混合方法" class="nav-link" data-scroll-target="#合成控制法匹配did等混合方法">9.5.4 合成控制法、匹配DID等混合方法</a></li>
+  </ul></li>
+  <li><a href="#did的应用实例与statar操作" id="toc-did的应用实例与statar操作" class="nav-link" data-scroll-target="#did的应用实例与statar操作">9.6 DID的应用实例与Stata/R操作</a>
+  <ul class="collapse">
+  <li><a href="#经典案例研究最低工资对就业的影响card-and-krueger1994" id="toc-经典案例研究最低工资对就业的影响card-and-krueger1994" class="nav-link" data-scroll-target="#经典案例研究最低工资对就业的影响card-and-krueger1994">9.6.1 经典案例研究：最低工资对就业的影响（Card and Krueger，1994）</a></li>
+  <li><a href="#中国语境下的典型案例解读如四万亿投资房产限购政策评估" id="toc-中国语境下的典型案例解读如四万亿投资房产限购政策评估" class="nav-link" data-scroll-target="#中国语境下的典型案例解读如四万亿投资房产限购政策评估">9.6.2 中国语境下的典型案例解读（如”四万亿”投资、房产限购政策评估）</a></li>
+  <li><a href="#did在statar中的实现步骤与代码示例reghdfediddid2s等命令" id="toc-did在statar中的实现步骤与代码示例reghdfediddid2s等命令" class="nav-link" data-scroll-target="#did在statar中的实现步骤与代码示例reghdfediddid2s等命令">9.6.3 DID在Stata/R中的实现步骤与代码示例（<code>reghdfe</code>、<code>did</code>、<code>did2s</code>等命令）</a></li>
+  </ul></li>
+  <li><a href="#本章总结" id="toc-本章总结" class="nav-link" data-scroll-target="#本章总结">本章总结</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/6因果推断框架.html">II 因果推断方法</a></li><li class="breadcrumb-item"><a href="../chapters/9双重差分法.html"><span class="chapter-title">9 双重差分法</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">9 双重差分法</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="第9章-双重差分法" class="level1">
+<h1>第9章 双重差分法</h1>
+<section id="本章导读" class="level2">
+<h2 class="anchored" data-anchor-id="本章导读">本章导读</h2>
+<p>双重差分法是现代计量经济学中进行政策评估和因果推断的核心方法之一。当研究者无法进行随机实验，但可以观察到政策实施前后的变化时，DID通过比较处理组和对照组在政策实施前后的差异变化，来识别政策的因果效应。本章将系统介绍双重差分法的基本思想、核心假设、模型设定、统计推断方法以及前沿扩展。通过学习，读者将掌握使用DID进行政策评估的完整框架，理解其应用前提与常见陷阱，为实际研究提供方法基础。</p>
+</section>
+<section id="双重差分法的基本思想与模型设定" class="level2">
+<h2 class="anchored" data-anchor-id="双重差分法的基本思想与模型设定">9.1 双重差分法的基本思想与模型设定</h2>
+<section id="双重差分法的直观逻辑与基本框架" class="level3">
+<h3 class="anchored" data-anchor-id="双重差分法的直观逻辑与基本框架">9.1.1 双重差分法的直观逻辑与基本框架</h3>
+<p>双重差分法（Difference-in-Differences, DID）是一种准实验设计方法，用于评估政策或处理的效果。其基本思想是通过比较处理组和对照组在政策实施前后结果变量的变化差异，来识别政策的净效应。</p>
+<p>设<span class="math inline">\(Y_{it}\)</span>为个体<span class="math inline">\(i\)</span>在时期<span class="math inline">\(t\)</span>的结果变量，<span class="math inline">\(D_{it}\)</span>为处理状态变量（<span class="math inline">\(D_{it}=1\)</span>表示接受处理，<span class="math inline">\(D_{it}=0\)</span>表示未接受处理）。假设政策在时期<span class="math inline">\(t^*\)</span>实施，且实施后处理组持续接受处理。</p>
+<p><strong>双重差分估计量</strong>的直观计算为：</p>
+<p><span class="math display">\[
+\hat{\tau}_{DID} = (\bar{Y}_{1,post} - \bar{Y}_{1,pre}) - (\bar{Y}_{0,post} - \bar{Y}_{0,pre})
+\]</span></p>
+<p>其中： - <span class="math inline">\(\bar{Y}_{1,post}\)</span>：处理组在政策后的平均结果 - <span class="math inline">\(\bar{Y}_{1,pre}\)</span>：处理组在政策前的平均结果 - <span class="math inline">\(\bar{Y}_{0,post}\)</span>：对照组在政策后的平均结果 - <span class="math inline">\(\bar{Y}_{0,pre}\)</span>：对照组在政策前的平均结果</p>
+</section>
+<section id="经典双重差分模型two-way-fixed-effects-model" class="level3">
+<h3 class="anchored" data-anchor-id="经典双重差分模型two-way-fixed-effects-model">9.1.2 经典双重差分模型（Two-way Fixed Effects Model）</h3>
+<p>经典DID模型通常表示为双向固定效应模型：</p>
+<p><span class="math display">\[
+Y_{it} = \alpha + \beta D_{it} + \gamma_i + \lambda_t + \epsilon_{it}
+\]</span></p>
+<p>其中： - <span class="math inline">\(\alpha\)</span>：截距项 - <span class="math inline">\(D_{it}\)</span>：处理状态变量（处理组在政策实施后取1，否则取0） - <span class="math inline">\(\beta\)</span>：核心参数，表示处理效应 - <span class="math inline">\(\gamma_i\)</span>：个体固定效应，控制个体不随时间变化的特征 - <span class="math inline">\(\lambda_t\)</span>：时间固定效应，控制时间趋势和共同冲击 - <span class="math inline">\(\epsilon_{it}\)</span>：随机误差项</p>
+<p>更一般地，对于平衡面板数据，DID模型可以写为：</p>
+<p><span class="math display">\[
+Y_{it} = \beta_0 + \beta_1 Treat_i \times Post_t + \beta_2 Treat_i + \beta_3 Post_t + \epsilon_{it}
+\]</span></p>
+<p>其中： - <span class="math inline">\(Treat_i\)</span>：个体是否属于处理组的虚拟变量（<span class="math inline">\(Treat_i=1\)</span>表示处理组，<span class="math inline">\(Treat_i=0\)</span>表示对照组） - <span class="math inline">\(Post_t\)</span>：时间是否在政策后的虚拟变量（<span class="math inline">\(Post_t=1\)</span>表示政策后，<span class="math inline">\(Post_t=0\)</span>表示政策前）</p>
+<p>此时，处理效应<span class="math inline">\(\beta_1\)</span>即为双重差分估计量。</p>
+</section>
+<section id="处理效应的图形化展示与直观理解" class="level3">
+<h3 class="anchored" data-anchor-id="处理效应的图形化展示与直观理解">9.1.3 处理效应的图形化展示与直观理解</h3>
+<p>DID的直观性部分来自于其图形化展示。一个典型的DID图形包括： 1. 横轴：时间（政策实施时点标记） 2. 纵轴：结果变量的均值 3. 两条线：分别代表处理组和对照组的时间趋势</p>
+<p>在平行趋势假设下，政策实施前两条线应基本平行，政策实施后处理组的线应出现”跳跃”或趋势变化，而对照组的线应继续原有趋势。</p>
+<p>图形化展示不仅有助于直观理解DID的逻辑，也是检验平行趋势假设的重要工具。</p>
+</section>
+<section id="did与简单前后比较截面比较的差异" class="level3">
+<h3 class="anchored" data-anchor-id="did与简单前后比较截面比较的差异">9.1.4 DID与简单前后比较、截面比较的差异</h3>
+<p>DID方法相对于简单方法的优势在于：</p>
+<p><strong>相对于简单前后比较</strong>： - 简单前后比较：<span class="math inline">\(\hat{\tau}_{pre-post} = \bar{Y}_{1,post} - \bar{Y}_{1,pre}\)</span> - 问题：无法区分政策效应与其他时间趋势（如宏观经济变化、技术进步等）</p>
+<p><strong>相对于截面比较</strong>： - 简单截面比较：<span class="math inline">\(\hat{\tau}_{cross-section} = \bar{Y}_{1,post} - \bar{Y}_{0,post}\)</span> - 问题：无法控制处理组和对照组的事前差异</p>
+<p>DID通过双重差分，既控制了时间趋势，也控制了两组的事前差异，从而更准确地识别政策效应。</p>
+</section>
+</section>
+<section id="平行趋势假设did的识别基石" class="level2">
+<h2 class="anchored" data-anchor-id="平行趋势假设did的识别基石">9.2 平行趋势假设：DID的识别基石</h2>
+<section id="平行趋势假设的核心内涵与经济学解释" class="level3">
+<h3 class="anchored" data-anchor-id="平行趋势假设的核心内涵与经济学解释">9.2.1 平行趋势假设的核心内涵与经济学解释</h3>
+<p>平行趋势假设是DID方法成立的<strong>核心识别假设</strong>。其正式表述为：</p>
+<p>在缺乏政策干预的情况下，处理组和对照组的潜在结果随时间变化的趋势相同。即：</p>
+<p><span class="math display">\[
+E[Y_{it}(0) | Treat_i=1, t] - E[Y_{it}(0) | Treat_i=1, t-1] = E[Y_{it}(0) | Treat_i=0, t] - E[Y_{it}(0) | Treat_i=0, t-1]
+\]</span></p>
+<p>其中<span class="math inline">\(Y_{it}(0)\)</span>表示未接受处理时的潜在结果。</p>
+<p><strong>经济学解释</strong>： 平行趋势假设要求，如果没有政策干预，处理组和对照组的结果变量会按照相同的趋势演变。这意味着两组除了是否接受政策干预外，在其他所有影响结果变量的因素上具有相似的时间趋势。</p>
+<p>平行趋势假设的合理性取决于： 1. 对照组的选取是否恰当 2. 是否有未观测到的时变混杂因素同时影响处理状态和结果变量</p>
+</section>
+<section id="平行趋势的检验方法" class="level3">
+<h3 class="anchored" data-anchor-id="平行趋势的检验方法">9.2.2 平行趋势的检验方法</h3>
+<section id="事件研究图event-study-plot" class="level4">
+<h4 class="anchored" data-anchor-id="事件研究图event-study-plot">事件研究图（Event Study Plot）</h4>
+<p>事件研究图是最直观的平行趋势检验方法。通过估计以下模型：</p>
+<p><span class="math display">\[
+Y_{it} = \alpha_i + \lambda_t + \sum_{k=-K}^{-1} \beta_k \cdot Treat_i \times 1(t = \text{政策前}k期) + \sum_{k=0}^{L} \beta_k \cdot Treat_i \times 1(t = \text{政策后}k期) + \epsilon_{it}
+\]</span></p>
+<p>其中，将政策实施前的<span class="math inline">\(K\)</span>期和政策实施后的<span class="math inline">\(L\)</span>期分别与处理组虚拟变量交互。</p>
+<p>检验方法： 1. 政策前的交互项系数<span class="math inline">\(\beta_k\)</span>（<span class="math inline">\(k&lt;0\)</span>）应统计上不显著（与0无差异） 2. 政策后的交互项系数<span class="math inline">\(\beta_k\)</span>（<span class="math inline">\(k\geq0\)</span>）应显示政策效应</p>
+<p>图形上，政策前的点应在0附近随机波动，政策后的点应显示政策效应。</p>
+</section>
+<section id="动态效应模型" class="level4">
+<h4 class="anchored" data-anchor-id="动态效应模型">动态效应模型</h4>
+<p>动态效应模型是事件研究图的参数化形式：</p>
+<p><span class="math display">\[
+Y_{it} = \alpha_i + \lambda_t + \sum_{m=-M}^{M} \beta_m \cdot Treat_i \times Post_{t,m} + \epsilon_{it}
+\]</span></p>
+<p>其中<span class="math inline">\(Post_{t,m}\)</span>是表示与政策时点相对距离的虚拟变量。</p>
+</section>
+</section>
+<section id="平行趋势不满足时的后果与应对策略" class="level3">
+<h3 class="anchored" data-anchor-id="平行趋势不满足时的后果与应对策略">9.2.3 平行趋势不满足时的后果与应对策略</h3>
+<p><strong>平行趋势不满足的后果</strong>： 如果平行趋势假设不成立，DID估计量将存在偏差：</p>
+<p><span class="math display">\[
+\hat{\tau}_{DID} \xrightarrow{p} \tau + \text{趋势差异}
+\]</span></p>
+<p>其中”趋势差异”是处理组和对照组在无政策情况下的趋势差异。</p>
+<p><strong>应对策略</strong>： 1. <strong>调整对照组</strong>：寻找更合适的对照组 2. <strong>合成控制法</strong>：构造合成的对照组 3. <strong>匹配DID</strong>：先进行匹配，再进行DID分析 4. <strong>三重差分法</strong>：引入第三个差分维度 5. <strong>控制时间趋势</strong>：加入组别特定的时间趋势</p>
+</section>
+<section id="替代性假设与敏感性分析" class="level3">
+<h3 class="anchored" data-anchor-id="替代性假设与敏感性分析">9.2.4 替代性假设与敏感性分析</h3>
+<p>当平行趋势假设难以验证时，可以考虑以下替代方法：</p>
+<p><strong>共同趋势假设</strong>： 要求处理组和对照组的趋势差异是固定的，不随时间变化。这比平行趋势假设稍弱。</p>
+<p><strong>敏感性分析</strong>： 通过检验DID估计结果对平行趋势假设的敏感性，评估结论的稳健性。常见方法包括： 1. 安慰剂检验：将政策时点提前，检验”伪政策”效应 2. 置换检验：随机分配处理状态，检验估计效应分布 3. 控制更多时变协变量</p>
+</section>
+</section>
+<section id="双重差分法的估计推断与稳健标准误" class="level2">
+<h2 class="anchored" data-anchor-id="双重差分法的估计推断与稳健标准误">9.3 双重差分法的估计、推断与稳健标准误</h2>
+<section id="did模型的参数估计与处理效应解释" class="level3">
+<h3 class="anchored" data-anchor-id="did模型的参数估计与处理效应解释">9.3.1 DID模型的参数估计与处理效应解释</h3>
+<p>DID模型通常通过最小二乘法（OLS）进行估计。对于双向固定效应模型：</p>
+<p><span class="math display">\[
+Y_{it} = \beta D_{it} + \gamma_i + \lambda_t + \epsilon_{it}
+\]</span></p>
+<p>可以通过以下方法估计： 1. <strong>LSDV法</strong>：加入个体和时间虚拟变量 2. <strong>组内估计法</strong>：先对个体和时间去均值，再回归 3. <strong>Stata命令</strong>：<code>xtreg y d, fe</code> 或 <code>reghdfe y d, absorb(i t)</code></p>
+<p><strong>处理效应的解释</strong>： - <span class="math inline">\(\hat{\beta}\)</span>表示平均处理效应（ATE） - 如果处理效应异质，<span class="math inline">\(\hat{\beta}\)</span>表示处理组平均处理效应（ATT） - 动态模型中，<span class="math inline">\(\hat{\beta}_m\)</span>表示政策实施后第<span class="math inline">\(m\)</span>期的处理效应</p>
+</section>
+<section id="聚类稳健标准误为何在did中至关重要" class="level3">
+<h3 class="anchored" data-anchor-id="聚类稳健标准误为何在did中至关重要">9.3.2 聚类稳健标准误：为何在DID中至关重要</h3>
+<p>在DID分析中，误差项通常存在： 1. <strong>组内自相关</strong>：同一组别内不同时期的误差相关 2. <strong>组间异方差</strong>：不同组别的误差方差不同</p>
+<p>这些问题会导致传统标准误低估真实不确定性，使得统计推断失效。</p>
+<p><strong>聚类稳健标准误</strong>： 将标准误聚类在组别层面（如个体层面或更高层级），可以解决组内自相关问题。聚类稳健方差估计量为：</p>
+<p><span class="math display">\[
+\widehat{Var}_{cluster}(\hat{\beta}) = (X'X)^{-1} \left( \sum_{g=1}^{G} X_g' \hat{\epsilon}_g \hat{\epsilon}_g' X_g \right) (X'X)^{-1}
+\]</span></p>
+<p>其中<span class="math inline">\(g\)</span>表示聚类，<span class="math inline">\(G\)</span>为聚类总数。</p>
+<p><strong>聚类层级选择</strong>： 1. 个体层面聚类：处理组内自相关问题 2. 更高层级聚类：如县级、省级，处理更广泛的相关性 3. 双重聚类：同时考虑时间和个体维度</p>
+<p><strong>经验法则</strong>： - 至少聚类在处理组层面 - 当聚类数量较少时（如&lt;50），使用小样本调整（如Wild bootstrap）</p>
+</section>
+<section id="conley估计bootstrap等替代推断方法" class="level3">
+<h3 class="anchored" data-anchor-id="conley估计bootstrap等替代推断方法">9.3.3 Conley估计、bootstrap等替代推断方法</h3>
+<p>当聚类数量较少或存在更复杂的误差结构时，可以考虑以下方法：</p>
+<p><strong>Conley标准误</strong>： 处理空间自相关的标准误估计方法，适用于地理相邻单元可能存在相关性的情况。</p>
+<p><strong>Bootstrap方法</strong>： 通过重复抽样计算标准误，特别适用于小样本情况： 1. 对残差进行重抽样（残差bootstrap） 2. 对聚类进行重抽样（聚类bootstrap） 3. Wild bootstrap：特别适用于小样本和异方差情况</p>
+<p><strong>排列检验</strong>： 通过随机置换处理状态，构建处理效应的经验分布，进行非参数推断。</p>
+</section>
+<section id="处理组样本量较小时的统计推断问题" class="level3">
+<h3 class="anchored" data-anchor-id="处理组样本量较小时的统计推断问题">9.3.4 处理组样本量较小时的统计推断问题</h3>
+<p>当处理组数量较少时（如政策只影响少数几个地区），传统推断方法可能失效：</p>
+<p><strong>问题</strong>： 1. 聚类稳健标准误可能严重低估 2. 中心极限定理可能不适用 3. 统计检验势较低</p>
+<p><strong>解决方案</strong>： 1. <strong>Wild cluster bootstrap</strong>：特别适用于少量聚类的情况 2. <strong>随机化推断</strong>：基于随机分配处理的假设进行推断 3. <strong>贝叶斯方法</strong>：引入先验信息 4. <strong>合成控制法</strong>：特别适用于单一处理组的情况</p>
+</section>
+</section>
+<section id="双重差分法的扩展模型" class="level2">
+<h2 class="anchored" data-anchor-id="双重差分法的扩展模型">9.4 双重差分法的扩展模型</h2>
+<section id="多期did与异质性处理效应交错did问题" class="level3">
+<h3 class="anchored" data-anchor-id="多期did与异质性处理效应交错did问题">9.4.1 多期DID与异质性处理效应（交错DID）问题</h3>
+<p>在实际应用中，政策往往在不同时间点对不同个体实施，形成交错DID设计。</p>
+<p><strong>交错DID模型</strong>： 设个体<span class="math inline">\(i\)</span>在时期<span class="math inline">\(G_i\)</span>首次接受处理，之后持续处于处理状态。传统双向固定效应模型为：</p>
+<p><span class="math display">\[
+Y_{it} = \beta D_{it} + \gamma_i + \lambda_t + \epsilon_{it}
+\]</span></p>
+<p>其中<span class="math inline">\(D_{it} = 1(t \geq G_i)\)</span>。</p>
+<p><strong>异质性处理效应问题</strong>： 近期研究（如Goodman-Bacon，2021；Sun &amp; Abraham，2021）发现，当处理效应异质时（不同队列、不同时期效应不同），传统双向固定效应估计量可能是有偏的，它是不同”2×2 DID”比较的加权平均。</p>
+</section>
+<section id="异质性处理效应的识别" class="level3">
+<h3 class="anchored" data-anchor-id="异质性处理效应的识别">9.4.2 异质性处理效应的识别</h3>
+<section id="sun-abraham2021方法" class="level4">
+<h4 class="anchored" data-anchor-id="sun-abraham2021方法">Sun &amp; Abraham（2021）方法</h4>
+<p>通过估计事件研究模型，使用从未接受处理的组作为对照组：</p>
+<p><span class="math display">\[
+Y_{it} = \gamma_i + \lambda_t + \sum_{g} \sum_{e \neq -1} \beta_{ge} \cdot 1(G_i=g) \cdot 1(E_{it}=e) + \epsilon_{it}
+\]</span></p>
+<p>其中<span class="math inline">\(E_{it}=t-G_i\)</span>表示相对事件时间，以政策前一期（<span class="math inline">\(e=-1\)</span>）为基准。</p>
+</section>
+<section id="callaway-santanna2021方法" class="level4">
+<h4 class="anchored" data-anchor-id="callaway-santanna2021方法">Callaway &amp; Sant’Anna（2021）方法</h4>
+<p>基于反事实框架，使用从未接受处理的组或尚未接受处理的组作为对照组，估计组别-时期平均处理效应：</p>
+<p><span class="math display">\[
+ATT(g,t) = E[Y_t - Y_{g-1} | G=g] - E[Y_t - Y_{g-1} | G&gt;t]
+\]</span></p>
+</section>
+<section id="borusyak-et-al.2021方法" class="level4">
+<h4 class="anchored" data-anchor-id="borusyak-et-al.2021方法">Borusyak et al.（2021）方法</h4>
+<p>使用插补法：先用未处理样本估计反事实结果，再计算处理效应。</p>
+</section>
+</section>
+<section id="连续型处理与强度did" class="level3">
+<h3 class="anchored" data-anchor-id="连续型处理与强度did">9.4.3 连续型处理与强度DID</h3>
+<p>当处理强度在不同个体或不同时间不同时，可以使用强度DID：</p>
+<p><strong>模型设定</strong>： <span class="math display">\[
+Y_{it} = \beta_0 + \beta_1 Intensity_i \times Post_t + \beta_2 Intensity_i + \beta_3 Post_t + \epsilon_{it}
+\]</span></p>
+<p>其中<span class="math inline">\(Intensity_i\)</span>表示处理强度。</p>
+<p><strong>识别假设</strong>： 除了平行趋势，还需要满足处理强度的外生性假设：处理强度与潜在结果变化无关。</p>
+</section>
+<section id="三重差分法排除混杂政策的影响" class="level3">
+<h3 class="anchored" data-anchor-id="三重差分法排除混杂政策的影响">9.4.4 三重差分法：排除混杂政策的影响</h3>
+<p>当存在同时影响处理组和对照组的混杂政策时，可以使用三重差分法：</p>
+<p><strong>模型设定</strong>： <span class="math display">\[
+Y_{ijt} = \beta_0 + \beta_1 Treat_i \times Post_t \times Group_j + \text{所有低阶交互项和主效应} + \epsilon_{ijt}
+\]</span></p>
+<p>其中<span class="math inline">\(Group_j\)</span>表示第二个分组维度（如行业、地区类型等）。</p>
+<p><strong>识别假设</strong>： 要求混杂政策对第二个分组维度的影响相同，即”共同趋势中的共同趋势”。</p>
+<p><strong>应用场景</strong>： 1. 全国性政策但部分群体豁免 2. 多个政策同时实施 3. 存在同时影响处理组和对照组的外部冲击</p>
+</section>
+</section>
+<section id="双重差分法的常见陷阱批评与最新进展" class="level2">
+<h2 class="anchored" data-anchor-id="双重差分法的常见陷阱批评与最新进展">9.5 双重差分法的常见陷阱、批评与最新进展</h2>
+<section id="坏对照组问题与处理组选择偏误" class="level3">
+<h3 class="anchored" data-anchor-id="坏对照组问题与处理组选择偏误">9.5.1 “坏对照组”问题与处理组选择偏误</h3>
+<p><strong>坏对照组问题</strong>： 对照组可能受到政策间接影响，或与处理组在政策实施后的趋势不再可比。</p>
+<p><strong>处理组选择偏误</strong>： 处理组的选择可能非随机，与结果变量的趋势相关。解决方法： 1. 使用匹配方法选择对照组 2. 使用合成控制法 3. 检验和处理选择方程</p>
+</section>
+<section id="政策内生性与预期效应" class="level3">
+<h3 class="anchored" data-anchor-id="政策内生性与预期效应">9.5.2 政策内生性与预期效应</h3>
+<p><strong>政策内生性</strong>： 政策实施可能基于前期趋势（如”Ashenfelter’s dip”），导致估计偏误。</p>
+<p><strong>预期效应</strong>： 政策实施前，个体可能基于预期调整行为，导致政策前效应。</p>
+<p><strong>解决方案</strong>： 1. 检验政策前趋势 2. 使用更早的基线期 3. 考虑动态模型</p>
+</section>
+<section id="最近的方法论争论与反思" class="level3">
+<h3 class="anchored" data-anchor-id="最近的方法论争论与反思">9.5.3 最近的方法论争论与反思</h3>
+<section id="双向固定效应在交错did中的偏误" class="level4">
+<h4 class="anchored" data-anchor-id="双向固定效应在交错did中的偏误">“双向固定效应”在交错DID中的偏误</h4>
+<p>Goodman-Bacon（2021）证明，当处理效应异质时，传统双向固定效应估计量是不同”2×2 DID”比较的加权平均，可能产生偏误。</p>
+<p><strong>偏误来源</strong>： 1. 早期处理组vs晚期处理组比较 2. 已处理组vs尚未处理组比较 3. 处理组vs从未处理组比较</p>
+</section>
+<section id="动态偏误与静态偏误" class="level4">
+<h4 class="anchored" data-anchor-id="动态偏误与静态偏误">动态偏误与静态偏误</h4>
+<p>de Chaisemartin &amp; d’Haultfoeuille（2020）区分了： 1. 动态偏误：来自处理组内部的比较 2. 静态偏误：来自处理组与对照组的比较</p>
+</section>
+<section id="解决方案" class="level4">
+<h4 class="anchored" data-anchor-id="解决方案">解决方案</h4>
+<ol type="1">
+<li>使用Sun &amp; Abraham（2021）、Callaway &amp; Sant’Anna（2021）等方法</li>
+<li>使用Borusyak et al.（2021）的插补法</li>
+<li>使用de Chaisemartin &amp; d’Haultfoeuille（2020）的估计量</li>
+</ol>
+</section>
+</section>
+<section id="合成控制法匹配did等混合方法" class="level3">
+<h3 class="anchored" data-anchor-id="合成控制法匹配did等混合方法">9.5.4 合成控制法、匹配DID等混合方法</h3>
+<p><strong>合成控制法</strong>： 适用于处理组数量极少的情况，通过加权组合对照组单元构造”合成对照组”。</p>
+<p><strong>匹配DID</strong>： 先进行倾向得分匹配或协变量匹配，再进行DID分析，以改善平行趋势假设。</p>
+<p><strong>双重稳健DID</strong>： 结合匹配和回归调整，提高估计的稳健性。</p>
+</section>
+</section>
+<section id="did的应用实例与statar操作" class="level2">
+<h2 class="anchored" data-anchor-id="did的应用实例与statar操作">9.6 DID的应用实例与Stata/R操作</h2>
+<section id="经典案例研究最低工资对就业的影响card-and-krueger1994" class="level3">
+<h3 class="anchored" data-anchor-id="经典案例研究最低工资对就业的影响card-and-krueger1994">9.6.1 经典案例研究：最低工资对就业的影响（Card and Krueger，1994）</h3>
+</section>
+<section id="中国语境下的典型案例解读如四万亿投资房产限购政策评估" class="level3">
+<h3 class="anchored" data-anchor-id="中国语境下的典型案例解读如四万亿投资房产限购政策评估">9.6.2 中国语境下的典型案例解读（如”四万亿”投资、房产限购政策评估）</h3>
+</section>
+<section id="did在statar中的实现步骤与代码示例reghdfediddid2s等命令" class="level3">
+<h3 class="anchored" data-anchor-id="did在statar中的实现步骤与代码示例reghdfediddid2s等命令">9.6.3 DID在Stata/R中的实现步骤与代码示例（<code>reghdfe</code>、<code>did</code>、<code>did2s</code>等命令）</h3>
+</section>
+</section>
+<section id="本章总结" class="level2">
+<h2 class="anchored" data-anchor-id="本章总结">本章总结</h2>
+<p>双重差分法以其清晰的逻辑和易于实现的特点，成为应用微观计量中最受欢迎的政策评估工具之一。本章系统介绍了DID的基本思想、核心假设、模型设定、统计推断方法以及前沿扩展。</p>
+<p>DID的有效性完全依赖于<strong>平行趋势假设</strong>的成立，而这一假设本质上不可直接验证，只能通过事前趋势检验和丰富的稳健性分析来提供支持证据。近年来，针对异质性处理效应和交错DID的讨论推动了该方法论的快速发展，研究者现在有更多工具来处理传统双向固定效应模型可能存在的偏误。</p>
+<p>在使用DID时，研究者必须注意： 1. 谨慎选择对照组，避免”坏对照组”问题 2. 正确计算聚类稳健标准误，考虑误差结构 3. 进行充分的平行趋势检验和稳健性分析 4. 对于交错DID设计，考虑使用最新的异质性处理效应估计方法 5. 结合其他方法（如合成控制法、匹配方法）提高估计可信度</p>
+<p>通过深入理解DID的假设前提和最新方法论进展，研究者可以更准确地评估政策效应，为实证研究提供可靠的方法基础。</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/8倾向得分匹配.html" class="pagination-link" aria-label="8 倾向得分匹配">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">8 倾向得分匹配</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/10断点回归.html" class="pagination-link" aria-label="10 断点回归">
+        <span class="nav-page-text"><span class="chapter-title">10 断点回归</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

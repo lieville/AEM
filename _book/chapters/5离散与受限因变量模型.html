@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-Hans" xml:lang="zh-Hans"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5 离散数据与受限因变量模型 – 计量模型及应用</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/6因果推断框架.html" rel="next">
+<link href="../chapters/4时间序列分析.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-70a47bd5681a7291082a5b9f83d58762.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="science-textbook.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/1线性回归.html">I 数据与模型</a></li><li class="breadcrumb-item"><a href="../chapters/5离散与受限因变量模型.html"><span class="chapter-title">5 离散数据与受限因变量模型</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">计量模型及应用</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">简介</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">说明</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">I 数据与模型</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/1线性回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">1 线性回归基础</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/2横截面数据分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">2 横截面数据：假设违反的诊断与修正</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/3面板数据模型.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">3 面板数据模型</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/4时间序列分析.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">4 时间序列分析</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/5离散与受限因变量模型.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">5 离散数据与受限因变量模型</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">II 因果推断方法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/6因果推断框架.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">6 因果推断框架</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/7工具变量法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">7 工具变量法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/8倾向得分匹配.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">8 倾向得分匹配</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/9双重差分法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">9 双重差分法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10断点回归.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">10 断点回归</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11合成控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">11 合成控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12回归控制法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">12 回归控制法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13中介效应与调节效应.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">13 中介效应与调节效应</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">III 理论与算法</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="展开或折叠此栏">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14大样本理论.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">14 大样本理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15最大似然估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">15 最大似然估计理论</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16广义矩估计法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">16 广义矩估计法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17蒙特卡洛法与自助法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">17 蒙特卡洛法与自助法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/18优化算法与数值方法.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">18 数值优化与矩阵方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/19机器学习在计量中的应用.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">19 机器学习在计量中的应用</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#本章导读" id="toc-本章导读" class="nav-link active" data-scroll-target="#本章导读">本章导读</a></li>
+  <li><a href="#二元选择模型" id="toc-二元选择模型" class="nav-link" data-scroll-target="#二元选择模型">5.1 二元选择模型</a>
+  <ul class="collapse">
+  <li><a href="#线性概率模型及其局限" id="toc-线性概率模型及其局限" class="nav-link" data-scroll-target="#线性概率模型及其局限">5.1.1 线性概率模型及其局限</a></li>
+  <li><a href="#潜变量框架与非线性设定" id="toc-潜变量框架与非线性设定" class="nav-link" data-scroll-target="#潜变量框架与非线性设定">5.1.2 潜变量框架与非线性设定</a></li>
+  <li><a href="#probit-与-logit-模型" id="toc-probit-与-logit-模型" class="nav-link" data-scroll-target="#probit-与-logit-模型">5.1.3 Probit 与 Logit 模型</a></li>
+  <li><a href="#估计与解释" id="toc-估计与解释" class="nav-link" data-scroll-target="#估计与解释">5.1.4 估计与解释</a></li>
+  </ul></li>
+  <li><a href="#多元选择模型" id="toc-多元选择模型" class="nav-link" data-scroll-target="#多元选择模型">5.2 多元选择模型</a>
+  <ul class="collapse">
+  <li><a href="#多项logit模型" id="toc-多项logit模型" class="nav-link" data-scroll-target="#多项logit模型">5.2.1 多项Logit模型</a></li>
+  <li><a href="#多项probit模型及其他模型" id="toc-多项probit模型及其他模型" class="nav-link" data-scroll-target="#多项probit模型及其他模型">5.2.2 多项Probit模型及其他模型</a></li>
+  </ul></li>
+  <li><a href="#排序选择模型" id="toc-排序选择模型" class="nav-link" data-scroll-target="#排序选择模型">5.3 排序选择模型</a>
+  <ul class="collapse">
+  <li><a href="#模型设定" id="toc-模型设定" class="nav-link" data-scroll-target="#模型设定">5.4.1 模型设定</a></li>
+  <li><a href="#有序probit与有序logit" id="toc-有序probit与有序logit" class="nav-link" data-scroll-target="#有序probit与有序logit">5.4.2 有序Probit与有序Logit</a></li>
+  </ul></li>
+  <li><a href="#计数数据模型" id="toc-计数数据模型" class="nav-link" data-scroll-target="#计数数据模型">5.4 计数数据模型</a>
+  <ul class="collapse">
+  <li><a href="#泊松回归模型" id="toc-泊松回归模型" class="nav-link" data-scroll-target="#泊松回归模型">5.4.1 泊松回归模型</a></li>
+  <li><a href="#负二项回归模型" id="toc-负二项回归模型" class="nav-link" data-scroll-target="#负二项回归模型">5.4.1 负二项回归模型</a></li>
+  </ul></li>
+  <li><a href="#受限因变量模型" id="toc-受限因变量模型" class="nav-link" data-scroll-target="#受限因变量模型">5.5 受限因变量模型</a>
+  <ul class="collapse">
+  <li><a href="#截取回归模型" id="toc-截取回归模型" class="nav-link" data-scroll-target="#截取回归模型">5.5.1 截取回归模型</a></li>
+  <li><a href="#断尾回归模型" id="toc-断尾回归模型" class="nav-link" data-scroll-target="#断尾回归模型">5.5.2 断尾回归模型</a></li>
+  <li><a href="#样本选择模型" id="toc-样本选择模型" class="nav-link" data-scroll-target="#样本选择模型">5.5.3 样本选择模型</a></li>
+  </ul></li>
+  <li><a href="#模型设定检验与前沿议题" id="toc-模型设定检验与前沿议题" class="nav-link" data-scroll-target="#模型设定检验与前沿议题">5.6 模型设定检验与前沿议题</a>
+  <ul class="collapse">
+  <li><a href="#对模型假设的检验" id="toc-对模型假设的检验" class="nav-link" data-scroll-target="#对模型假设的检验">5.6.1 对模型假设的检验</a></li>
+  <li><a href="#动态模型与面板数据扩展" id="toc-动态模型与面板数据扩展" class="nav-link" data-scroll-target="#动态模型与面板数据扩展">5.6.2 动态模型与面板数据扩展</a></li>
+  </ul></li>
+  <li><a href="#案例分析" id="toc-案例分析" class="nav-link" data-scroll-target="#案例分析">5.7 案例分析</a></li>
+  <li><a href="#本章总结" id="toc-本章总结" class="nav-link" data-scroll-target="#本章总结">本章总结</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/1线性回归.html">I 数据与模型</a></li><li class="breadcrumb-item"><a href="../chapters/5离散与受限因变量模型.html"><span class="chapter-title">5 离散数据与受限因变量模型</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">5 离散数据与受限因变量模型</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="本章导读" class="level2">
+<h2 class="anchored" data-anchor-id="本章导读">本章导读</h2>
+<p>在经典计量经济学模型中，因变量通常被假定为连续变量。然而，在经济决策与实证研究中，大量核心变量本质上是<strong>离散的</strong>（如是否购买、选择何种出行方式）或<strong>数值上受到限制</strong>的（如工作时间非负、消费数据在某一区间内聚集）。以这类变量作为被解释变量建立的模型，分别称为<strong>离散选择模型</strong>和<strong>受限因变量模型</strong>。</p>
+<p>离散选择模型旨在分析决策者在有限个备选方案中作出选择的概率，其因变量取值为离散的类别。受限因变量模型则处理因数据搜集机制导致观测值不能完全反映总体分布的情形，例如样本截断或数据归并。这两类模型极大地扩展了计量经济学的应用范围，使其能够更贴切地分析微观个体行为，广泛应用于劳动经济学、金融学、卫生经济学及消费行为研究等领域。</p>
+<p>本章将系统阐述这些模型的理论基础、估计方法及解释。首先从最简单的二元选择模型出发，逐步扩展到多元选择、排序选择及计数数据模型，最后讨论处理样本选择或数据截断等问题的受限因变量模型。</p>
+</section>
+<section id="二元选择模型" class="level2">
+<h2 class="anchored" data-anchor-id="二元选择模型">5.1 二元选择模型</h2>
+<section id="线性概率模型及其局限" class="level3">
+<h3 class="anchored" data-anchor-id="线性概率模型及其局限">5.1.1 线性概率模型及其局限</h3>
+<p>对于因变量 <span class="math inline">\(y_i\)</span> 取值为0或1的二元选择问题，一个直观的起点是采用<strong>线性概率模型</strong>： <span class="math display">\[
+y_i = \mathbf{x}_i^\top \pmb{\beta} + \varepsilon_i
+\]</span> 其中 <span class="math inline">\(E(y_i | \mathbf{x}_i) = P(y_i=1 | \mathbf{x}_i) = \mathbf{x}_i^\top \pmb{\beta}\)</span>。</p>
+<p>该模型尽管估计简便，但存在两个主要缺陷： 1. <strong>预测值可能超出概率区间</strong>：线性组合 <span class="math inline">\(\mathbf{x}_i^\top \hat{\pmb{\beta}}\)</span> 的取值可能不在 <code>[0, 1]</code> 之间，这与概率的定义相矛盾。 2. <strong>异方差性</strong>：误差项 <span class="math inline">\(\varepsilon_i\)</span> 的方差为 <span class="math inline">\(\text{Var}(\varepsilon_i | \mathbf{x}_i) = (\mathbf{x}_i^\top \pmb{\beta})(1 - \mathbf{x}_i^\top \pmb{\beta})\)</span>，必然存在异方差，导致普通最小二乘估计非有效。</p>
+<p>这些缺陷促使我们发展出形式更为灵活的非线性概率模型。</p>
+</section>
+<section id="潜变量框架与非线性设定" class="level3">
+<h3 class="anchored" data-anchor-id="潜变量框架与非线性设定">5.1.2 潜变量框架与非线性设定</h3>
+<p>二元选择模型通常基于一个连续的<strong>潜变量</strong> <span class="math inline">\(y_i^*\)</span> 来构建： <span class="math display">\[
+y_i^* = \mathbf{x}_i^\top \pmb{\beta} + u_i, \quad y_i =
+\begin{cases}
+1, &amp; \text{if } y_i^* &gt; 0 \\
+0, &amp; \text{if } y_i^* \le 0
+\end{cases}
+\]</span> 其中 <span class="math inline">\(u_i\)</span> 是独立于 <span class="math inline">\(\mathbf{x}_i\)</span> 的随机扰动项，均值为0，方差固定。潜变量 <span class="math inline">\(y_i^*\)</span> 可理解为决策者的“净收益”或“效用差”。</p>
+<p>在此框架下，选择概率为： <span class="math display">\[
+P(y_i = 1 | \mathbf{x}_i) = P(y_i^* &gt; 0 | \mathbf{x}_i) = P(u_i &gt; -\mathbf{x}_i^\top \pmb{\beta} | \mathbf{x}_i) = 1 - F(-\mathbf{x}_i^\top \pmb{\beta})
+\]</span> 其中 <span class="math inline">\(F(\cdot)\)</span> 是 <span class="math inline">\(u_i\)</span> 的累积分布函数。为保证概率值在 <code>[0, 1]</code> 之间且模型设定可识别，需对 <span class="math inline">\(F(\cdot)\)</span> 的形式进行假设。</p>
+</section>
+<section id="probit-与-logit-模型" class="level3">
+<h3 class="anchored" data-anchor-id="probit-与-logit-模型">5.1.3 Probit 与 Logit 模型</h3>
+<p>两种最常用的分布假设对应了核心的二元选择模型： * <strong>Probit模型</strong>：假设 <span class="math inline">\(u_i\)</span> 服从标准正态分布，即 <span class="math inline">\(u_i \sim N(0, 1)\)</span>。此时，<span class="math inline">\(P(y_i = 1 | \mathbf{x}_i) = \Phi(\mathbf{x}_i^\top \pmb{\beta})\)</span>，其中 <span class="math inline">\(\Phi(\cdot)\)</span> 是标准正态分布的累积分布函数。 * <strong>Logit模型</strong>：假设 <span class="math inline">\(u_i\)</span> 服从逻辑分布。此时，<span class="math inline">\(P(y_i = 1 | \mathbf{x}_i) = \Lambda(\mathbf{x}_i^\top \pmb{\beta}) = \frac{\exp(\mathbf{x}_i^\top \pmb{\beta})}{1 + \exp(\mathbf{x}_i^\top \pmb{\beta})}\)</span>。</p>
+<p>两种模型的概率函数都是 <span class="math inline">\(\mathbf{x}_i^\top \pmb{\beta}\)</span> 的单调递增函数，其曲线呈S形，能自动保证预测概率落在0到1之间。Probit模型和Logit模型的估计结果通常非常接近。它们的差异主要在于逻辑分布的尾部略厚于正态分布，但这在实证中很少导致实质性区别。模型选择常取决于学术传统或软件实现的便利性。</p>
+</section>
+<section id="估计与解释" class="level3">
+<h3 class="anchored" data-anchor-id="估计与解释">5.1.4 估计与解释</h3>
+<p>由于潜变量 <span class="math inline">\(y_i^*\)</span> 不可观测，二元选择模型通常采用<strong>极大似然法</strong>进行估计。对于样本量为 <span class="math inline">\(N\)</span> 的数据，似然函数为： <span class="math display">\[
+L(\pmb{\beta}) = \prod_{i: y_i=1} P(y_i=1|\mathbf{x}_i) \cdot \prod_{i: y_i=0} [1 - P(y_i=1|\mathbf{x}_i)]
+\]</span></p>
+<p>对似然函数取对数后，通过数值优化方法求解使对数似然函数最大的参数估计值 <span class="math inline">\(\hat{\pmb{\beta}}\)</span>。</p>
+<p>参数 <span class="math inline">\(\pmb{\beta}\)</span> 的估计值<strong>不能直接解释为边际效应</strong>。以Probit模型为例，第 <span class="math inline">\(j\)</span> 个解释变量 <span class="math inline">\(x_{ij}\)</span> 对选择概率的边际效应为： <span class="math display">\[
+\frac{\partial P(y_i=1|\mathbf{x}_i)}{\partial x_{ij}} = \phi(\mathbf{x}_i^\top \pmb{\beta}) \beta_j
+\]</span> 其中 <span class="math inline">\(\phi(\cdot)\)</span> 是标准正态概率密度函数。该边际效应<strong>不是常数</strong>，它依赖于所有解释变量在 <span class="math inline">\(\mathbf{x}_i\)</span> 处的取值。因此，报告边际效应时，通常需要计算在解释变量样本均值处的值，或计算每个观测个体的边际效应后再求样本平均。</p>
+</section>
+</section>
+<section id="多元选择模型" class="level2">
+<h2 class="anchored" data-anchor-id="多元选择模型">5.2 多元选择模型</h2>
+<p>当决策者面临两个以上的离散选项时，需要使用多元选择模型。根据选项之间是否具有自然的排序，可以分为<strong>无序选择模型</strong>和<strong>有序选择模型</strong>。本节讨论无序选择模型。</p>
+<section id="多项logit模型" class="level3">
+<h3 class="anchored" data-anchor-id="多项logit模型">5.2.1 多项Logit模型</h3>
+<p><strong>多项Logit模型</strong>是最常用的无序选择模型。设个体 <span class="math inline">\(i\)</span> 在 <span class="math inline">\(J+1\)</span> 个选项（编号为 <code>0, 1, ..., J</code>）中选择，以选项 <code>0</code> 为参照基准。个体选择选项 <span class="math inline">\(j\)</span> 的概率为： <span class="math display">\[
+P(y_i = j | \mathbf{x}_i) = \frac{\exp(\mathbf{x}_i^\top \pmb{\beta}_j)}{1 + \sum_{k=1}^{J} \exp(\mathbf{x}_i^\top \pmb{\beta}_k)}, \quad j=1,\ldots,J
+\]</span> 以及 <span class="math inline">\(P(y_i = 0 | \mathbf{x}_i) = \frac{1}{1 + \sum_{k=1}^{J} \exp(\mathbf{x}_i^\top \pmb{\beta}_k)}\)</span>。</p>
+<p>该模型的一个关键性质是<strong>无关选项的独立性</strong>：任意两个选项的选择概率之比仅与这两个选项的特性有关，与其他选项无关。这一性质在某些情境下可能构成限制。</p>
+</section>
+<section id="多项probit模型及其他模型" class="level3">
+<h3 class="anchored" data-anchor-id="多项probit模型及其他模型">5.2.2 多项Probit模型及其他模型</h3>
+<p>为克服IIA性质的限制，可采用<strong>多项Probit模型</strong>。该模型假设与各选项相关的随机误差项服从多元正态分布。由于其似然函数涉及高维数值积分，计算较为复杂，但在计算能力提升和模拟方法发展的背景下，其应用正逐渐增加。</p>
+<p>此外，还有<strong>嵌套Logit模型</strong>和<strong>混合Logit模型</strong>等，它们通过引入更灵活的误差相关结构，来建模选项之间可能存在的相关性。</p>
+</section>
+</section>
+<section id="排序选择模型" class="level2">
+<h2 class="anchored" data-anchor-id="排序选择模型">5.3 排序选择模型</h2>
+<p>当因变量的离散类别之间存在<strong>内在的顺序</strong>时，例如调查问卷中的满意度（非常不满意、不满意、一般、满意、非常满意）、信用评级或疾病严重程度分级，则应使用排序选择模型。</p>
+<section id="模型设定" class="level3">
+<h3 class="anchored" data-anchor-id="模型设定">5.4.1 模型设定</h3>
+<p>排序选择模型同样基于潜变量框架： <span class="math display">\[
+y_i^* = \mathbf{x}_i^\top \pmb{\beta} + \varepsilon_i
+\]</span> 所观测到的有序结果 <span class="math inline">\(y_i\)</span> 由潜变量 <span class="math inline">\(y_i^*\)</span> 穿越一系列递增的<strong>门槛值</strong> <span class="math inline">\(\mu_1 &lt; \mu_2 &lt; \cdots &lt; \mu_{J-1}\)</span> 决定： <span class="math display">\[
+y_i =
+\begin{cases}
+0, &amp; \text{if } y_i^* \le \mu_1 \\
+1, &amp; \text{if } \mu_1 &lt; y_i^* \le \mu_2 \\
+\vdots \\
+J-1, &amp; \text{if } y_i^* &gt; \mu_{J-1}
+\end{cases}
+\]</span> 其中，为了模型识别，通常将常数项设为零，并设定 <span class="math inline">\(\mu_1\)</span>（或 <span class="math inline">\(\mu_0\)</span> 为 <code>-∞</code>， <span class="math inline">\(\mu_J\)</span> 为 <code>+∞</code>）。</p>
+</section>
+<section id="有序probit与有序logit" class="level3">
+<h3 class="anchored" data-anchor-id="有序probit与有序logit">5.4.2 有序Probit与有序Logit</h3>
+<p>根据扰动项 <span class="math inline">\(\varepsilon_i\)</span> 的分布假设，可得到两种主要模型： * <strong>有序Probit模型</strong>：假设 <span class="math inline">\(\varepsilon_i \sim N(0, 1)\)</span>。 * <strong>有序Logit模型</strong>：假设 <span class="math inline">\(\varepsilon_i\)</span> 服从逻辑分布。</p>
+<p>个体 <span class="math inline">\(i\)</span> 选择类别 <span class="math inline">\(j\)</span> 的概率为： <span class="math display">\[
+\begin{aligned}
+P(y_i = j | \mathbf{x}_i) &amp;= P(\mu_{j} &lt; y_i^* \le \mu_{j+1}) \\
+&amp;= F(\mu_{j+1} - \mathbf{x}_i^\top \pmb{\beta}) - F(\mu_j - \mathbf{x}_i^\top \pmb{\beta})
+\end{aligned}
+\]</span> 其中 <span class="math inline">\(F(\cdot)\)</span> 是标准正态或逻辑分布的累积分布函数。</p>
+<p>解释变量 <span class="math inline">\(\mathbf{x}_i\)</span> 对处于特定类别 <span class="math inline">\(j\)</span> 的概率的边际效应，其符号并不确定，需要进行计算。<span class="math inline">\(\pmb{\beta}\)</span> 系数的符号可以解释为对潜变量 <span class="math inline">\(y_i^*\)</span> 的影响方向。</p>
+</section>
+</section>
+<section id="计数数据模型" class="level2">
+<h2 class="anchored" data-anchor-id="计数数据模型">5.4 计数数据模型</h2>
+<p>当因变量是<strong>非负整数计数</strong>时，例如一个家庭在一年内就医的次数、一家企业申请的专利数量，或一个区域发生的交通事故数，需要使用计数数据模型。</p>
+<section id="泊松回归模型" class="level3">
+<h3 class="anchored" data-anchor-id="泊松回归模型">5.4.1 泊松回归模型</h3>
+<p><strong>泊松回归</strong>是计数模型的基础。设 <span class="math inline">\(y_i\)</span> 给定 <span class="math inline">\(\mathbf{x}_i\)</span> 的条件分布为泊松分布： <span class="math display">\[
+P(y_i | \mathbf{x}_i) = \frac{e^{-\lambda_i} \lambda_i^{y_i}}{y_i!}, \quad y_i = 0, 1, 2, \ldots
+\]</span> 其中，条件均值（即发生率的期望）被设定为指数形式，以确保其为正： <span class="math display">\[
+E(y_i | \mathbf{x}_i) = \lambda_i = \exp(\mathbf{x}_i^\top \pmb{\beta})
+\]</span> 泊松分布的一个重要性质是<strong>等离散性</strong>，即条件均值等于条件方差：<span class="math inline">\(E(y_i | \mathbf{x}_i) = \text{Var}(y_i | \mathbf{x}_i) = \lambda_i\)</span>。</p>
+</section>
+<section id="负二项回归模型" class="level3">
+<h3 class="anchored" data-anchor-id="负二项回归模型">5.4.1 负二项回归模型</h3>
+<p>在实际数据中，方差常常大于均值，这种现象称为<strong>过度离散</strong>。忽视过度离散会导致标准误被低估。<strong>负二项回归</strong>模型通过引入一个额外的随机成分来放松等离散假设，其条件方差被设定为 <span class="math display">\[ \text{Var}(y_i | \mathbf{x}_i) = \lambda_i + \alpha \lambda_i^2 \]</span>，其中 <span class="math inline">\(\alpha &gt; 0\)</span> 是衡量过度离散程度的参数。当 <span class="math inline">\(\alpha = 0\)</span> 时，负二项回归即退化为泊松回归。</p>
+<p>此外，对于数据中零值过多的情形，还有<strong>零膨胀泊松模型</strong>和<strong>零膨胀负二项模型</strong>等专门应对零值堆积问题的扩展模型。</p>
+</section>
+</section>
+<section id="受限因变量模型" class="level2">
+<h2 class="anchored" data-anchor-id="受限因变量模型">5.5 受限因变量模型</h2>
+<p>当因变量的观测值由于数据收集过程而受到限制时，就需要用到受限因变量模型。主要分为两类：<strong>截取</strong>和<strong>断尾</strong>。</p>
+<section id="截取回归模型" class="level3">
+<h3 class="anchored" data-anchor-id="截取回归模型">5.5.1 截取回归模型</h3>
+<p>在截取情况下，部分因变量的真实值无法被观测到，但我们知道它们是否被截取以及截取的界限。最经典的模型是<strong>Tobit模型</strong>，由James Tobin提出，常用于分析诸如家庭耐用消费品支出（有大量零值）等数据。</p>
+<p>标准Tobit模型（Type I）设定如下： <span class="math display">\[
+\begin{aligned}
+y_i^* &amp;= \mathbf{x}_i^\top \pmb{\beta} + u_i, \quad u_i | \mathbf{x}_i \sim N(0, \sigma^2) \\
+y_i &amp;= \max(0, y_i^*)
+\end{aligned}
+\]</span> 我们观测到的是 <span class="math inline">\(y_i\)</span>，而非 <span class="math inline">\(y_i^*\)</span>。对于 <span class="math inline">\(y_i &gt; 0\)</span> 的观测，其条件分布是断尾正态分布；对于 <span class="math inline">\(y_i = 0\)</span> 的观测，我们仅知道 <span class="math inline">\(y_i^* \le 0\)</span>。</p>
+<p>该模型可用极大似然法估计，其对数似然函数由两部分构成：对应于 <span class="math inline">\(y_i=0\)</span> 观测的概率部分，和对应于 <span class="math inline">\(y_i&gt;0\)</span> 观测的密度部分。Tobit模型的一个关键特征是，解释变量 <span class="math inline">\(\mathbf{x}_i\)</span> 同时对决定 <span class="math inline">\(y_i^*\)</span> 是否大于0的概率（即“选择方程”）和给定 <span class="math inline">\(y_i^*&gt;0\)</span> 时 <span class="math inline">\(y_i^*\)</span> 的水平（即“水平方程”）产生影响，且两个效应的系数比例是固定的，这有时可能构成限制。</p>
+<p><strong>两阶段估计</strong>和<strong>工具变量Tobit模型</strong>也被发展出来，以处理内生解释变量等问题。</p>
+</section>
+<section id="断尾回归模型" class="level3">
+<h3 class="anchored" data-anchor-id="断尾回归模型">5.5.2 断尾回归模型</h3>
+<p>在断尾情况下，部分观测值被完全排除在样本之外，既不知道其存在，也不知道其解释变量的值。例如，只对收入高于某个门槛的家庭进行调查。</p>
+<p>若断尾规则为 <span class="math inline">\(y_i^* &gt; c\)</span>，则我们观测到的 <span class="math inline">\(y_i\)</span> 的条件分布为： <span class="math display">\[
+f(y_i | y_i &gt; c, \mathbf{x}_i) = \frac{f(y_i^* | \mathbf{x}_i)}{P(y_i^* &gt; c | \mathbf{x}_i)}, \quad y_i &gt; c
+\]</span> 其中 <span class="math inline">\(f(y_i^* | \mathbf{x}_i)\)</span> 是 <span class="math inline">\(y_i^*\)</span> 的原始条件密度函数。忽略断尾而直接使用OLS估计，会导致参数估计有偏。</p>
+</section>
+<section id="样本选择模型" class="level3">
+<h3 class="anchored" data-anchor-id="样本选择模型">5.5.3 样本选择模型</h3>
+<p>样本选择模型（Heckman模型）处理的是更一般的选择性问题：是否进入样本（选择方程）与关心的结果变量（结果方程）由两个虽有联系但不同的机制决定。</p>
+<p>其经典设定如下： <span class="math display">\[
+\begin{aligned}
+\text{选择方程:} &amp; \quad s_i^* = \mathbf{z}_i^\top \pmb{\gamma} + v_i, \quad s_i = \mathbf{1}[s_i^* &gt; 0] \\
+\text{结果方程:} &amp; \quad y_i^* = \mathbf{x}_i^\top \pmb{\beta} + u_i \\
+\text{观测规则:} &amp; \quad y_i = y_i^* \text{ 当且仅当 } s_i = 1; \text{ 否则 } y_i \text{ 缺失}
+\end{aligned}
+\]</span> 其中 <span class="math inline">\((u_i, v_i)\)</span> 假设服从二元正态分布。如果误差 <span class="math inline">\(u_i\)</span> 和 <span class="math inline">\(v_i\)</span> 相关，那么仅对可观测样本进行OLS回归就会导致<strong>样本选择偏差</strong>。</p>
+<p>Heckman提出了一个广为使用的两阶段纠正方法： 1. 利用全部样本，用Probit模型估计选择方程，得到逆米尔斯比 <span class="math inline">\(\hat{\lambda}_i = \phi(\mathbf{z}_i^\top \hat{\pmb{\gamma}}) / \Phi(\mathbf{z}_i^\top \hat{\pmb{\gamma}})\)</span>。 2. 在可观测子样本中，将 <span class="math inline">\(\hat{\lambda}_i\)</span> 作为额外控制变量加入结果方程进行OLS回归，即估计 <span class="math inline">\(y_i = \mathbf{x}_i^\top \pmb{\beta} + \rho \sigma_u \hat{\lambda}_i + \eta_i\)</span>。其中 <span class="math inline">\(\rho \sigma_u\)</span> 的系数显著性检验了选择偏差的存在性。</p>
+</section>
+</section>
+<section id="模型设定检验与前沿议题" class="level2">
+<h2 class="anchored" data-anchor-id="模型设定检验与前沿议题">5.6 模型设定检验与前沿议题</h2>
+<section id="对模型假设的检验" class="level3">
+<h3 class="anchored" data-anchor-id="对模型假设的检验">5.6.1 对模型假设的检验</h3>
+<p>离散与受限因变量模型大多依赖于较强的分布假设（如正态性、逻辑分布）和函数形式假设（如线性指数）。近年来，针对这些假设的检验方法不断发展。</p>
+<p>例如，对于Tobit模型，有文献系统性地发展了对其核心识别假设（线性指数、潜在误差的正态性、外生性）的<strong>可检验等式</strong>，并构建了相应的检验程序。还有研究专注于检验Tobit模型中的正态性假设，或将其与更灵活的两部分模型进行对比的设定检验。</p>
+<p>当关键假设被拒绝时，研究者可以考虑使用对分布假设更稳健的半参数或非参数估计方法，或者转向基于较弱假设的<strong>部分识别</strong>分析框架。</p>
+</section>
+<section id="动态模型与面板数据扩展" class="level3">
+<h3 class="anchored" data-anchor-id="动态模型与面板数据扩展">5.6.2 动态模型与面板数据扩展</h3>
+<p>在面板数据背景下，离散和受限因变量模型可以纳入个体效应（固定效应或随机效应）以控制不随时间变化的异质性。更进一步，<strong>动态模型</strong>（包含因变量滞后项）被用来研究状态依赖性和调整成本，例如上一期的就业状态如何影响当期的就业概率。</p>
+<p>这些扩展模型在估计上更具挑战，但为分析经济行为的持续性和动态变化提供了有力工具。</p>
+</section>
+</section>
+<section id="案例分析" class="level2">
+<h2 class="anchored" data-anchor-id="案例分析">5.7 案例分析</h2>
+<p>本章节旨在提供一个或多个综合性的实证研究框架示例，展示如何根据研究问题与数据类型，从本章介绍的模型库中选择适当的模型，并完成从模型设定、估计、假设检验到结果解释的全过程。例如，可以分析影响个人高等教育选择（二元/多项选择）的因素，或研究家庭慈善捐款数额（截取数据）的决定因素。具体案例内容此处从略。</p>
+</section>
+<section id="本章总结" class="level2">
+<h2 class="anchored" data-anchor-id="本章总结">本章总结</h2>
+<p>本章系统介绍了当因变量为离散或受限变量时的一整套计量经济学建模方法。我们从二元选择的基础模型（Probit/Logit）出发，逐步扩展到多元无序选择、有序选择以及计数数据模型。最后，探讨了处理数据截取、断尾和样本选择问题的受限因变量模型。</p>
+<p>这些模型的共同核心是<strong>基于潜变量或直接设定非线性的条件期望函数</strong>，并通常依赖<strong>最大似然估计</strong>。在解释估计结果时，必须谨慎，因为系数通常不代表简单的边际效应，边际效应本身也常常依赖于其他变量的取值。</p>
+<p>在选择模型时，<strong>首要准则是因变量的数据类型和经济问题的实质</strong>（有无序、是否有序、是否计数、是否受限）。同时，需要意识到各种经典模型背后的假设，并利用不断发展成熟的检验方法对模型设定进行诊断。当数据和方法允许时，考虑使用更稳健的估计量或探索面板数据、动态模型等扩展形式，能使实证分析更为深入和可靠。</p>
+<p>掌握本章内容，将使研究者能够更恰当地处理微观实证研究中广泛存在的离散和受限因变量问题，从而得出更有效的经验证据和经济解释。</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "已复制");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "已复制");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/4时间序列分析.html" class="pagination-link" aria-label="4 时间序列分析">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">4 时间序列分析</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/6因果推断框架.html" class="pagination-link" aria-label="6 因果推断框架">
+        <span class="nav-page-text"><span class="chapter-title">6 因果推断框架</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
