@@ -30,7 +30,7 @@ jobs:
         with:
           tinytex: true
 
-      # 安装系统依赖
+      # 安装系统依赖（添加了字体和图形相关库）
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -38,7 +38,16 @@ jobs:
             libpng-dev \
             libxml2-dev \
             libssl-dev \
-            libcurl4-openssl-dev
+            libcurl4-openssl-dev \
+            libfontconfig1-dev \
+            libharfbuzz-dev \
+            libfribidi-dev \
+            libfreetype6-dev \
+            libtiff5-dev \
+            libjpeg-dev \
+            libgdal-dev \
+            libgeos-dev \
+            libproj-dev
 
       # 安装 R
       - name: Set up R
@@ -46,40 +55,21 @@ jobs:
         with:
           r-version: '4.5.2'
 
-      # 缓存 R 包
-      - name: Cache R packages
-        uses: actions/cache@v4
-        id: cache-r
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-r-4.5.2-${{ hashFiles('DESCRIPTION', 'renv.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-r-4.5.2-
-
-      # 安装 R 包
+      # 使用 r-lib/actions 安装 R 包依赖（自动处理系统依赖）
       - name: Install R packages
-        if: steps.cache-r.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p ${{ env.R_LIBS_USER }}
-          echo "R_LIBS_USER=${{ env.R_LIBS_USER }}" >> ~/.Renviron
-          
-          Rscript -e '
-          options(repos = c(CRAN = "https://cloud.r-project.org/"))
-          packages <- c("rmarkdown", "knitr", "downlit", "xml2","ggplot2", "dplyr", "tidyverse")
-          installed <- installed.packages()
-          to_install <- packages[!packages %in% rownames(installed)]
-          
-          if (length(to_install) > 0) {
-            install.packages(to_install, lib = Sys.getenv("R_LIBS_USER"))
-          }
-          
-          for (pkg in packages) {
-            if (!require(pkg, character.only = TRUE, quietly = TRUE)) {
-              stop("Failed to load package: ", pkg)
-            }
-          }
-          cat("All R packages installed and loaded successfully\n")
-          '
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::rmarkdown
+            any::knitr
+            any::downlit
+            any::xml2
+            any::ggplot2
+            any::dplyr
+            any::tidyverse
+          extra-packages: |
+            any::rcmdcheck
+          needs: check
 
       # 渲染并发布
       - name: Render and Publish

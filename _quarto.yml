@@ -58,11 +58,6 @@ format:
     crossref:
       chapters: true
     number-sections: false
-    fontfamily:
-      - "Microsoft YaHei"
-      - "FangSong"
-      - "PingFang SC"
-      - sans-serif
     css: science-textbook.css
     
   docx:
@@ -76,9 +71,7 @@ format:
       engine: omml
     page-break-before:
       level: 1                     # 一级标题前分页（章节）
-    mainfont: 宋体              # 正文主要字体
-    sansfont: 微软雅黑          # 无衬线字体（标题等）
-    monofont: Consolas          # 等宽字体（代码）
+    #字体设置
     fontsize: 12                # 正文字号（磅）
     css: science-textbook.css
 
@@ -97,9 +90,6 @@ format:
       - right=2.5cm
       - headheight=15pt
     # 字体配置
-    mainfont: Times New Roman
-    sansfont: Arial
-    monofont: Courier New
     fontsize: 11pt
     linestretch: 1.25
     pdf-engine: xelatex  
