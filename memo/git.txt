@@ -44,20 +44,17 @@ git push -u origin main
 SSH推送
 ssh -T git@github.com  # 测试 SSH 连接
 git remote -v  # 查看当前 Git 项目的远程仓库信息
-git add .    # 添加所有修改
-git commit -m "更新描述" # 提交到本地
-git push -u origin main   # 推送到 GitHub
 
 # 日常推送三部曲
 git remote -v # 查看当前 Git 项目的远程仓库信息
 git add .    # 添加所有修改
-git commit -m "更新描述" # 提交到本地
+git commit -m "字体更新1" # 提交到本地
 git push github main # 推送到 GitHub
 git push gitee main    # 推送到 Gitee
 
 #单文件推送
 git add .github/workflows/publish.yml
-git commit -m "修改包安转"
+git commit -m "自动触发pages生成"
 git push github main
 
 git add _quarto.yml
