@@ -9,98 +9,122 @@ execute:
   enabled: true
   cache: true
   freeze: auto
+  warning: false
   engine: knitr
-  warning: false 
-
 
 book:
-  title: "计量模型及应用"
+  title: "现代预测建模：从回归到机器学习"
   author: "李世纪"
   date: "2025-11-26"
 
   chapters: 
-    - intro.qmd 
     - index.qmd
-    - part: I 数据与模型
+    - intro.qmd
+    - part: "I 基础-线性回归模型"
       chapters:
-        - chapters/1线性回归.qmd
-        - chapters/2横截面数据分析.qmd
-        - chapters/3面板数据模型.qmd
-        - chapters/4时间序列分析.qmd
-        - chapters/5离散与受限因变量模型.qmd
-    - part: II 因果推断方法
+        - chapters/part-1-introduction.qmd
+        - chapters/1预测模型与评估.qmd
+        - chapters/2线性回归.qmd
+        - chapters/3残差分析.qmd
+        - chapters/4自相关.qmd
+    - part: "II 扩展——线性分析方法"
       chapters:
-        - chapters/6因果推断框架.qmd
-        - chapters/7工具变量法.qmd
-        - chapters/8倾向得分匹配.qmd
-        - chapters/9双重差分法.qmd
-        - chapters/10断点回归.qmd
-        - chapters/11合成控制法.qmd
-        - chapters/12回归控制法.qmd
-        - chapters/13中介效应与调节效应.qmd
-    - part: III 理论与算法
+        - chapters/part-2-introduction.qmd
+        - chapters/5降维.qmd
+        - chapters/6正则化.qmd
+        - chapters/7广义线性模型.qmd
+        - chapters/8线性分类模型.qmd
+        - chapters/9非线性回归与样条回归.qmd
+    - part: "III 进阶——超越线性的机器学习"
       chapters:
-        - chapters/14大样本理论.qmd
-        - chapters/15最大似然估计法.qmd
-        - chapters/16广义矩估计法.qmd
-        - chapters/17蒙特卡洛法与自助法.qmd
-        - chapters/18优化算法与数值方法.qmd
-        - chapters/19机器学习在计量中的应用.qmd
-    
+        - chapters/part-3-introduction.qmd
+        - chapters/10决策树与集成学习.qmd
+        - chapters/11支持向量机.qmd
+        - chapters/12神经网络与深度学习基础.qmd
+    - part: "IV 实践——综合案例分析"
+      chapters:   
+        - chapters/part-4-introduction.qmd     
+        - chapters/13回归任务与基准测试.qmd
+        - chapters/14分类任务.qmd
+        - chapters/15案例综合分析.qmd        
 
 bibliography: references.bib
 
 format:
   html:
+    toc: true
+    toc-depth: 3
     theme: cosmo
     code-link: true
     code-line-numbers: true
-    crossref:
-      chapters: true
-    number-sections: false
-    css: science-textbook.css
+    number-sections: true
+    css: textbook.css
     
   docx:
-    toc: true       # 生成目录
-    toc-depth: 2     # 目录深度
-    documentclass: book
-    crossref:
-      chapters: true
-    number-sections: false      # 章节编号
-    math:
-      engine: omml
-    page-break-before:
-      level: 1                     # 一级标题前分页（章节）
-    #字体设置
-    fontsize: 12                # 正文字号（磅）
-    css: science-textbook.css
-
-
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    
   pdf:
-    # 文档类配置
-    toc-depth: 2 
-    documentclass: ctexbook 
-    classoption: ["openany"]  # 章节从任意页开始（减少空白页）
-    # classoption: ["oneside", "openany"]  # 单面印刷，章节从任意页开始
-    # 页面布局
+    documentclass: ctexbook
+    classoption: ["openany"]
+    
+    # 禁用 ctex 默认字体，使用 fontspec/xeCJK 手动控制
+    ctex: false
+    
+    # 西文字体回退：Windows → Linux 开源
+    mainfont: "Times New Roman, Liberation Serif, Noto Serif, serif"
+    sansfont: "Arial, Liberation Sans, Noto Sans, sans-serif"
+    monofont: "Consolas, JetBrains Mono, Liberation Mono, monospace"
+    
+    include-in-header:
+      text: |
+        \usepackage{xeCJK}
+        
+        % 中文字体回退：Windows 字体优先，Linux 开源字体回退
+        % 宋体（正文）：Windows SimSun → Linux Noto Serif CJK
+        \setCJKmainfont{SimSun}[
+          BoldFont=SimHei,
+          ItalicFont=KaiTi,
+          BoldItalicFont=SimHei,
+          AlternateFont={Noto Serif CJK SC}
+        ]
+        
+        % 黑体（标题）：Windows SimHei → Linux Noto Sans CJK
+        \setCJKsansfont{SimHei}[
+          BoldFont=SimHei,
+          AlternateFont={Noto Sans CJK SC}
+        ]
+        
+        % 等宽中文：Windows FangSong → Linux Noto Sans Mono CJK
+        \setCJKmonofont{FangSong}[
+          AlternateFont={Noto Sans Mono CJK SC}
+        ]
+    
+    toc-depth: 3
     geometry:
       - top=2.5cm
       - bottom=2.5cm
       - left=3cm
       - right=2.5cm
       - headheight=15pt
-    # 字体配置
     fontsize: 11pt
-    linestretch: 1.25
-    pdf-engine: xelatex  
-    include-in-header:
-      - text: \usepackage{ctex}
-      - text: \setCJKmainfont{SimSun}
-    number-sections: false
+    linestretch: 1.4
+    pdf-engine: xelatex
+    number-sections: true
+    code-block-bg: "#f8f9fa"
+    code-block-border-left: "#5c5c5c"
+    highlight-style: tango
 
-  
-editor: visual
+editor: source
 
+crossref:
+  chapters: true
+  fig-title: "图"
+  tbl-title: "表"
+  fig-prefix: "图"
+  tbl-prefix: "表"
+  sec-prefix: "节"
 
 
 
